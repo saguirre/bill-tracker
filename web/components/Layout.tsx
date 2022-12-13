@@ -7,8 +7,8 @@ export const Layout: React.FC<LayoutProps> = ({ children }) => {
   return (
     <div className="drawer">
       <input id="my-drawer-3" type="checkbox" className="drawer-toggle" />
-      <div className="drawer-content flex flex-col">
-        <div className="w-full navbar bg-base-100 p-3">
+      <div className="drawer-content flex flex-col p-4">
+        <div className="w-full navbar bg-base-100 p-3 rounded-lg">
           <div className="flex-none">
             <label htmlFor="my-drawer-3" className="btn btn-square btn-ghost">
               <svg
