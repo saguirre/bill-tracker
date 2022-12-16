@@ -3,6 +3,8 @@ import { ConfigModule } from '@nestjs/config';
 import { HealthModule } from './health/health.module';
 import { AppLoggerMiddleware } from './logger.middleware';
 import { PrismaService } from './prisma.service';
+import { AuthModule } from './auth/auth.module';
+import { UserModule } from './user/user.module';
 
 @Module({
   imports: [
@@ -10,6 +12,8 @@ import { PrismaService } from './prisma.service';
       isGlobal: true,
     }),
     HealthModule,
+    AuthModule,
+    UserModule,
   ],
   controllers: [],
   providers: [PrismaService],
