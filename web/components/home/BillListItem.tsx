@@ -21,7 +21,7 @@ export const BillListItem: React.FC<BillListItemProps> = ({
         setSelectedBill(bill);
         setLoadingBillData(true);
       }}
-      htmlFor="my-modal-4"
+      htmlFor="edit-bill-modal"
       key={bill.id}
       className="flex flex-col justify-center items-start hover:cursor-pointer hover:bg-base-200 transition-colors duration-300 rounded-xl px-4 pt-2 pb-3 w-full"
     >

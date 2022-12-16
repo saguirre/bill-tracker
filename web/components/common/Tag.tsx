@@ -1,5 +1,5 @@
 import classNames from 'classnames';
-import { Color } from '../../types/color.types';
+import { Color } from '../../types/color.type';
 
 interface TagProps {
   text: string;

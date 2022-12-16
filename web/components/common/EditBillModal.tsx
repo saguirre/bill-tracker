@@ -9,8 +9,8 @@ interface EditBillModalProps {
 export const EditBillModal: React.FC<EditBillModalProps> = ({ loading, bill }) => {
   return (
     <>
-      <input type="checkbox" id="my-modal-4" className="modal-toggle" />
-      <label htmlFor="my-modal-4" className="modal cursor-pointer">
+      <input type="checkbox" id="edit-bill-modal" className="modal-toggle" />
+      <label htmlFor="edit-bill-modal" className="modal cursor-pointer">
         <label className="modal-box relative" htmlFor="">
           {loading ? (
             <div className="w-full h-60 flex flex-col items-center justify-center">
