@@ -13,6 +13,8 @@ export class BillEntity implements Bill {
   @ApiProperty()
   userId: number;
   @ApiProperty()
+  dueDate: Date | null;
+  @ApiProperty()
   createdAt: Date;
   @ApiProperty()
   updatedAt: Date;

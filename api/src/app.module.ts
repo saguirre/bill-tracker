@@ -7,6 +7,9 @@ import { AuthModule } from './auth/auth.module';
 import { UserModule } from './user/user.module';
 import { BillModule } from './bill/bill.module';
 import { UserGroupModule } from './user-group/user-group.module';
+import { AuthController } from './auth.controller';
+import { UserService } from './user/user.service';
+import { AuthService } from './auth/auth.service';
 
 @Module({
   imports: [
@@ -19,8 +22,8 @@ import { UserGroupModule } from './user-group/user-group.module';
     BillModule,
     UserGroupModule,
   ],
-  controllers: [],
-  providers: [PrismaService],
+  controllers: [AuthController],
+  providers: [PrismaService, UserService, AuthService],
 })
 export class AppModule implements NestModule {
   configure(consumer: MiddlewareConsumer): void {

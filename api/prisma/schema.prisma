@@ -48,6 +48,7 @@ model Bill {
   paid        Boolean    @default(false)
   user        User       @relation(fields: [userId], references: [id])
   userId      Int
+  dueDate     DateTime?
   createdAt   DateTime   @default(now())
   updatedAt   DateTime   @updatedAt
   file        File[]

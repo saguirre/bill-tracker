@@ -9,6 +9,8 @@ export class CreateBillEntity implements Partial<Prisma.BillCreateInput> {
   @ApiProperty({ required: false })
   paid?: boolean;
   @ApiProperty({ required: false })
+  dueDate?: string | Date;
+  @ApiProperty({ required: false })
   createdAt?: string | Date;
   @ApiProperty({ required: false })
   updatedAt?: string | Date;

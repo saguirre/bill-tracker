@@ -1,6 +1,5 @@
 import { XMarkIcon } from '@heroicons/react/24/solid';
 import { useForm } from 'react-hook-form';
-import { Bill } from '../../models/bill';
 import { CategoryModel } from '../../models/category';
 import { Frequency } from '../../types/frequency.type';
 
@@ -131,7 +130,7 @@ export const AddBillModal: React.FC<AddBillModalProps> = ({ loading }) => {
                       required: 'Category is required',
                     })}
                   >
-                    <option disabled selected>
+                    <option disabled defaultValue={''}>
                       Select Category
                     </option>
                     <option value="FOOD">Food</option>

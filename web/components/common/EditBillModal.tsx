@@ -1,4 +1,4 @@
-import { Bill } from '../../models/bill';
+import { Bill } from '../../models/bill/bill';
 import { DueDateLabel } from './DueDateLabel';
 
 interface EditBillModalProps {
@@ -23,7 +23,7 @@ export const EditBillModal: React.FC<EditBillModalProps> = ({ loading, bill }) =
                   <div className="flex flex-row items-center justify-between">
                     <input
                       type="text"
-                      value={bill.name}
+                      value={bill.title}
                       placeholder="Bill name"
                       className="input focus:ring-0 focus:border-base-300 text-xl font-bold w-full max-w-xs"
                     />

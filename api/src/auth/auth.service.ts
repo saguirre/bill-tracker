@@ -28,15 +28,16 @@ export class AuthService {
   }
 
   async login(user: User) {
-    const dbUser = await this.userService.user({ id: Number(user.id) });
+    console.log(user);
+    const dbUser = await this.userService.user({ email: user.email });
     if (!dbUser) {
       throw new HttpException('Unauthorized', HttpStatus.UNAUTHORIZED);
     }
 
     const payload = {
-      id: user.id,
-      name: user.name,
-      email: user.email,
+      id: dbUser.id,
+      name: dbUser.name,
+      email: dbUser.email,
     };
 
     const userWithToken = {

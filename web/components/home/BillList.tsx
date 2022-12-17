@@ -1,5 +1,5 @@
 import classNames from 'classnames';
-import { Bill } from '../../models/bill';
+import { Bill } from '../../models/bill/bill';
 import { BillListItem } from './BillListItem';
 
 interface BillListProps {
