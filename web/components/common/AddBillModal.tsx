@@ -60,7 +60,14 @@ export const AddBillModal: React.FC<AddBillModalProps> = ({ loading }) => {
                 <label className="label flex flex-col items-start gap-1">
                   <span className="label-text font-semibold">Name</span>
 
-                  <input type="text" placeholder="Name" className="input input-bordered" {...register('name')} />
+                  <input
+                    type="text"
+                    placeholder="Name"
+                    className="input input-bordered"
+                    {...register('name', {
+                      required: 'Name is required',
+                    })}
+                  />
 
                   {errors.name && <span className="text-error">{errors.name.message}</span>}
 

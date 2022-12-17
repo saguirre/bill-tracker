@@ -1,6 +1,5 @@
 import { useContext, useEffect, useState } from 'react';
 import { useRouter } from 'next/router';
-
 import { AuthContext } from '../../contexts/auth.context';
 import { LoadingWrapper } from './LoadingWrapper';
 import { getCookie } from 'cookies-next';
