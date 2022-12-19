@@ -26,6 +26,7 @@ export class BillService extends HttpService implements IBillService {
   };
 
   getUserBills = async (userId: number): Promise<any> => {
+    console.log(userId);
     return await this.getRequest(this.getServiceUrl(`${this.endpointPrefix}/user/${userId}`), this.getAuthHeaders());
   };
 

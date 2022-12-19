@@ -10,7 +10,7 @@ interface BillListProps {
   amountColor: string;
   setLoadingBillData: (loading: boolean) => void;
   setSelectedBill: (bill: Bill | null) => void;
-  bills: Bill[];
+  bills: Bill[] | undefined;
 }
 
 export const BillList: React.FC<BillListProps> = ({
@@ -36,7 +36,7 @@ export const BillList: React.FC<BillListProps> = ({
         <div className="divider m-0"></div>
         <div className="flex flex-col m-0 items-start h-full justify-start overflow-x-hidden overflow-y-scroll">
           <div className="flex flex-col h-full items-center justify-between w-full overflow-x-hidden overflow-y-scroll">
-            {bills.map((bill) => (
+            {bills?.map((bill) => (
               <BillListItem
                 key={bill.id}
                 setSelectedBill={setSelectedBill}

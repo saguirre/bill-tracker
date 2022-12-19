@@ -12,6 +12,7 @@
     "classnames": "^2.3.2",
     "cookies-next": "^2.1.1",
     "date-fns": "^2.29.3",
+    "iron-session": "^6.3.1",
     "jwt-decode": "^3.1.2",
     "next": "latest",
     "next-themes": "^0.2.1",

@@ -1,18 +1,16 @@
 import '../styles/globals.css';
 import type { AppProps } from 'next/app';
 import { ThemeProvider } from 'next-themes';
-import { Layout } from '../components/Layout';
 import { ToastContainer } from 'react-toastify';
-import { useEffect, useState } from 'react';
+import { useState } from 'react';
 import { Bill } from '../models/bill/bill';
 import { User } from '../models/user/user';
 import { AppContext } from '../contexts/app.context';
 import { BillService } from '../services/bill.service';
 import { AuthService } from '../services/auth.service';
 import { AuthContext } from '../contexts';
-import { getCookie } from 'cookies-next';
-import { useRouter } from 'next/router';
-import { LoadingTransition } from '../components/common/LoadingTransition';
+import { SWRConfig } from 'swr';
+import fetchJson from '../lib/fetchJson';
 
 const toastClass = {
   success:
@@ -27,7 +25,6 @@ const toastClass = {
 };
 
 const BillTracker = ({ Component, pageProps }: AppProps) => {
-  const router = useRouter();
   const [user, setUser] = useState<User | null>(null);
   const [bills, setBills] = useState<Bill[]>([]);
   const [userToken, setUserToken] = useState('');
@@ -44,20 +41,18 @@ const BillTracker = ({ Component, pageProps }: AppProps) => {
     billService,
   };
 
-  useEffect(() => {
-    const token = getCookie('access-token');
-    if (token) {
-      setUserToken(token.toString());
-      router.push('/');
-    }
-    router.push('/signin');
-  }, []);
-
   return (
-    <ThemeProvider>
-      <AuthContext.Provider value={authContextProps}>
-        <AppContext.Provider value={appContextProps}>
-          <Layout>
+    <SWRConfig
+      value={{
+        fetcher: fetchJson,
+        onError: (err) => {
+          console.error(err);
+        },
+      }}
+    >
+      <ThemeProvider>
+        <AuthContext.Provider value={authContextProps}>
+          <AppContext.Provider value={appContextProps}>
             <Component {...pageProps} />
             <ToastContainer
               position="bottom-left"
@@ -65,11 +60,10 @@ const BillTracker = ({ Component, pageProps }: AppProps) => {
               toastClassName={(props) => toastClass[props?.type || 'default']}
               hideProgressBar={true}
             />
-          </Layout>
-          <LoadingTransition />
-        </AppContext.Provider>
-      </AuthContext.Provider>
-    </ThemeProvider>
+          </AppContext.Provider>
+        </AuthContext.Provider>
+      </ThemeProvider>
+    </SWRConfig>
   );
 };
 

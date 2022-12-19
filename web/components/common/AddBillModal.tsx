@@ -8,7 +8,7 @@ interface AddBillModalProps {
 }
 
 interface FormValues {
-  name: string;
+  title: string;
   amount: number;
   dueDate: Date;
   billFrequency: Frequency;
@@ -58,18 +58,10 @@ export const AddBillModal: React.FC<AddBillModalProps> = ({ loading }) => {
             >
               <div className="form-control">
                 <label className="label flex flex-col items-start gap-1">
-                  <span className="label-text font-semibold">Name</span>
+                  <span className="label-text font-semibold">Title</span>
+                  <input type="date" placeholder="Due Date" className="input input-bordered" />
 
-                  <input
-                    type="text"
-                    placeholder="Name"
-                    className="input input-bordered"
-                    {...register('name', {
-                      required: 'Name is required',
-                    })}
-                  />
-
-                  {errors.name && <span className="text-error">{errors.name.message}</span>}
+                  {errors.title && <span className="text-error">{errors.title.message}</span>}
 
                   <span className="text-error"></span>
                 </label>
@@ -78,14 +70,7 @@ export const AddBillModal: React.FC<AddBillModalProps> = ({ loading }) => {
                 <div className="form-control">
                   <label className="label flex flex-col items-start gap-1">
                     <span className="label-text font-semibold">Due Date</span>
-                    <input
-                      type="date"
-                      placeholder="Due Date"
-                      className="input input-bordered"
-                      {...register('dueDate', {
-                        required: 'Due Date is required',
-                      })}
-                    />
+                    <input type="date" placeholder="Due Date" className="input input-bordered" />
                     {errors.dueDate && <span className="text-error">{errors.dueDate.message}</span>}
 
                     <span className="text-error"></span>
@@ -94,14 +79,7 @@ export const AddBillModal: React.FC<AddBillModalProps> = ({ loading }) => {
                 <div className="form-control">
                   <label className="label flex flex-col items-start gap-1">
                     <span className="label-text font-semibold">Amount</span>
-                    <input
-                      type="number"
-                      placeholder="Amount"
-                      className="input input-bordered"
-                      {...register('amount', {
-                        required: 'Amount is required',
-                      })}
-                    />
+                    <input type="number" placeholder="Amount" className="input input-bordered" />
                     {errors.amount && <span className="text-error">{errors.amount.message}</span>}
 
                     <span className="text-error"></span>
@@ -112,12 +90,7 @@ export const AddBillModal: React.FC<AddBillModalProps> = ({ loading }) => {
               <div className="form-control">
                 <label className="label flex flex-col items-start gap-1">
                   <span className="label-text font-semibold">Frequency</span>
-                  <select
-                    className="select select-bordered w-full max-w-xs"
-                    {...register('billFrequency', {
-                      required: 'Frequency is required',
-                    })}
-                  >
+                  <select className="select select-bordered w-full max-w-xs">
                     <option value="">Select Frequency</option>
                     <option value="WEEKLY">Weekly</option>
                     <option value="MONTHLY">Monthly</option>
@@ -131,12 +104,7 @@ export const AddBillModal: React.FC<AddBillModalProps> = ({ loading }) => {
               <div className="form-control">
                 <label className="label flex flex-col items-start gap-1">
                   <span className="label-text font-semibold">Category</span>
-                  <select
-                    className="select select-bordered w-full max-w-xs"
-                    {...register('billCategory', {
-                      required: 'Category is required',
-                    })}
-                  >
+                  <select className="select select-bordered w-full max-w-xs">
                     <option disabled defaultValue={''}>
                       Select Category
                     </option>
@@ -157,11 +125,7 @@ export const AddBillModal: React.FC<AddBillModalProps> = ({ loading }) => {
               <div className="form-control">
                 <label className="label flex flex-col items-start gap-1">
                   <span className="label-text font-semibold">Notes</span>
-                  <textarea
-                    className="textarea h-24 textarea-bordered"
-                    placeholder="Notes"
-                    {...register('notes')}
-                  ></textarea>
+                  <textarea className="textarea h-24 textarea-bordered" placeholder="Notes"></textarea>
 
                   <span className="text-error"></span>
                 </label>
@@ -169,11 +133,7 @@ export const AddBillModal: React.FC<AddBillModalProps> = ({ loading }) => {
               <div className="form-control">
                 <label className="label flex flex-col items-start gap-1">
                   <span className="label-text font-semibold">Bill File or Image</span>
-                  <input
-                    type="file"
-                    className="file-input file-input-bordered w-full max-w-xs"
-                    {...register('billImage')}
-                  />
+                  <input type="file" className="file-input file-input-bordered w-full max-w-xs" />
 
                   <span className="text-error"></span>
                 </label>

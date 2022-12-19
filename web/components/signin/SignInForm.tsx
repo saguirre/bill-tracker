@@ -36,14 +36,14 @@ export const SignInForm: React.FC<SignInFormProps> = ({ submit, loadingRequest }
             </div>
             <div>
               <h2 className="mt-3 text-3xl font-bold text-black">Sign in with your account</h2>
-              <p className="flex flex-row items-center gap-1 mt-2 text-sm text-gray-600">
+              <div className="flex flex-row items-center gap-1 mt-2 text-sm text-gray-600">
                 Or{' '}
                 <Link href="/signup">
                   <div className="font-medium text-primary hover:text-primary/80 hover:cursor-pointer">
                     create a new one.
                   </div>
                 </Link>
-              </p>
+              </div>
             </div>
           </div>
 

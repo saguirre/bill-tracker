@@ -29,7 +29,7 @@ export const BillListItem: React.FC<BillListItemProps> = ({
         <div className="text-xl font-bold">{bill.title}</div>
         <div className={classNames('badge font-semibold', amountColor)}>${bill.amount}</div>
       </div>
-      {bill.dueDate && <div className="text-sm">{'Due on ' + format(bill.dueDate, 'dd/MM/yyyy')}</div>}
+      {bill.dueDate && <div className="text-sm">{'Due on ' + format(new Date(bill.dueDate), 'dd/MM/yyyy')}</div>}
     </label>
   );
 };

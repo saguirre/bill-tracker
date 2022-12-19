@@ -2,34 +2,24 @@ import { DecodedUserToken } from '../models/user/decoded-user-token';
 import jwtDecode from 'jwt-decode';
 import axios from 'axios';
 import { toast } from 'react-toastify';
+import { getCookie } from 'cookies-next';
 
 export abstract class HttpService {
-  constructor() {
-    axios.interceptors.request.use(
-      function (config) {
-        console.log('interceptor', config);
-        return config;
-      },
-      function (error) {
-        // Do something with request error
-        return Promise.reject(error);
-      }
-    );
-  }
+  constructor() {}
 
   private serviceUrl: string = `${process.env.NEXT_PUBLIC_API_URL}`;
 
   protected getAuthHeaders = () => {
-    const token = localStorage.getItem('access_token');
-    return { Authorization: `Bearer ${token}` };
+    const token = getCookie('access-token');
+    return { Authorization: `Bearer ${token?.toString()}` };
   };
 
   protected getDecodedToken = (): DecodedUserToken | null => {
-    const token = localStorage.getItem('access_token');
+    const token = getCookie('access-token');
     if (!token) {
       return null;
     }
-    return jwtDecode(token);
+    return jwtDecode(token.toString());
   };
 
   protected getServiceUrl = (completing?: string): string => {
@@ -39,7 +29,6 @@ export abstract class HttpService {
   protected getRequest = async (url: string, headers?: any) => {
     try {
       const axiosResponse = await axios.get(url, {
-        method: 'GET',
         headers: headers || this.getAuthHeaders(),
       });
       return await axiosResponse.data;
@@ -73,7 +62,6 @@ export abstract class HttpService {
   protected deleteRequest = async (url: string, headers?: any) => {
     try {
       const axiosResponse = await axios.delete(url, {
-        method: 'DELETE',
         headers: headers || this.getAuthHeaders(),
       });
       return await axiosResponse.data;

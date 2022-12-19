@@ -40,8 +40,9 @@ export class AuthService {
       email: dbUser.email,
     };
 
+    const { password, ...returnedUser } = dbUser;
     const userWithToken = {
-      ...user,
+      ...returnedUser,
       token: this.jwtService.sign(payload, {
         secret: process.env.JWT_SECRET,
       }),

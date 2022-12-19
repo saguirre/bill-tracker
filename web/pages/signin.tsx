@@ -1,28 +1,39 @@
-import { AuthContext } from '../contexts/auth.context';
 import { SignInForm } from '../components/signin/SignInForm';
-import { NextPage } from 'next';
-import { useRouter } from 'next/router';
-import { useState, useContext } from 'react';
+import { useState } from 'react';
 import 'react-toastify/dist/ReactToastify.css';
 import { toast } from 'react-toastify';
-import { AppContext } from '../contexts/app.context';
-import { setCookie } from 'cookies-next';
+import useUser from '../lib/useUser';
+import fetchJson, { FetchError } from '../lib/fetchJson';
+import { useRouter } from 'next/router';
 
-const SignInPage: NextPage = () => {
+export default function SignIn() {
   const router = useRouter();
+  const { mutateUser } = useUser({
+    redirectTo: '/',
+    redirectIfFound: true,
+  });
   const [loadingRequest, setLoadingRequest] = useState(false);
-  const { setUserToken, authService } = useContext(AuthContext);
-  const { setUser } = useContext(AppContext);
 
   const onSubmit = async (data: any) => {
     setLoadingRequest(true);
-    const userResponse = await authService.login(data);
-    if (userResponse) {
-      toast.success('Ingreso exitoso!');
-      const { token, ...user } = userResponse;
-      setCookie('access-token', token);
-      setUser(user);
-      router.push({ pathname: '/' });
+    try {
+      mutateUser(
+        await fetchJson('/api/login', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify(data),
+        }),
+        false
+      );
+      router.push('/');
+      toast.success('Signed in successfully!');
+    } catch (error) {
+      if (error instanceof FetchError) {
+        toast.error(error.data.message);
+      } else {
+        toast.error('An unexpected error happened');
+        console.error('An unexpected error happened:', error);
+      }
     }
     setLoadingRequest(false);
   };
@@ -32,6 +43,4 @@ const SignInPage: NextPage = () => {
       <SignInForm loadingRequest={loadingRequest} submit={onSubmit} />
     </div>
   );
-};
-
-export default SignInPage;
+}

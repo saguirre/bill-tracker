@@ -3,6 +3,7 @@ export interface User {
   email?: string;
   name?: string;
   phone?: string;
+  isLoggedIn?: boolean;
   countryCode?: string;
   createdAt?: Date;
   updatedAt?: Date;
