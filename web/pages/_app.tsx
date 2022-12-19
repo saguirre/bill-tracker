@@ -6,9 +6,6 @@ import { useState } from 'react';
 import { Bill } from '../models/bill/bill';
 import { User } from '../models/user/user';
 import { AppContext } from '../contexts/app.context';
-import { BillService } from '../services/bill.service';
-import { AuthService } from '../services/auth.service';
-import { AuthContext } from '../contexts';
 import { SWRConfig } from 'swr';
 import fetchJson from '../lib/fetchJson';
 
@@ -28,17 +25,14 @@ const BillTracker = ({ Component, pageProps }: AppProps) => {
   const [user, setUser] = useState<User | null>(null);
   const [bills, setBills] = useState<Bill[]>([]);
   const [userToken, setUserToken] = useState('');
-  const authService = new AuthService();
-  const billService = new BillService();
 
-  const authContextProps = { userToken, setUserToken, authService };
+  const authContextProps = { userToken, setUserToken };
 
   const appContextProps = {
     user,
     setUser,
     bills,
     setBills,
-    billService,
   };
 
   return (
@@ -51,17 +45,15 @@ const BillTracker = ({ Component, pageProps }: AppProps) => {
       }}
     >
       <ThemeProvider>
-        <AuthContext.Provider value={authContextProps}>
-          <AppContext.Provider value={appContextProps}>
-            <Component {...pageProps} />
-            <ToastContainer
-              position="bottom-left"
-              closeButton={false}
-              toastClassName={(props) => toastClass[props?.type || 'default']}
-              hideProgressBar={true}
-            />
-          </AppContext.Provider>
-        </AuthContext.Provider>
+        <AppContext.Provider value={appContextProps}>
+          <Component {...pageProps} />
+          <ToastContainer
+            position="bottom-left"
+            closeButton={false}
+            toastClassName={(props) => toastClass[props?.type || 'default']}
+            hideProgressBar={true}
+          />
+        </AppContext.Provider>
       </ThemeProvider>
     </SWRConfig>
   );

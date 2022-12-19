@@ -24,7 +24,7 @@ export const BillList: React.FC<BillListProps> = ({
   bills,
 }) => {
   return (
-    <div className="card w-96 h-[600px] bg-base-100 shadow-xl">
+    <div className="card w-full h-[600px] bg-base-100 shadow-xl">
       <div className="card-body h-full p-2">
         <div className="flex flex-col items-start justify-start px-4 pt-2">
           <h2 className="card-title">
