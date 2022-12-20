@@ -1,3 +1,4 @@
+import { ClipboardDocumentListIcon } from '@heroicons/react/24/outline';
 import classNames from 'classnames';
 import { Bill } from '../../models/bill/bill';
 import { BillListItem } from './BillListItem';
@@ -35,7 +36,7 @@ export const BillList: React.FC<BillListProps> = ({
         </div>
         <div className="divider m-0"></div>
         <div className="flex flex-col m-0 items-start h-full justify-start overflow-x-hidden overflow-y-scroll">
-          <div className="flex flex-col h-full items-center justify-between w-full overflow-x-hidden overflow-y-scroll">
+          <div className="flex flex-col h-full items-center justify-start w-full overflow-x-hidden overflow-y-scroll">
             {bills?.map((bill) => (
               <BillListItem
                 key={bill.id}
@@ -45,6 +46,12 @@ export const BillList: React.FC<BillListProps> = ({
                 bill={bill}
               />
             ))}
+            {bills?.length === 0 && (
+              <div className="flex flex-col items-center justify-center w-full h-full gap-2">
+                <ClipboardDocumentListIcon className='h-10 w-10 text-base-content/60'/>
+                <h2 className="text-base font-regular text-base-content/60">No bills in this category!</h2>
+              </div>
+            )}
           </div>
         </div>
       </div>

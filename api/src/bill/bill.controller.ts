@@ -9,11 +9,12 @@ import {
   UseGuards,
 } from '@nestjs/common';
 import { ApiCreatedResponse, ApiOkResponse } from '@nestjs/swagger';
-import { Bill, Prisma } from '@prisma/client';
+import { Bill } from '@prisma/client';
 import { JwtAuthGuard } from 'src/auth/jwt-auth.guard';
 import { BillService } from './bill.service';
 import { BillEntity } from './entities/bill.entity';
 import { CreateBillEntity } from './entities/create-bill.entity';
+import { UpdateBillEntity } from './entities/update-bill.entity';
 
 @Controller('bill')
 export class BillController {
@@ -77,6 +78,7 @@ export class BillController {
   ): Promise<Bill> {
     const createdBill = await this.billService.createBill({
       ...bill,
+      amount: Number(bill.amount),
       user: { connect: { id: Number(id) } },
     });
     return createdBill;
@@ -103,7 +105,7 @@ export class BillController {
   @Put('/:id')
   async updateBill(
     @Param('id') id: string,
-    @Body() bill: CreateBillEntity,
+    @Body() bill: UpdateBillEntity,
   ): Promise<Bill> {
     const updatedBill = await this.billService.updateBill({
       where: { id: Number(id) },

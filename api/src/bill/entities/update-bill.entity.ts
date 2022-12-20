@@ -1,15 +1,15 @@
 import { ApiProperty } from '@nestjs/swagger';
 import { Prisma } from '@prisma/client';
 
-export class CreateBillEntity implements Partial<Prisma.BillCreateInput> {
-  @ApiProperty()
-  title: string;
-  @ApiProperty()
-  amount: number;
+export class UpdateBillEntity implements Partial<Prisma.BillUpdateInput> {
+  @ApiProperty({ required: false })
+  title?: string;
+  @ApiProperty({ required: false })
+  amount?: number;
   @ApiProperty({ required: false })
   paid?: boolean;
-  @ApiProperty()
-  dueDate: string | Date;
+  @ApiProperty({ required: false })
+  dueDate?: string | Date;
   @ApiProperty({ required: false })
   paidDate?: string | Date;
   @ApiProperty({ required: false })

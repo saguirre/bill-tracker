@@ -14,7 +14,7 @@ export default function SsrHome({ user }: InferGetServerSidePropsType<typeof get
   const [selectedBill, setSelectedBill] = useState<Bill | null>(null);
   const [loadingBillData, setLoadingBillData] = useState(false);
   const [loadingAddBill, setLoadingAddBill] = useState(false);
-  const { bills } = useBills({
+  const { bills, mutateBills } = useBills({
     ...user,
   });
 
@@ -26,12 +26,12 @@ export default function SsrHome({ user }: InferGetServerSidePropsType<typeof get
     <Layout>
       <div className="flex flex-col items-center">
         <div className="flex flex-row max-w-7xl mt-6 mb-2 w-full gap-5 items-center justify-end px-5">
-          <input className="input w-1/3 border-2 border-base-300 placeholder:text-base-300" placeholder="Search" />
+          <input className="input w-1/3 border-2" placeholder="Search" />
           <label htmlFor="add-bill-modal" className="btn btn-primary flex flex-col items-center justify-center">
             Add Bill
           </label>
         </div>
-        <div className="flex flex-row items-center justify-between gap-3 w-full max-w-7xl pt-4 px-4">
+        <div className="flex flex-row items-center justify-between gap-5 w-full max-w-7xl pt-4 px-4">
           <BillList
             title="Upcoming Bills"
             subtitle="Here you can review your upcoming bills"
@@ -53,7 +53,7 @@ export default function SsrHome({ user }: InferGetServerSidePropsType<typeof get
             amountColor="badge-warning"
             bills={bills?.filter((bill) => {
               if (!bill?.dueDate) return false;
-              return new Date(bill.dueDate) <= new Date();
+              return new Date(bill.dueDate) <= new Date() && !bill?.paid;
             })}
             setSelectedBill={setSelectedBill}
             setLoadingBillData={setLoadingBillData}
@@ -71,8 +71,8 @@ export default function SsrHome({ user }: InferGetServerSidePropsType<typeof get
             setLoadingBillData={setLoadingBillData}
           />
         </div>
-        <AddBillModal loading={loadingAddBill} />
-        <EditBillModal loading={loadingBillData} bill={selectedBill} />
+        <AddBillModal bills={bills} mutateBills={mutateBills} userId={user?.id} loading={loadingAddBill} />
+        <EditBillModal bills={bills} mutateBills={mutateBills} loading={loadingBillData} bill={selectedBill} />
       </div>
     </Layout>
   );

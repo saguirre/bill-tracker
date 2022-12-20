@@ -27,7 +27,7 @@ export interface FormInputProps {
 export const FormInput: React.FC<FormInputProps> = forwardRef<HTMLInputElement, FormInputProps>(
   ({ labelText, htmlFor, errors, ...props }, ref) => {
     return (
-      <div className="space-y-0.5 w-full">
+      <div className="flex flex-col space-y-0.5 w-full">
         <label htmlFor={htmlFor} className="block text-sm font-semibold">
           {labelText}
         </label>
@@ -36,10 +36,10 @@ export const FormInput: React.FC<FormInputProps> = forwardRef<HTMLInputElement, 
           {...props}
           className={classNames(
             props.className || 'focus:border-transparent focus:outline-none focus:ring-2 focus:ring-primary',
-            'appearance-none block w-full px-3 py-2 border border-light-gray rounded-md shadow-sm placeholder-gray placeholder:text-sm disabled:opacity-50 disabled:cursor-not-allowed'
+            'input border-base-content input-primary focus:border-none'
           )}
         />
-        {errors && errors[props?.name] && <span className="!mt-2 pl-1 text-sm text-error">{errors[props?.name]?.message}</span>}
+        {errors && errors[props?.name] && <span className="!mt-1 pl-1 text-sm text-error">{errors[props?.name]?.message}</span>}
       </div>
     );
   }

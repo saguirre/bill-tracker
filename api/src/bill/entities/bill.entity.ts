@@ -11,9 +11,11 @@ export class BillEntity implements Bill {
   @ApiProperty()
   paid: boolean;
   @ApiProperty()
+  paidDate: Date | null;
+  @ApiProperty()
   userId: number;
   @ApiProperty()
-  dueDate: Date | null;
+  dueDate: Date;
   @ApiProperty()
   createdAt: Date;
   @ApiProperty()
