@@ -28,8 +28,9 @@ export const FormInput: React.FC<FormInputProps> = forwardRef<HTMLInputElement, 
   ({ labelText, htmlFor, errors, ...props }, ref) => {
     return (
       <div className="flex flex-col space-y-0.5 w-full">
-        <label htmlFor={htmlFor} className="block text-sm font-semibold">
+        <label htmlFor={htmlFor} className="flex flex-row items-center text-sm font-semibold">
           {labelText}
+          {props.required && <span className="block text-sm align-super text-secondary">*</span>}
         </label>
         <input
           ref={ref}
@@ -39,7 +40,9 @@ export const FormInput: React.FC<FormInputProps> = forwardRef<HTMLInputElement, 
             'input border-base-content input-primary focus:border-none'
           )}
         />
-        {errors && errors[props?.name] && <span className="!mt-1 pl-1 text-sm text-error">{errors[props?.name]?.message}</span>}
+        {errors && errors[props?.name] && (
+          <span className="!mt-1 pl-1 text-sm text-error">{errors[props?.name]?.message}</span>
+        )}
       </div>
     );
   }

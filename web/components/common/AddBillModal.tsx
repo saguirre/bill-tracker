@@ -1,4 +1,4 @@
-import { XMarkIcon } from '@heroicons/react/24/outline';
+import { ClipboardDocumentIcon, XMarkIcon } from '@heroicons/react/24/outline';
 import { useState } from 'react';
 import { SubmitHandler, useForm } from 'react-hook-form';
 import { toast } from 'react-toastify';
@@ -27,7 +27,7 @@ export const AddBillModal: React.FC<AddBillModalProps> = ({ userId, bills, mutat
     register,
     handleSubmit,
     formState: { errors },
-  } = useForm<FormValues>({ mode: 'onTouched' });
+  } = useForm<FormValues>({ mode: 'onChange' });
 
   const [checked, setChecked] = useState(false);
 
@@ -72,6 +72,14 @@ export const AddBillModal: React.FC<AddBillModalProps> = ({ userId, bills, mutat
       <input type="checkbox" id="add-bill-modal" className="modal-toggle" />
       <label htmlFor="add-bill-modal" className="modal cursor-pointer">
         <label className="modal-box relative" htmlFor="">
+          <div className="flex flex-col items-start justify-start gap-2">
+            <div className="flex flex-row items-center justify-start gap-2">
+              <ClipboardDocumentIcon className="h-8 w-8" />
+              <h1 className="text-2xl font-semibold">Add Bill</h1>
+            </div>
+            <span className="text-base-content text-sm font-normal">Fill out the details for your Bill.</span>
+          </div>
+          <div className="divider my-1.5"></div>
           <form onSubmit={handleSubmit(onSubmit)}>
             <div className="flex flex-col items-start justify-center space-y-3">
               <FormInput
@@ -91,29 +99,33 @@ export const AddBillModal: React.FC<AddBillModalProps> = ({ userId, bills, mutat
                   },
                 })}
               />
-              <FormInput
-                id="dueDate"
-                type="date"
-                htmlFor="dueDate"
-                autoComplete="true"
-                placeholder="Due Date"
-                labelText="Due Date"
-                required={true}
-                errors={errors}
-                {...register('dueDate', {
-                  required: 'Due Date should not be empty',
-                })}
-              />
-              <FormInput
-                id="amount"
-                type="number"
-                htmlFor="amount"
-                autoComplete="true"
-                placeholder="Amount"
-                labelText="Amount"
-                errors={errors}
-                {...register('amount')}
-              />
+              <div className="flex flex-row gap-3 w-full">
+                <FormInput
+                  id="dueDate"
+                  type="date"
+                  htmlFor="dueDate"
+                  autoComplete="true"
+                  placeholder="Due Date"
+                  labelText="Due Date"
+                  required={true}
+                  errors={errors}
+                  {...register('dueDate', {
+                    required: 'Due Date should not be empty',
+                  })}
+                />
+                <FormInput
+                  id="amount"
+                  type="number"
+                  htmlFor="amount"
+                  autoComplete="true"
+                  placeholder="Amount"
+                  labelText="Amount"
+                  errors={errors}
+                  {...register('amount')}
+                />
+              </div>
+              {checked && <div className="divider my-1"></div>}
+
               <div className="flex flex-row w-full items-center justify-end gap-3">
                 {!checked && (
                   <div className="form-control w-32">
@@ -129,6 +141,7 @@ export const AddBillModal: React.FC<AddBillModalProps> = ({ userId, bills, mutat
                     </label>
                   </div>
                 )}
+
                 {checked && (
                   <div className="flex flex-row items-end gap-2 w-full">
                     <FormInput
