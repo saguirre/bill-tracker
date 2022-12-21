@@ -1,12 +1,9 @@
-import { DocumentPlusIcon, RectangleGroupIcon } from '@heroicons/react/24/outline';
+import { InboxIcon } from '@heroicons/react/24/outline';
 import classNames from 'classnames';
 import { useRouter } from 'next/router';
 import { useState } from 'react';
-import { toast } from 'react-toastify';
-import fetchJson from '../lib/fetchJson';
 import { CollapsedSidebarItem } from './common/CollapsedSidebarItem';
 import { Navbar } from './common/Navbar';
-import { ThemeChanger } from './ThemeChanger';
 
 interface LayoutProps {
   children: React.ReactNode;
@@ -37,7 +34,14 @@ export const Layout: React.FC<LayoutProps> = ({ children }) => {
       >
         <label htmlFor="my-drawer-3" className="drawer-overlay"></label>
         <ul className="flex flex-col justify-start h-full bg-base-100 p-3">
-          <CollapsedSidebarItem collapsed={collapsed} icon={RectangleGroupIcon} label="Dashboard" onClick={() => {}} />
+          <CollapsedSidebarItem
+            collapsed={collapsed}
+            icon={InboxIcon}
+            label="Dashboard"
+            onClick={() => {
+              router.push('/');
+            }}
+          />
         </ul>
       </div>
     </div>

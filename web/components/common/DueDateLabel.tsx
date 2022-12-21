@@ -1,4 +1,3 @@
-import classNames from 'classnames';
 import { format } from 'date-fns';
 
 interface DueDateLabelProps {
