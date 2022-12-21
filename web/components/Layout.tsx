@@ -1,6 +1,11 @@
+import { DocumentPlusIcon, RectangleGroupIcon } from '@heroicons/react/24/outline';
+import classNames from 'classnames';
 import { useRouter } from 'next/router';
+import { useState } from 'react';
 import { toast } from 'react-toastify';
 import fetchJson from '../lib/fetchJson';
+import { CollapsedSidebarItem } from './common/CollapsedSidebarItem';
+import { Navbar } from './common/Navbar';
 import { ThemeChanger } from './ThemeChanger';
 
 interface LayoutProps {
@@ -8,83 +13,33 @@ interface LayoutProps {
 }
 export const Layout: React.FC<LayoutProps> = ({ children }) => {
   const router = useRouter();
+  const [collapsed, setCollapsed] = useState(false);
+
   return (
-    <>
-      <div className="drawer">
-        <input id="my-drawer-3" type="checkbox" className="drawer-toggle" />
-        <div className="drawer-content flex flex-col">
-          <div className="w-full navbar bg-base-100 p-3 rounded-lg">
-            <div className="flex-none">
-              <label htmlFor="my-drawer-3" className="btn btn-square btn-ghost">
-                <svg
-                  xmlns="http://www.w3.org/2000/svg"
-                  fill="none"
-                  viewBox="0 0 24 24"
-                  className="inline-block w-6 h-6 stroke-current"
-                >
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M4 6h16M4 12h16M4 18h16"></path>
-                </svg>
-              </label>
-            </div>
-            <div className="flex-1">
-              <a className="btn btn-ghost normal-case text-xl">Bill Tracker</a>
-            </div>
-            <ThemeChanger />
-            <div className="dropdown dropdown-end">
-              <label tabIndex={0} className="btn btn-ghost btn-circle avatar">
-                <div className="w-10 rounded-full">
-                  <img src="https://placeimg.com/80/80/people" />
-                </div>
-              </label>
-              <ul
-                tabIndex={0}
-                className="menu menu-compact dropdown-content mt-3 p-2 shadow bg-base-100 rounded-box w-52"
-              >
-                <li>
-                  <a className="justify-between">
-                    Profile
-                    <span className="badge">New</span>
-                  </a>
-                </li>
-                <li>
-                  <a>Settings</a>
-                </li>
-                <li>
-                  <a
-                    onClick={async () => {
-                      try {
-                        await fetchJson('/api/logout', {
-                          method: 'POST',
-                        });
-                        router.push('/signin');
-                      } catch (error) {
-                        toast.error(
-                          'There was an error logging you out. If the error persists, please close the browser tab.'
-                        );
-                        console.error('Error logging out');
-                      }
-                    }}
-                  >
-                    Logout
-                  </a>
-                </li>
-              </ul>
-            </div>
-          </div>
-          {children}
-        </div>
-        <div className="drawer-side">
-          <label htmlFor="my-drawer-3" className="drawer-overlay"></label>
-          <ul className="menu p-4 w-80 bg-base-100">
-            <li>
-              <a>Sidebar Item 1</a>
-            </li>
-            <li>
-              <a>Sidebar Item 2</a>
-            </li>
-          </ul>
-        </div>
+    <div className="flex flex-col">
+      <Navbar setCollapsed={setCollapsed} />
+      <div
+        className={classNames('transition-all duration-200 ease-in-out', {
+          'ml-[70px]': collapsed,
+          'ml-52': !collapsed,
+        })}
+      >
+        {children}
       </div>
-    </>
+      <div
+        className={classNames(
+          'flex transition-all duration-200 border-r border-base-content/5 ease-in-out flex-col h-screen absolute top-[74px] z-50 left-0',
+          {
+            'w-[70px]': collapsed,
+            'w-52': !collapsed,
+          }
+        )}
+      >
+        <label htmlFor="my-drawer-3" className="drawer-overlay"></label>
+        <ul className="flex flex-col justify-start h-full bg-base-100 p-3">
+          <CollapsedSidebarItem collapsed={collapsed} icon={RectangleGroupIcon} label="Dashboard" onClick={() => {}} />
+        </ul>
+      </div>
+    </div>
   );
 };
