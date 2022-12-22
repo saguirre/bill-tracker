@@ -26,7 +26,6 @@ export default function SsrHome({ user }: InferGetServerSidePropsType<typeof get
     <Layout>
       <div className="flex flex-col items-center">
         <div className="flex flex-row max-w-7xl mt-6 mb-2 w-full gap-5 items-center justify-end px-5">
-          <input className="input w-1/3 border-2" placeholder="Search" />
           <label htmlFor="add-bill-modal" className="btn btn-primary flex flex-col items-center justify-center">
             Add Bill
           </label>
