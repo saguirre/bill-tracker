@@ -8,9 +8,9 @@ import { User } from '../models/user/user';
 export default function Profile({ user }: InferGetServerSidePropsType<typeof getServerSideProps>) {
   return (
     <Layout>
-      <div className="flex flex-col items-center h-full p-8">
-        <div className="card h-[600px] w-full bg-base-100 shadow-xl">
-          <div className="card-body h-full flex flex-row relative">
+      <div className="flex flex-col items-center h-full px-12 pt-6">
+        <div className="h-[600px] w-full bg-base-100 px-6">
+          <div className="h-full flex flex-row relative">
             <div className="flex flex-col w-full">
               <div className="flex flex-col items-start justify-start">
                 <h2 className="card-title">

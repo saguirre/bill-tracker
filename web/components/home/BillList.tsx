@@ -1,13 +1,12 @@
-import { ClipboardDocumentListIcon } from '@heroicons/react/24/outline';
 import classNames from 'classnames';
 import { Bill } from '../../models/bill/bill';
 import { BillListItem } from './BillListItem';
 
 interface BillListProps {
   title: string;
-  badge: string;
-  subtitle: string;
+  badge?: string;
   badgeColor: string;
+  dueBadgeColor?: string;
   amountColor: string;
   setLoadingBillData: (loading: boolean) => void;
   setSelectedBill: (bill: Bill | null) => void;
@@ -17,41 +16,43 @@ interface BillListProps {
 export const BillList: React.FC<BillListProps> = ({
   title,
   badge,
-  subtitle,
   setSelectedBill,
   setLoadingBillData,
   badgeColor = 'badge-primary',
+  dueBadgeColor = badgeColor,
   amountColor = 'badge-success',
   bills,
 }) => {
   return (
-    <div className="card w-full h-[600px] bg-base-100 shadow-xl">
-      <div className="card-body h-full p-2">
-        <div className="flex flex-col items-start justify-start px-4 pt-2">
-          <h2 className="card-title">
-            {title}
-            <div className={classNames('badge', badgeColor)}>{badge}</div>
-          </h2>
-          <p>{subtitle}</p>
-        </div>
-        <div className="divider m-0"></div>
-        <div className="flex flex-col m-0 items-start h-full justify-start overflow-x-hidden overflow-y-scroll">
-          <div className="flex flex-col h-full items-center justify-start w-full overflow-x-hidden overflow-y-scroll">
+    <div className="flex flex-col w-full h-fit">
+      <div className="flex flex-col items-start justify-start px-2 py-2">
+        <h2 className="text-lg font-semibold flex flex-row items-center gap-2">
+          {title}
+          {badge && badge?.length > 0 && (
+            <>
+              {bills && bills?.length > 0 && (
+                <div className={classNames('badge badge-outline', badgeColor)}>{badge}</div>
+              )}
+              {bills?.length === 0 && (
+                <span className="badge badge-success h-6 badge-outline uppercase">Cleared 🎉</span>
+              )}
+            </>
+          )}
+        </h2>
+      </div>
+      <div className="w-full h-full max-h-[480px] bg-base-100">
+        <div className="h-full">
+          <div className="flex flex-col gap-3 h-full max-h-[460px] items-center justify-start w-full overflow-x-hidden overflow-y-scroll">
             {bills?.map((bill) => (
               <BillListItem
                 key={bill.id}
+                badgeColor={dueBadgeColor}
                 setSelectedBill={setSelectedBill}
                 setLoadingBillData={setLoadingBillData}
                 amountColor={amountColor}
                 bill={bill}
               />
             ))}
-            {bills?.length === 0 && (
-              <div className="flex flex-col items-center justify-center w-full h-full gap-2">
-                <ClipboardDocumentListIcon className='h-10 w-10 text-base-content/60'/>
-                <h2 className="text-base font-regular text-base-content/60">No bills in this category!</h2>
-              </div>
-            )}
           </div>
         </div>
       </div>

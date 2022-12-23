@@ -1,7 +1,8 @@
 import { ClipboardDocumentIcon, XMarkIcon } from '@heroicons/react/24/outline';
-import { useState } from 'react';
+import { useRef, useState } from 'react';
 import { SubmitHandler, useForm } from 'react-hook-form';
 import { toast } from 'react-toastify';
+import { useKeyPress } from '../../hooks/useKeyPress.hook';
 import fetchJson from '../../lib/fetchJson';
 import { Bill } from '../../models/bill/bill';
 import { FormInput } from './FormInput';
@@ -26,10 +27,22 @@ export const AddBillModal: React.FC<AddBillModalProps> = ({ userId, bills, mutat
   const {
     register,
     handleSubmit,
+    reset,
     formState: { errors },
   } = useForm<FormValues>({ mode: 'onChange' });
 
   const [checked, setChecked] = useState(false);
+  const closeRef = useRef<HTMLInputElement>(null);
+
+  useKeyPress(
+    () => {
+      if (closeRef.current) {
+        closeRef.current.checked = false;
+      }
+    },
+    ['Escape'],
+    false
+  );
 
   const onSubmit: SubmitHandler<FormValues> = async (data: FormValues) => {
     try {
@@ -59,17 +72,18 @@ export const AddBillModal: React.FC<AddBillModalProps> = ({ userId, bills, mutat
       }
       const modal = document.getElementById('add-bill-modal') as any;
       if (modal) modal.checked = false;
-
+      reset();
+      setChecked(false);
       toast.success('Bill added successfully');
     } catch (error) {
-      console.log(error);
+      console.error(error);
       toast.error('There was an error adding your bill. Please try again later.');
     }
   };
 
   return (
     <>
-      <input type="checkbox" id="add-bill-modal" className="modal-toggle" />
+      <input ref={closeRef} type="checkbox" id="add-bill-modal" className="modal-toggle" />
       <label htmlFor="add-bill-modal" className="modal cursor-pointer">
         <label className="modal-box relative" htmlFor="">
           <div className="flex flex-col items-start justify-start gap-2">

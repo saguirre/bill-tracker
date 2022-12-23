@@ -46,7 +46,7 @@ const BillTracker = ({ Component, pageProps }: AppProps) => {
         <AppContext.Provider value={appContextProps}>
           <Component {...pageProps} />
           <ToastContainer
-            position="top-left"
+            position="bottom-left"
             closeButton={false}
             toastClassName={(props) => toastClass[props?.type || 'default']}
             hideProgressBar={true}

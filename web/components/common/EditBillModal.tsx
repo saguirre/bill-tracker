@@ -1,5 +1,6 @@
-import { useEffect, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { toast } from 'react-toastify';
+import { useKeyPress } from '../../hooks/useKeyPress.hook';
 import fetchJson from '../../lib/fetchJson';
 import { Bill } from '../../models/bill/bill';
 import { DueDateLabel } from './DueDateLabel';
@@ -14,6 +15,13 @@ interface EditBillModalProps {
 export const EditBillModal: React.FC<EditBillModalProps> = ({ bills, mutateBills, loading, bill }) => {
   const [checked, setChecked] = useState(false);
   const [isPaid, setIsPaid] = useState(bill?.paid || false);
+  const closeRef = useRef<HTMLInputElement>(null);
+
+  useKeyPress(() => {
+    if (closeRef.current) {
+      closeRef.current.checked = false;
+    }
+  }, ['Escape']);
 
   useEffect(() => {
     setIsPaid(bill?.paid || false);
@@ -54,7 +62,7 @@ export const EditBillModal: React.FC<EditBillModalProps> = ({ bills, mutateBills
 
   return (
     <>
-      <input type="checkbox" id="edit-bill-modal" className="modal-toggle" />
+      <input ref={closeRef} type="checkbox" id="edit-bill-modal" className="modal-toggle" />
       <label htmlFor="edit-bill-modal" className="modal cursor-pointer">
         <label className="modal-box relative" htmlFor="">
           {loading ? (
