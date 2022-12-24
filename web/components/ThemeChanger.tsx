@@ -39,6 +39,21 @@ export const ThemeChanger: React.FC = () => {
           <a onClick={() => setTheme('light')}>Light</a>
         </li>
         <li>
+          <a onClick={() => setTheme('cupcake')}>Cupcake</a>
+        </li>
+        <li>
+          <a onClick={() => setTheme('lofi')}>Lofi</a>
+        </li>
+        <li>
+          <a onClick={() => setTheme('emerald')}>Emerald</a>
+        </li>
+        <li>
+          <a onClick={() => setTheme('pastel')}>Pastel</a>
+        </li>
+        <li>
+          <a onClick={() => setTheme('dracula')}>Dracula</a>
+        </li>
+        <li>
           <a onClick={() => setTheme('dark')}>Dark</a>
         </li>
       </ul>

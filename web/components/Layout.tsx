@@ -12,7 +12,7 @@ export const Layout: React.FC<LayoutProps> = ({ children, search }) => {
   const router = useRouter();
   const [scrolling, setScrolling] = useState(false);
   useEffect(() => {
-    const listener = () => (window.scrollY > 74 ? setScrolling(true) : setScrolling(false));
+    const listener = () => (window.scrollY > 10 ? setScrolling(true) : setScrolling(false));
     window.addEventListener('scroll', listener);
     return () => {
       window.removeEventListener('scroll', listener);

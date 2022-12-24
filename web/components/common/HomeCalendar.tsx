@@ -1,5 +1,5 @@
 import { ChevronLeftIcon, ChevronRightIcon } from '@heroicons/react/24/solid';
-import { isSameDay } from 'date-fns';
+import { isAfter, isSameDay } from 'date-fns';
 import { useEffect } from 'react';
 
 import { useCalendar } from '../../hooks/useCalendar.hook';
@@ -8,7 +8,7 @@ import { Day } from '../../models/day';
 import { CalendarButton } from './CalendarButton';
 
 interface HomeCalendarProps {
-  onSelectDate: (day: Day) => void;
+  onSelectDate: (bills: Bill[]) => void;
   bills?: Bill[];
 }
 
@@ -95,7 +95,13 @@ export const HomeCalendar: React.FC<HomeCalendarProps> = ({ bills, onSelectDate 
                       return { ...currentDay, isSelected: day.formattedDate === currentDay.formattedDate };
                     });
                   });
-                  onSelectDate(day);
+                  onSelectDate(
+                    bills
+                      ?.filter((bill) => bill?.dueDate && isSameDay(new Date(bill?.dueDate), day.date))
+                      ?.sort((a, b) =>
+                        isAfter(new Date(a.dueDate || new Date()), new Date(b.dueDate || new Date())) ? 1 : -1
+                      ) ?? []
+                  );
                 }
               }}
             />

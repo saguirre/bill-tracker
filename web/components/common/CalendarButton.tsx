@@ -12,9 +12,9 @@ interface Props {
 
 export const CalendarButton: React.FC<Props> = ({ day, dayIdx, selectedDay, billCount, days, onClick }) => {
   return (
-    <button
+    <label
+      htmlFor="view-bills-from-calendar-modal"
       key={day.weekday + day.formattedDate + dayIdx}
-      type="button"
       onClick={() => onClick(day)}
       className={classNames(
         'btn btn-circle btn-md btn-ghost relative',
@@ -58,6 +58,6 @@ export const CalendarButton: React.FC<Props> = ({ day, dayIdx, selectedDay, bill
           )}
         </>
       )}
-    </button>
+    </label>
   );
 };

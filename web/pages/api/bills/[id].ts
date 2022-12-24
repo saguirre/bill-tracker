@@ -12,6 +12,15 @@ async function billHandler(req: NextApiRequest, res: NextApiResponse) {
     const { body, method } = req;
 
     switch (method) {
+      case 'DELETE':
+        // Delete bill
+        const deletedBill = await fetchJson(getServiceUrl(`bill/${req.query.id}`), {
+          method: 'DELETE',
+          headers: { Authorization: `Bearer ${req.session.accessToken}`, 'Content-Type': 'application/json' },
+        });
+
+        res.status(200).json(deletedBill);
+        break;
       case 'PUT':
         // Edit bill
         const newBill = await fetchJson(getServiceUrl(`bill/${req.query.id}`), {
@@ -23,7 +32,7 @@ async function billHandler(req: NextApiRequest, res: NextApiResponse) {
         res.status(200).json(newBill as Bill);
         break;
       default:
-        res.setHeader('Allow', ['PUT']);
+        res.setHeader('Allow', ['DELETE', 'PUT']);
         res.status(405).end(`Method ${method} Not Allowed`);
     }
   } catch (error: any) {

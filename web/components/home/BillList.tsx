@@ -8,6 +8,7 @@ interface BillListProps {
   badgeColor: string;
   dueBadgeColor?: string;
   amountColor: string;
+  removeBill: (bill: Bill) => void;
   setLoadingBillData: (loading: boolean) => void;
   setSelectedBill: (bill: Bill | null) => void;
   bills: Bill[] | undefined;
@@ -17,6 +18,7 @@ export const BillList: React.FC<BillListProps> = ({
   title,
   badge,
   setSelectedBill,
+  removeBill,
   setLoadingBillData,
   badgeColor = 'badge-primary',
   dueBadgeColor = badgeColor,
@@ -40,12 +42,14 @@ export const BillList: React.FC<BillListProps> = ({
           )}
         </h2>
       </div>
+      <div className='divider my-0'></div>
       <div className="w-full h-full max-h-[480px] bg-base-100">
         <div className="h-full">
-          <div className="flex flex-col gap-3 h-full max-h-[460px] items-center justify-start w-full overflow-x-hidden overflow-y-scroll">
+          <div className="flex flex-col gap-3 h-full max-h-[460px] items-center justify-start w-full">
             {bills?.map((bill) => (
               <BillListItem
                 key={bill.id}
+                removeBill={removeBill}
                 badgeColor={dueBadgeColor}
                 setSelectedBill={setSelectedBill}
                 setLoadingBillData={setLoadingBillData}

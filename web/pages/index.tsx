@@ -12,9 +12,12 @@ import { AddBillModal } from '../components/common/AddBillModal';
 import classNames from 'classnames';
 import { HomeCalendar } from '../components/common/HomeCalendar';
 import { useKeyPress } from '../hooks/useKeyPress.hook';
+import { toast } from 'react-toastify';
+import { ViewBillsFromCalendarModal } from '../components/common/ViewBillsFromCalendarModal';
 
 export default function SsrHome({ user }: InferGetServerSidePropsType<typeof getServerSideProps>) {
   const [selectedBill, setSelectedBill] = useState<Bill | null>(null);
+  const [calendarSelectedBills, setCalendarSelectedBills] = useState<Bill[]>([]);
   const [loadingBillData, setLoadingBillData] = useState(false);
   const [loadingAddBill, setLoadingAddBill] = useState(false);
   const addBillRef = useRef<HTMLLabelElement>(null);
@@ -24,6 +27,24 @@ export default function SsrHome({ user }: InferGetServerSidePropsType<typeof get
   });
 
   const [filterableBills, setFilterableBills] = useState<Bill[] | undefined>(bills);
+
+  const removeBill = async (bill: Bill) => {
+    try {
+      const response = await fetch(`/api/bills/${bill.id}`, {
+        method: 'DELETE',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+      });
+      if (response.status === 200) {
+        toast.success('Bill deleted successfully!');
+        mutateBills();
+      }
+    } catch (error) {
+      console.error(error);
+      toast.error('An unexpected error happened');
+    }
+  };
 
   useKeyPress(() => {
     if (addBillRef.current) {
@@ -75,7 +96,7 @@ export default function SsrHome({ user }: InferGetServerSidePropsType<typeof get
             </div>
           </div>
         </div>
-        <div className="flex flex-row w-full">
+        <div className="flex flex-row w-full mb-20">
           <div className="grid w-full px-5 pt-4">
             <div className="tabs z-10 -mb-px w-full">
               <a
@@ -130,7 +151,7 @@ export default function SsrHome({ user }: InferGetServerSidePropsType<typeof get
               <div
                 style={{ backgroundSize: '5px 5px' }}
                 className={classNames(
-                  'border-base-300 bg-base-100 rounded-b-box flex flex-col h-[550px] min-h-[6rem] w-full min-w-[18rem] flex-wrap items-center justify-center gap-2 overflow-x-hidden border bg-cover bg-top p-4',
+                  'border-base-300 bg-base-100 rounded-b-box flex flex-col h-[500px] min-h-[6rem] w-full min-w-[18rem] flex-wrap items-center justify-center gap-2 overflow-x-hidden border bg-cover bg-top p-4',
                   {
                     'rounded-tr-box': selectedTab === 'inbox',
                     'rounded-t-box': selectedTab === 'paid',
@@ -144,6 +165,7 @@ export default function SsrHome({ user }: InferGetServerSidePropsType<typeof get
                       badge="EXPIRED"
                       badgeColor="badge-error"
                       amountColor="badge-error"
+                      removeBill={(bill) => removeBill(bill)}
                       bills={filterableBills?.filter((bill) => {
                         if (!bill?.dueDate) return false;
                         return new Date(bill.dueDate) <= new Date() && !bill?.paid;
@@ -151,7 +173,7 @@ export default function SsrHome({ user }: InferGetServerSidePropsType<typeof get
                       setSelectedBill={setSelectedBill}
                       setLoadingBillData={setLoadingBillData}
                     />
-                    <div className="divider my-1">
+                    <div className="divider mt-8 -mb-1">
                       <span className="badge badge-xs badge-ghost"></span>
                       <span className="badge badge-xs badge-ghost"></span>
                       <span className="badge badge-xs badge-ghost"></span>
@@ -159,6 +181,7 @@ export default function SsrHome({ user }: InferGetServerSidePropsType<typeof get
                     <BillList
                       title="Upcoming Bills"
                       badge="DUE"
+                      removeBill={(bill) => removeBill(bill)}
                       badgeColor="badge-primary"
                       dueBadgeColor="badge-ghost"
                       amountColor="badge-ghost"
@@ -176,6 +199,7 @@ export default function SsrHome({ user }: InferGetServerSidePropsType<typeof get
                     <BillList
                       title="Paid Bills"
                       badgeColor="badge-success"
+                      removeBill={(bill) => removeBill(bill)}
                       amountColor="badge-success"
                       bills={filterableBills?.filter((bill) => {
                         return bill?.paid;
@@ -189,12 +213,23 @@ export default function SsrHome({ user }: InferGetServerSidePropsType<typeof get
             </div>
           </div>
           <div className="w-[45%] px-5 pt-4">
-            <HomeCalendar bills={bills} onSelectDate={() => {}} />
+            <HomeCalendar
+              bills={bills}
+              onSelectDate={(bills: Bill[]) => {
+                setCalendarSelectedBills(bills);
+              }}
+            />
           </div>
         </div>
 
         <AddBillModal bills={bills} mutateBills={mutateBills} userId={user?.id} loading={loadingAddBill} />
         <EditBillModal bills={bills} mutateBills={mutateBills} loading={loadingBillData} bill={selectedBill} />
+        <ViewBillsFromCalendarModal
+          bills={calendarSelectedBills}
+          removeBill={(bill) => removeBill(bill)}
+          setSelectedBill={setSelectedBill}
+          setLoadingBillData={setLoadingBillData}
+        />
       </div>
     </Layout>
   );
