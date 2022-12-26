@@ -6,6 +6,7 @@
     "start": "next start"
   },
   "dependencies": {
+    "@ably-labs/react-hooks": "^2.0.11",
     "@heroicons/react": "^2.0.13",
     "@tailwindcss/typography": "^0.5.8",
     "@types/react-currency-format": "^1.0.0",
@@ -14,6 +15,7 @@
     "cookies-next": "^2.1.1",
     "daisyui": "^2.45.0",
     "date-fns": "^2.29.3",
+    "dotenv": "^16.0.3",
     "iron-session": "^6.3.1",
     "jwt-decode": "^3.1.2",
     "next": "latest",
@@ -24,6 +26,8 @@
     "react-hook-form": "^7.40.0",
     "react-rewards": "^2.0.4",
     "react-toastify": "^9.1.1",
+    "socket.io": "^4.5.4",
+    "socket.io-client": "^4.5.4",
     "swr": "^2.0.0"
   },
   "devDependencies": {

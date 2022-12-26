@@ -11,27 +11,29 @@ datasource db {
 }
 
 model UserGroup {
-  id        Int      @id @default(autoincrement())
-  name      String
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
-  bills     Bill[]
-  members   User[]
+  id           Int            @id @default(autoincrement())
+  name         String
+  createdAt    DateTime       @default(now())
+  updatedAt    DateTime       @updatedAt
+  bills        Bill[]
+  members      User[]
+  Notification Notification[]
 }
 
 model User {
-  id          Int        @id @default(autoincrement())
-  email       String     @unique
-  name        String?
-  password    String
-  phone       String?
-  countryCode String?
-  bills       Bill[]
-  profile     Profile?
-  createdAt   DateTime   @default(now())
-  updatedAt   DateTime   @updatedAt
-  userGroup   UserGroup? @relation(fields: [userGroupId], references: [id])
-  userGroupId Int?
+  id           Int            @id @default(autoincrement())
+  email        String         @unique
+  name         String?
+  password     String
+  phone        String?
+  countryCode  String?
+  bills        Bill[]
+  profile      Profile?
+  createdAt    DateTime       @default(now())
+  updatedAt    DateTime       @updatedAt
+  userGroup    UserGroup?     @relation(fields: [userGroupId], references: [id])
+  userGroupId  Int?
+  Notification Notification[]
 }
 
 model Profile {
@@ -65,4 +67,18 @@ model File {
   billId    Int
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
+}
+
+model Notification {
+  id        Int        @id @default(autoincrement())
+  title     String
+  message   String
+  read      Boolean    @default(false)
+  deleted   Boolean    @default(false)
+  createdAt DateTime   @default(now())
+  updatedAt DateTime   @updatedAt
+  group     UserGroup? @relation(fields: [groupId], references: [id])
+  groupId   Int?
+  user      User       @relation(fields: [userId], references: [id])
+  userId    Int
 }

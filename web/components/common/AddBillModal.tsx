@@ -1,5 +1,5 @@
-import { ClipboardDocumentIcon, XMarkIcon } from '@heroicons/react/24/outline';
-import { useRef, useState } from 'react';
+import { ClipboardDocumentIcon, CloudArrowUpIcon, XMarkIcon } from '@heroicons/react/24/outline';
+import { MouseEventHandler, MouseEvent, useEffect, useRef, useState } from 'react';
 import { SubmitHandler, useForm } from 'react-hook-form';
 import { toast } from 'react-toastify';
 import { useKeyPress } from '../../hooks/useKeyPress.hook';
@@ -7,6 +7,9 @@ import fetchJson from '../../lib/fetchJson';
 import { Bill } from '../../models/bill/bill';
 import { FormInput } from './FormInput';
 import { Spinner } from './Spinner';
+import * as Ably from 'ably/promises';
+import { configureAbly } from '@ably-labs/react-hooks';
+import { getServiceUrl } from '../../lib/httpHelpers';
 
 interface AddBillModalProps {
   userId?: number;
@@ -30,9 +33,42 @@ export const AddBillModal: React.FC<AddBillModalProps> = ({ userId, bills, mutat
     reset,
     formState: { errors },
   } = useForm<FormValues>({ mode: 'onChange' });
+  const [channel, setChannel] = useState<Ably.Types.RealtimeChannelPromise | null>(null);
 
   const [checked, setChecked] = useState(false);
   const closeRef = useRef<HTMLInputElement>(null);
+
+  useEffect(() => {
+    const ably: Ably.Types.RealtimePromise = configureAbly({ authUrl: '/api/authentication' });
+
+    ably.connection.on((stateChange: Ably.Types.ConnectionStateChange) => {
+      console.log(stateChange);
+    });
+
+    const _channel = ably.channels.get('status-updates');
+    setChannel(_channel);
+
+    return () => {
+      _channel.unsubscribe();
+    };
+  }, []); // Only run the client
+
+  const publishFromClient = async (bill: any) => {
+    if (channel === null) return;
+
+    const notificationBody = {
+      title: `${bill.user.name} added a new bill`,
+      message: `${bill.title} - ${bill.amount}`,
+    };
+    console.log(notificationBody);
+    channel.publish('update-from-client', { ...notificationBody });
+
+    await fetchJson(`/api/notifications/user/${userId}`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(notificationBody),
+    });
+  };
 
   useKeyPress(
     () => {
@@ -74,6 +110,7 @@ export const AddBillModal: React.FC<AddBillModalProps> = ({ userId, bills, mutat
       if (modal) modal.checked = false;
       reset();
       setChecked(false);
+      publishFromClient(billResponse);
       toast.success('Bill added successfully');
     } catch (error) {
       console.error(error);
@@ -88,7 +125,9 @@ export const AddBillModal: React.FC<AddBillModalProps> = ({ userId, bills, mutat
         <label className="modal-box relative" htmlFor="">
           <div className="flex flex-col items-start justify-start gap-2">
             <div className="flex flex-row items-center justify-start gap-2">
-              <ClipboardDocumentIcon className="h-8 w-8" />
+              <div className="border rounded-box p-1.5">
+                <ClipboardDocumentIcon className="h-8 w-8" />
+              </div>
               <h1 className="text-2xl font-semibold">Add Bill</h1>
             </div>
             <span className="text-base-content text-sm font-normal">Fill out the details for your Bill.</span>
@@ -182,6 +221,16 @@ export const AddBillModal: React.FC<AddBillModalProps> = ({ userId, bills, mutat
                   </div>
                 )}
               </div>
+              <label
+                htmlFor="input-file"
+                className="w-full p-4 rounded-box hover:border-primary hover:border-solid cursor-pointer border border-base-content/40 border-dashed"
+              >
+                <div className="flex flex-row items-center justify-center gap-2">
+                  <input id="input-file" className="hidden" type="file" />
+                  <CloudArrowUpIcon className="h-6 w-6" />
+                  <h1 className="text-regular font-semibold">Upload file</h1>
+                </div>
+              </label>
             </div>
             <div className="modal-action">
               <label htmlFor="add-bill-modal" className="btn btn-ghost rounded-xl">

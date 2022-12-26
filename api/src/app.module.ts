@@ -10,6 +10,7 @@ import { UserGroupModule } from './user-group/user-group.module';
 import { AuthController } from './auth.controller';
 import { UserService } from './user/user.service';
 import { AuthService } from './auth/auth.service';
+import { NotificationModule } from './notification/notification.module';
 
 @Module({
   imports: [
@@ -21,6 +22,7 @@ import { AuthService } from './auth/auth.service';
     UserModule,
     BillModule,
     UserGroupModule,
+    NotificationModule,
   ],
   controllers: [AuthController],
   providers: [PrismaService, UserService, AuthService],

@@ -62,6 +62,7 @@ export default function SsrHome({ user }: InferGetServerSidePropsType<typeof get
 
   return (
     <Layout
+      user={user}
       search={(value: string) => {
         const filteredBills = bills?.filter((bill) => bill.title?.toLowerCase()?.includes(value.toLowerCase()));
         if (filteredBills && filteredBills.length > 0) {
@@ -151,7 +152,7 @@ export default function SsrHome({ user }: InferGetServerSidePropsType<typeof get
               <div
                 style={{ backgroundSize: '5px 5px' }}
                 className={classNames(
-                  'border-base-300 bg-base-100 rounded-b-box flex flex-col h-[500px] min-h-[6rem] w-full min-w-[18rem] flex-wrap items-center justify-center gap-2 overflow-x-hidden border bg-cover bg-top p-4',
+                  'border border-base-300 bg-base-100 rounded-b-box flex flex-col h-[500px] min-h-[6rem] w-full min-w-[18rem] flex-wrap items-center justify-center gap-2 overflow-x-hidden bg-top pt-4 px-4 pb-12 mb-12',
                   {
                     'rounded-tr-box': selectedTab === 'inbox',
                     'rounded-t-box': selectedTab === 'paid',

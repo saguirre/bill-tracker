@@ -3,7 +3,6 @@ import { FormInput } from '../common/FormInput';
 import { BanknotesIcon } from '@heroicons/react/24/outline';
 import { emailRegex } from '../../utils/email-regex.util';
 import Link from 'next/link';
-import { useRouter } from 'next/router';
 import classNames from 'classnames';
 import { useState } from 'react';
 
@@ -26,9 +25,8 @@ export const SignUpForm: React.FC<SignUpFormProps> = ({ submit, loadingRequest }
     register,
     handleSubmit,
     watch,
-    setValue,
     formState: { errors },
-  } = useForm<FormValues>({ mode: 'onTouched' });
+  } = useForm<FormValues>({ mode: 'onChange' });
 
   const [passwordStrength, setPasswordStrength] = useState(0);
   const getPasswordSuccessPercentage = (password: string) => {

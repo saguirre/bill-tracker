@@ -29,35 +29,35 @@ const generateUser = async () => {
 
 async function main() {
   try {
-    // await prisma.bill.deleteMany({}); // Remove for production
-    // await prisma.user.deleteMany({}); // Remove for production
-    // const personalUser = {
-    //   email: 'saguirrews@gmail.com',
-    //   password: await bcrypt.hash('123456', 10),
-    //   name: 'Santiago Aguirre',
-    // };
+    await prisma.bill.deleteMany({}); // Remove for production
+    await prisma.user.deleteMany({}); // Remove for production
+    const personalUser = {
+      email: 'saguirrews@gmail.com',
+      password: await bcrypt.hash('123456', 10),
+      name: 'Santiago Aguirre',
+    };
 
-    // const users = await Promise.all(
-    //   Array.from({ length: 10 }).map(async () => {
-    //     return await generateUser();
-    //   }),
-    // );
+    const users = await Promise.all(
+      Array.from({ length: 10 }).map(async () => {
+        return await generateUser();
+      }),
+    );
 
-    // users.push(personalUser);
-    // const savedUsers = await Promise.all(
-    //   users.map(async (user) => {
-    //     return await saveUser(user);
-    //   }),
-    // );
+    users.push(personalUser);
+    const savedUsers = await Promise.all(
+      users.map(async (user) => {
+        return await saveUser(user);
+      }),
+    );
     const bills = await Promise.all(
-      Array.from({ length: 33 }).map(async (_) => {
+      savedUsers.map(async (user) => {
         return await prisma.bill.create({
           data: {
             title: faker.commerce.productName(),
             amount: faker.datatype.number({ min: 100, max: 10000 }),
             paid: faker.datatype.boolean(),
             dueDate: faker.date.future(),
-            user: { connect: { id: 17 } },
+            user: { connect: { id: user.id } },
           },
         });
       }),

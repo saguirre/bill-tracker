@@ -36,6 +36,9 @@ export class BillService {
   async createBill(data: Prisma.BillCreateInput): Promise<Bill> {
     return this.prisma.bill.create({
       data,
+      include: {
+        user: true,
+      },
     });
   }
 

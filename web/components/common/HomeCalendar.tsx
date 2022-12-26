@@ -82,6 +82,7 @@ export const HomeCalendar: React.FC<HomeCalendarProps> = ({ bills, onSelectDate 
         <div className="isolate mt-2 grid grid-cols-7 bg-base-100 text-sm">
           {days.map((day, dayIdx) => (
             <CalendarButton
+              key={day.formattedDate}
               day={day}
               dayIdx={dayIdx}
               days={days}

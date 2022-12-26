@@ -43,7 +43,9 @@ export const ViewBillsFromCalendarModal: React.FC<ViewBillsFromCalendarModalProp
         <label className="modal-box w-11/12 max-w-4xl relative" htmlFor="">
           <div className="flex flex-col items-start justify-start gap-2">
             <div className="flex flex-row items-center justify-start gap-2">
-              <ClipboardDocumentListIcon className="h-8 w-8" />
+              <div className="border rounded-box p-1.5">
+                <ClipboardDocumentListIcon className="h-8 w-8" />
+              </div>
               {bills && bills?.[0] && bills?.[0]?.dueDate && (
                 <h1 className="text-2xl font-semibold">
                   Bills on {format(new Date(bills?.[0]?.dueDate), 'dd/MM/yyyy')}
