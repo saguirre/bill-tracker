@@ -1,4 +1,4 @@
-import { BanknotesIcon, InboxIcon } from '@heroicons/react/24/outline';
+import { BanknotesIcon, ChartPieIcon, InboxIcon } from '@heroicons/react/24/outline';
 import { useRouter } from 'next/router';
 import { SidebarItem } from './common/SidebarItem';
 import { Navbar } from './common/Navbar';
@@ -9,8 +9,9 @@ interface LayoutProps {
   search?: (value: string) => void;
   children: React.ReactNode;
   user?: User;
+  showSearch?: boolean;
 }
-export const Layout: React.FC<LayoutProps> = ({ user, children, search }) => {
+export const Layout: React.FC<LayoutProps> = ({ showSearch, user, children, search }) => {
   const router = useRouter();
   const [scrolling, setScrolling] = useState(false);
   useEffect(() => {
@@ -23,7 +24,7 @@ export const Layout: React.FC<LayoutProps> = ({ user, children, search }) => {
 
   return (
     <div className="flex flex-col overflow-x-hidden">
-      <Navbar user={user} search={search} scrolling={scrolling} />
+      <Navbar user={user} showSearch={showSearch} search={search} scrolling={scrolling} />
       <div className="transition-all mt-[74px] ml-[70px] duration-200 ease-in-out relative">{children}</div>
       <div className="fixed flex transition-all duration-200 w-[70px] bg-base-100 ease-in-out flex-col h-screen z-50 top-0 left-0">
         <ul className="flex flex-col justify-start bg-base-100 px-2 py-1 mt-2">
@@ -43,6 +44,13 @@ export const Layout: React.FC<LayoutProps> = ({ user, children, search }) => {
             icon={InboxIcon}
             onClick={() => {
               router.push('/');
+            }}
+          />
+          <SidebarItem
+            iconClassName="h-5 w-5"
+            icon={ChartPieIcon}
+            onClick={() => {
+              router.push('/historic');
             }}
           />
         </ul>

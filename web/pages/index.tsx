@@ -62,6 +62,7 @@ export default function SsrHome({ user }: InferGetServerSidePropsType<typeof get
 
   return (
     <Layout
+      showSearch={true}
       user={user}
       search={(value: string) => {
         const filteredBills = bills?.filter((bill) => bill.title?.toLowerCase()?.includes(value.toLowerCase()));
@@ -179,20 +180,22 @@ export default function SsrHome({ user }: InferGetServerSidePropsType<typeof get
                       <span className="badge badge-xs badge-ghost"></span>
                       <span className="badge badge-xs badge-ghost"></span>
                     </div>
-                    <BillList
-                      title="Upcoming Bills"
-                      badge="DUE"
-                      removeBill={(bill) => removeBill(bill)}
-                      badgeColor="badge-primary"
-                      dueBadgeColor="badge-ghost"
-                      amountColor="badge-ghost"
-                      bills={filterableBills?.filter((bill) => {
-                        if (!bill?.dueDate) return false;
-                        return new Date(bill.dueDate) > new Date() && !bill?.paid;
-                      })}
-                      setSelectedBill={setSelectedBill}
-                      setLoadingBillData={setLoadingBillData}
-                    />
+                    <div className="w-full pb-10">
+                      <BillList
+                        title="Upcoming Bills"
+                        badge="DUE"
+                        removeBill={(bill) => removeBill(bill)}
+                        badgeColor="badge-primary"
+                        dueBadgeColor="badge-ghost"
+                        amountColor="badge-ghost"
+                        bills={filterableBills?.filter((bill) => {
+                          if (!bill?.dueDate) return false;
+                          return new Date(bill.dueDate) > new Date() && !bill?.paid;
+                        })}
+                        setSelectedBill={setSelectedBill}
+                        setLoadingBillData={setLoadingBillData}
+                      />
+                    </div>
                   </div>
                 )}
                 {selectedTab === 'paid' && (

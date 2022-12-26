@@ -6,8 +6,6 @@ import * as Ably from 'ably/promises';
 dotenv.config();
 
 export default async function handler(req: NextApiRequest, res: NextApiResponse) {
-  console.log('/api/authentication/token-auth called');
-
   if (!process.env.ABLY_API_KEY) {
     return res
       .status(500)
@@ -23,6 +21,5 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
   const clientId = req.body['clientId'] || process.env.DEFAULT_CLIENT_ID || 'NO_CLIENT_ID';
   const client = new Ably.Rest(process.env.ABLY_API_KEY);
   const tokenRequestData = await client.auth.createTokenRequest({ clientId: clientId });
-  console.log(tokenRequestData)
   return res.status(200).json(tokenRequestData);
 }

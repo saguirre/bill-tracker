@@ -16,8 +16,9 @@ interface NavbarProps {
   scrolling: boolean;
   search?: (value: string) => void;
   user?: User;
+  showSearch?: boolean;
 }
-export const Navbar: React.FC<NavbarProps> = ({ user, scrolling, search }) => {
+export const Navbar: React.FC<NavbarProps> = ({ showSearch, user, scrolling, search }) => {
   const router = useRouter();
   const commandPlusF = useRef<HTMLInputElement>(null);
   const [channel, setChannel] = useState<Ably.Types.RealtimeChannelPromise | null>(null);
@@ -26,13 +27,8 @@ export const Navbar: React.FC<NavbarProps> = ({ user, scrolling, search }) => {
   useEffect(() => {
     const ably: Ably.Types.RealtimePromise = configureAbly({ authUrl: '/api/authentication' });
 
-    ably.connection.on((stateChange: Ably.Types.ConnectionStateChange) => {
-      console.log(stateChange);
-    });
-
     const _channel = ably.channels.get('status-updates');
     _channel.subscribe((message: Ably.Types.Message) => {
-      console.log(message);
       mutateNotifications([message.data, ...(notifications || [])]);
     });
     setChannel(_channel);
@@ -65,7 +61,7 @@ export const Navbar: React.FC<NavbarProps> = ({ user, scrolling, search }) => {
   };
 
   useKeyPress(() => {
-    commandPlusF?.current?.focus();
+    if (showSearch) commandPlusF?.current?.focus();
   }, ['KeyK']);
 
   return (
@@ -76,16 +72,20 @@ export const Navbar: React.FC<NavbarProps> = ({ user, scrolling, search }) => {
       })}
     >
       <div className="relative ml-[130px] flex w-full items-start justify-start">
-        <input
-          ref={commandPlusF}
-          onChange={(e) => {
-            if (search) search(e.target.value);
-          }}
-          className="relative input input-ghost w-full max-w-xs"
-          placeholder="Search"
-        />
-        <kbd className="absolute left-[265px] opacity-60 top-3 kbd kbd-sm">⌘</kbd>
-        <kbd className="absolute left-[290px] opacity-60 top-3 kbd kbd-sm">K</kbd>
+        {showSearch && (
+          <>
+            <input
+              ref={commandPlusF}
+              onChange={(e) => {
+                if (search) search(e.target.value);
+              }}
+              className="relative input input-ghost w-full max-w-xs"
+              placeholder="Search"
+            />
+            <kbd className="absolute left-[265px] opacity-60 top-3 kbd kbd-sm">⌘</kbd>
+            <kbd className="absolute left-[290px] opacity-60 top-3 kbd kbd-sm">K</kbd>
+          </>
+        )}
       </div>
       <div className="flex flex-row items-center justify-end">
         <ThemeChanger />
@@ -127,9 +127,11 @@ export const Navbar: React.FC<NavbarProps> = ({ user, scrolling, search }) => {
                     hidden: notification.read,
                   })}
                 ></span>
-                <li className={classNames("w-full hover:bg-base-200 rounded-box p-4", {
-                  "bg-base-200": !notification.read
-                })}>
+                <li
+                  className={classNames('w-full hover:bg-base-200 rounded-box p-4', {
+                    'bg-base-200': !notification.read,
+                  })}
+                >
                   <div className="flex flex-row">
                     <div className="flex flex-col items-start justify-start w-full">
                       <span className="text-base font-bold">{notification.title}</span>

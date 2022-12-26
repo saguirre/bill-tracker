@@ -8,8 +8,6 @@ import { getServiceUrl } from '../../lib/httpHelpers';
 dotenv.config();
 
 export default async function handler(req: NextApiRequest, res: NextApiResponse) {
-  console.log('/api/pub-sub/publish called');
-
   if (!process.env.ABLY_API_KEY) {
     return res
       .status(500)

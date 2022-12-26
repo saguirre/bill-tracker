@@ -97,7 +97,6 @@ export class BillController {
       user: { connect: { id: Number(id) } },
       userGroup: { connect: { id: Number(id) } },
     });
-    console.log(createdBill);
     return createdBill;
   }
 

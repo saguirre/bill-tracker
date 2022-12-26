@@ -41,10 +41,6 @@ export const AddBillModal: React.FC<AddBillModalProps> = ({ userId, bills, mutat
   useEffect(() => {
     const ably: Ably.Types.RealtimePromise = configureAbly({ authUrl: '/api/authentication' });
 
-    ably.connection.on((stateChange: Ably.Types.ConnectionStateChange) => {
-      console.log(stateChange);
-    });
-
     const _channel = ably.channels.get('status-updates');
     setChannel(_channel);
 
@@ -60,7 +56,6 @@ export const AddBillModal: React.FC<AddBillModalProps> = ({ userId, bills, mutat
       title: `${bill.user.name} added a new bill`,
       message: `${bill.title} - ${bill.amount}`,
     };
-    console.log(notificationBody);
     channel.publish('update-from-client', { ...notificationBody });
 
     await fetchJson(`/api/notifications/user/${userId}`, {
