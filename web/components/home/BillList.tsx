@@ -1,5 +1,6 @@
 import classNames from 'classnames';
 import { Bill } from '../../models/bill/bill';
+import { getRandomMoneyImage } from '../../utils/get-random-money-image';
 import { BillListItem } from './BillListItem';
 
 interface BillListProps {
@@ -61,19 +62,19 @@ export const BillList: React.FC<BillListProps> = ({
               {title === 'Expired Bills' && (
                 <div className="flex flex-col items-center justify-center gap-1.5">
                   <p className="text-sm text-base-content/60 mt-8 -mb-9">No Expired Bills</p>
-                  <img src="/images/no_bills_3.svg" alt="No Expired Bills" className="w-[250px]" />
+                  <img src={getRandomMoneyImage()} alt="No Expired Bills" className="w-[250px]" />
                 </div>
               )}
               {title === 'Upcoming Bills' && (
                 <div className="flex flex-col items-center justify-center gap-1.5">
                   <p className="text-sm text-base-content/60 mt-8 -mb-9">No Upcoming Bills</p>
-                  <img src="/images/no_bills_4.svg" alt="No Upcoming Bills" className="w-[250px]" />
+                  <img src={getRandomMoneyImage()} alt="No Upcoming Bills" className="w-[250px]" />
                 </div>
               )}
               {title === 'Paid Bills' && (
                 <div className="flex flex-col items-center justify-center gap-1.5">
                   <p className="text-sm text-base-content/60 mt-8 -mb-9">No Paid Bills</p>
-                  <img src="/images/no_bills_paid.svg" alt="No Bills Paid" className="w-[250px]" />
+                  <img src={getRandomMoneyImage()} alt="No Bills Paid" className="w-[250px]" />
                 </div>
               )}
             </div>

@@ -1,11 +1,14 @@
 import { TrashIcon } from '@heroicons/react/24/outline';
 import { withIronSessionSsr } from 'iron-session/next';
 import { InferGetServerSidePropsType } from 'next';
+import { useTheme } from 'next-themes';
 import { Layout } from '../components/Layout';
 import { sessionOptions } from '../lib/session';
 import { User } from '../models/user/user';
+import { getCorrespondingThemeImage } from '../utils/get-page-image-by-theme';
 
 export default function Profile({ user }: InferGetServerSidePropsType<typeof getServerSideProps>) {
+  const { theme } = useTheme();
   return (
     <Layout user={user}>
       <div className="flex flex-col items-center h-full px-12 pt-6">
@@ -62,7 +65,11 @@ export default function Profile({ user }: InferGetServerSidePropsType<typeof get
                 </div>
               </div>
             </div>
-            <img src="/images/profile.svg" alt="profile" className="hidden xl:block absolute h-[90%] right-0 top-20" />
+            <img
+              src={getCorrespondingThemeImage('profile', theme)}
+              alt="Profile"
+              className="hidden xl:block absolute h-[90%] right-0 top-20"
+            />
           </div>
         </div>
       </div>
