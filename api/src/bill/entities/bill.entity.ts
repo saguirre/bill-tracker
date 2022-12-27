@@ -17,6 +17,8 @@ export class BillEntity implements Bill {
   @ApiProperty()
   dueDate: Date;
   @ApiProperty()
+  categoryId: number;
+  @ApiProperty()
   createdAt: Date;
   @ApiProperty()
   updatedAt: Date;
