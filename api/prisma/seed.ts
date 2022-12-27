@@ -49,14 +49,57 @@ async function main() {
         return await saveUser(user);
       }),
     );
+
+    const baseCategories = [
+      'Food',
+      'Rent',
+      'Electricity',
+      'Gas',
+      'Transportation',
+      'Health',
+      'Insurance',
+      'Entertainment',
+      'Education',
+      'Other',
+    ];
+
+    await Promise.all(
+      baseCategories.map(async (name) => {
+        return await prisma.category.create({
+          data: {
+            name,
+          },
+        });
+      }),
+    );
+
+    await Promise.all(
+      savedUsers.map(async (user) => {
+        baseCategories.forEach(async (name) => {
+          return await prisma.category.create({
+            data: {
+              name,
+              user: { connect: { id: user.id } },
+            },
+          });
+        });
+      }),
+    );
+
     const bills = await Promise.all(
       savedUsers.map(async (user) => {
+        const category = await prisma.category.findFirst({
+          where: {
+            userId: user.id,
+          },
+        });
         return await prisma.bill.create({
           data: {
             title: faker.commerce.productName(),
             amount: faker.datatype.number({ min: 100, max: 10000 }),
             paid: faker.datatype.boolean(),
             dueDate: faker.date.future(),
+            category: { connect: { id: category.id } },
             user: { connect: { id: user.id } },
           },
         });

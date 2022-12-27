@@ -44,17 +44,19 @@ export const BillListItem: React.FC<BillListItemProps> = ({
       >
         <div className="flex flex-row items-start justify-between w-full">
           <div className="text-base font-semibold">{bill.title}</div>
-          <div className={classNames('text-base-content text-lg font-bold')}>
-            {currencyFormat(bill?.amount || 0)}
-          </div>
+          <div className={classNames('text-base-content text-lg font-bold')}>{currencyFormat(bill?.amount || 0)}</div>
         </div>
         <div className="flex flex-row w-full justify-between text-sm">
-          <div className="flex flex-row gap-2 max-w-sm w-full">
-            <div className="badge badge-outline badge-secondary">Category</div>
-            <div className="badge badge-outline badge-accent">Category</div>
-          </div>
+          {bill?.category && (
+            <div className="flex flex-row gap-2 max-w-sm w-full">
+              <div className="badge badge-outline badge-secondary">{bill?.category?.name}</div>
+            </div>
+          )}
+          {!bill?.category && <div className='max-w-sm w-full'></div>}
           {bill.dueDate && !bill.paid && (
-            <span className={classNames('font-bold badge badge-error badge-xs badge-outline h-5 mt-1 uppercase text-xs')}>
+            <span
+              className={classNames('font-bold badge badge-error badge-xs badge-outline h-5 mt-1 uppercase text-xs')}
+            >
               {'Due on ' + format(new Date(bill.dueDate), 'dd/MM/yyyy')}
             </span>
           )}

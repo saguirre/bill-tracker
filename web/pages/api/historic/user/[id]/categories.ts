@@ -4,21 +4,21 @@ import fetchJson from '../../../../../lib/fetchJson';
 import { getServiceUrl } from '../../../../../lib/httpHelpers';
 import { sessionOptions } from '../../../../../lib/session';
 
-export default withIronSessionApiRoute(historicMonthsHandler, sessionOptions);
+export default withIronSessionApiRoute(historicCategoriesHandler, sessionOptions);
 
-async function historicMonthsHandler(req: NextApiRequest, res: NextApiResponse) {
+async function historicCategoriesHandler(req: NextApiRequest, res: NextApiResponse) {
   try {
     const { method } = req;
 
     switch (method) {
       case 'GET':
-        // Get historic bills by month
-        const historicBillsByMonth = await fetchJson(getServiceUrl(`historic/months/user/${req.query.id}`), {
+        // Get historic bills by category
+        const historicBillsByCategory = await fetchJson(getServiceUrl(`historic/categories/user/${req.query.id}`), {
           method: 'GET',
           headers: { Authorization: `Bearer ${req.session.accessToken}`, 'Content-Type': 'application/json' },
         });
 
-        res.status(200).json(historicBillsByMonth);
+        res.status(200).json(historicBillsByCategory);
         break;
       default:
         res.setHeader('Allow', ['GET']);

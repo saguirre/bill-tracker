@@ -76,10 +76,24 @@ export class BillController {
     @Param('id') id: string,
     @Body() bill: CreateBillEntity,
   ): Promise<Bill> {
+    let createBillInput;
+    if (bill.categoryId) {
+      const { categoryId, ...rest } = bill;
+      createBillInput = {
+        ...rest,
+        amount: Number(bill.amount),
+        category: { connect: { id: Number(categoryId) } },
+        user: { connect: { id: Number(id) } },
+      };
+    } else {
+      createBillInput = {
+        ...bill,
+        amount: Number(bill.amount),
+        user: { connect: { id: Number(id) } },
+      };
+    }
     const createdBill = await this.billService.createBill({
-      ...bill,
-      amount: Number(bill.amount),
-      user: { connect: { id: Number(id) } },
+      ...createBillInput,
     });
     return createdBill;
   }

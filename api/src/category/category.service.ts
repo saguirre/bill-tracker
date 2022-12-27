@@ -37,7 +37,13 @@ export class CategoryService {
     return this.prisma.category.create({
       data,
       include: {
-        user: true,
+        user: {
+          select: {
+            id: true,
+            email: true,
+            name: true,
+          },
+        },
       },
     });
   }

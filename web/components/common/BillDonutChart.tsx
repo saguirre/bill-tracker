@@ -9,13 +9,25 @@ import {
   Legend,
   Filler,
   ArcElement,
+  CoreChartOptions,
+  DatasetChartOptions,
+  ElementChartOptions,
+  PluginChartOptions,
+  ScaleChartOptions,
+  DoughnutControllerChartOptions,
 } from 'chart.js';
+import { _DeepPartialObject } from 'chart.js/dist/types/utils';
+import { useEffect, useState } from 'react';
 
 ChartJS.register(CategoryScale, ArcElement, LinearScale, PointElement, LineElement, Title, Tooltip, Legend, Filler);
 
 import { Doughnut } from 'react-chartjs-2';
+import { HistoricBillsByCategory } from '../../models/historic/historic-bills-by-category';
 
-export const BillDonutChart = () => {
+interface BillDonutChartProps {
+  historicBillsByCategory?: HistoricBillsByCategory;
+}
+export const BillDonutChart: React.FC<BillDonutChartProps> = ({ historicBillsByCategory }) => {
   const data = {
     backgroundColor: ['rgb(2, 88, 255)', 'rgb(249, 151, 0)', 'rgb(255, 199, 0)', 'rgb(32, 199, 0)', 'rgb(19, 23, 151)'],
     labels: ['Categoría 1', 'Categoría 2', 'Categoría 3', 'Categoría 4', 'Categoría 5'],
@@ -35,10 +47,35 @@ export const BillDonutChart = () => {
     ],
   };
 
-  const options = {
+  const [chartData, setChartData] = useState<any>(data);
+
+  useEffect(() => {
+    setChartData((current: any) => {
+      return {
+        ...current,
+        labels: historicBillsByCategory?.billsByCategory.map((item) => item.category.name) || [],
+        datasets: [
+          {
+            ...current.datasets[0],
+            data: historicBillsByCategory?.billsByCategory.map((month) => month.total) || [],
+          },
+        ],
+      };
+    });
+  }, [historicBillsByCategory]);
+
+  const options:
+    | _DeepPartialObject<
+        CoreChartOptions<'doughnut'> &
+          ElementChartOptions<'doughnut'> &
+          PluginChartOptions<'doughnut'> &
+          DatasetChartOptions<'doughnut'> &
+          ScaleChartOptions<'doughnut'> &
+          DoughnutControllerChartOptions
+      >
+    | undefined = {
     elements: {
       arc: {
-        weight: 0.5,
         borderWidth: 0.5,
       },
     },
@@ -51,7 +88,7 @@ export const BillDonutChart = () => {
         <span className="text-xl font-bold text-center">Bills per Category</span>
         <span className="text-sm text-center mt-1">View the bills you have paid per category</span>
       </div>
-      <Doughnut data={data} width={100} height={100} options={options} />
+      <Doughnut data={chartData} width={100} height={100} options={options} />
     </div>
   );
 };

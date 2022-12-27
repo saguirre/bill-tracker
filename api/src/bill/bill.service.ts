@@ -11,6 +11,16 @@ export class BillService {
   ): Promise<Partial<Bill> | null> {
     const bill = await this.prisma.bill.findUnique({
       where: billWhereUniqueInput,
+      include: {
+        user: {
+          select: {
+            id: true,
+            email: true,
+            name: true,
+          },
+        },
+        category: true,
+      },
     });
 
     return bill;
@@ -30,6 +40,16 @@ export class BillService {
       cursor,
       where,
       orderBy,
+      include: {
+        user: {
+          select: {
+            id: true,
+            email: true,
+            name: true,
+          },
+        },
+        category: true,
+      },
     });
   }
 
@@ -37,7 +57,13 @@ export class BillService {
     return this.prisma.bill.create({
       data,
       include: {
-        user: true,
+        user: {
+          select: {
+            id: true,
+            email: true,
+            name: true,
+          },
+        },
       },
     });
   }
@@ -50,12 +76,32 @@ export class BillService {
     return this.prisma.bill.update({
       data,
       where,
+      include: {
+        user: {
+          select: {
+            id: true,
+            email: true,
+            name: true,
+          },
+        },
+        category: true,
+      },
     });
   }
 
   async deleteBill(where: Prisma.BillWhereUniqueInput): Promise<Bill> {
     return this.prisma.bill.delete({
       where,
+      include: {
+        user: {
+          select: {
+            id: true,
+            email: true,
+            name: true,
+          },
+        },
+        category: true,
+      },
     });
   }
 }

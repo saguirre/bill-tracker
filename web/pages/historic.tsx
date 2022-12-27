@@ -4,11 +4,13 @@ import { BillBarChart } from '../components/common/BillBarChart';
 import { BillDonutChart } from '../components/common/BillDonutChart';
 import { Layout } from '../components/Layout';
 import { sessionOptions } from '../lib/session';
+import useHistoricBillsByCategory from '../lib/useHistoricBillsByCategory';
 import useHistoricBillsByMonth from '../lib/useHistoricBillsByMonth';
 import { User } from '../models/user/user';
 
 export default function Historic({ user }: InferGetServerSidePropsType<typeof getServerSideProps>) {
   const { historicBillsByMonth } = useHistoricBillsByMonth(user);
+  const { historicBillsByCategory } = useHistoricBillsByCategory(user);
   return (
     <Layout user={user}>
       <div className="flex flex-col items-center h-full px-12">
@@ -25,7 +27,7 @@ export default function Historic({ user }: InferGetServerSidePropsType<typeof ge
               <div className="divider my-1"></div>
               <div className="grid grid-cols-2 w-full mt-2 gap-6">
                 <BillBarChart historicBillsByMonth={historicBillsByMonth} />
-                <BillDonutChart />
+                <BillDonutChart historicBillsByCategory={historicBillsByCategory} />
               </div>
             </div>
             <div className=""></div>

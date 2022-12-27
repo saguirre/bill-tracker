@@ -1,5 +1,5 @@
 import { ApiProperty } from '@nestjs/swagger';
-import { Bill } from '@prisma/client';
+import { Bill, Category } from '@prisma/client';
 
 export class BillByMonth {
   @ApiProperty()
@@ -14,7 +14,7 @@ export class BillByMonth {
 
 export class BillByCategory {
   @ApiProperty()
-  category: string;
+  category: Category;
   @ApiProperty()
   bills: Bill[];
 }
@@ -46,8 +46,6 @@ export class HistoricBillsByMonth {
 export class HistoricBillsByCategory {
   @ApiProperty()
   userId: number;
-  @ApiProperty()
-  userGroupId: number;
   @ApiProperty()
   billsByCategory: BillByCategory[];
 }

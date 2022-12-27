@@ -9,13 +9,14 @@ import { FormInput } from './FormInput';
 import { Spinner } from './Spinner';
 import * as Ably from 'ably/promises';
 import { configureAbly } from '@ably-labs/react-hooks';
-import { getServiceUrl } from '../../lib/httpHelpers';
+import { CategoryModel } from '../../models/category';
 
 interface AddBillModalProps {
   userId?: number;
   loading: boolean;
   bills: Bill[] | undefined;
   mutateBills: (bills: Bill[]) => void;
+  categories?: CategoryModel[];
 }
 
 interface FormValues {
@@ -23,10 +24,11 @@ interface FormValues {
   amount: number;
   dueDate: string;
   paidDate?: string;
+  categoryId?: number;
   paid: boolean;
 }
 
-export const AddBillModal: React.FC<AddBillModalProps> = ({ userId, bills, mutateBills, loading }) => {
+export const AddBillModal: React.FC<AddBillModalProps> = ({ categories, userId, bills, mutateBills, loading }) => {
   const {
     register,
     handleSubmit,
@@ -77,6 +79,9 @@ export const AddBillModal: React.FC<AddBillModalProps> = ({ userId, bills, mutat
 
   const onSubmit: SubmitHandler<FormValues> = async (data: FormValues) => {
     try {
+      if (!data.categoryId) {
+        delete data.categoryId;
+      }
       const newBill: Bill = {
         ...data,
         paid: checked,
@@ -173,6 +178,24 @@ export const AddBillModal: React.FC<AddBillModalProps> = ({ userId, bills, mutat
                   errors={errors}
                   {...register('amount')}
                 />
+              </div>
+              <div className="form-control w-full">
+                <label className="label pt-0 pb-1">
+                  <span className="label-text text-sm font-semibold">Category</span>
+                </label>
+                <select
+                  placeholder="Select a category"
+                  defaultValue={''}
+                  {...register('categoryId')}
+                  className="select select-bordered border-base-content select-primary focus:border-none focus:border-transparent focus:outline-none focus:ring-2 focus:ring-primary"
+                >
+                  <option value="">Select a category</option>
+                  {categories?.map((category: CategoryModel) => (
+                    <option key={category.id} value={category.id}>
+                      {category.name}
+                    </option>
+                  ))}
+                </select>
               </div>
               {checked && <div className="divider my-1"></div>}
 

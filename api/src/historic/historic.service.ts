@@ -1,5 +1,6 @@
 import { Injectable } from '@nestjs/common';
 import { BillService } from 'src/bill/bill.service';
+import { CategoryService } from 'src/category/category.service';
 import {
   HistoricBillsByCategory,
   HistoricBillsByMonth,
@@ -8,7 +9,10 @@ import {
 
 @Injectable()
 export class HistoricService {
-  constructor(private readonly billService: BillService) {}
+  constructor(
+    private readonly billService: BillService,
+    private readonly categoryService: CategoryService,
+  ) {}
 
   async historicBillsInMonth(params: {
     where: { userId: number };
@@ -48,9 +52,22 @@ export class HistoricService {
     where: { userId: number };
   }): Promise<HistoricBillsByCategory> {
     const { where } = params;
-    const a = this.billService.bills({
+    const userCategories = await this.categoryService.categories({
       where: { userId: Number(where.userId) },
     });
-    return a as any;
+
+    const allBills = await this.billService.bills({
+      where: { userId: Number(where.userId) },
+    });
+    const billsByCategory = userCategories.map((category) => {
+      const bills = allBills.filter((bill) => bill.categoryId === category.id);
+      return {
+        category,
+        total: bills.reduce((acc, bill) => acc + bill.amount, 0),
+        bills,
+      };
+    });
+
+    return { userId: Number(where.userId), billsByCategory };
   }
 }

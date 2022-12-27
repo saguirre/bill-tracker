@@ -62,6 +62,13 @@ model Bill {
   userGroupId Int?
 }
 
+model BaseCategory {
+  id        Int      @id @default(autoincrement())
+  name      String
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
 model Category {
   id        Int      @id @default(autoincrement())
   name      String

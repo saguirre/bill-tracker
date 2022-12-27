@@ -14,15 +14,22 @@ import { HomeCalendar } from '../components/common/HomeCalendar';
 import { useKeyPress } from '../hooks/useKeyPress.hook';
 import { toast } from 'react-toastify';
 import { ViewBillsFromCalendarModal } from '../components/common/ViewBillsFromCalendarModal';
+import { AddCategoryModal } from '../components/common/AddCategoryModal';
+import useCategories from '../lib/useCategories';
 
 export default function SsrHome({ user }: InferGetServerSidePropsType<typeof getServerSideProps>) {
   const [selectedBill, setSelectedBill] = useState<Bill | null>(null);
   const [calendarSelectedBills, setCalendarSelectedBills] = useState<Bill[]>([]);
   const [loadingBillData, setLoadingBillData] = useState(false);
   const [loadingAddBill, setLoadingAddBill] = useState(false);
+  const [loadingAddCategory, setLoadingAddCategory] = useState(false);
   const addBillRef = useRef<HTMLLabelElement>(null);
+  const addCategoryRef = useRef<HTMLLabelElement>(null);
   const [selectedTab, setSelectedTab] = useState<'inbox' | 'paid'>('inbox');
   const { bills, mutateBills } = useBills({
+    ...user,
+  });
+  const { categories, mutateCategories } = useCategories({
     ...user,
   });
 
@@ -51,6 +58,12 @@ export default function SsrHome({ user }: InferGetServerSidePropsType<typeof get
       addBillRef.current.click();
     }
   }, ['KeyA']);
+
+  useKeyPress(() => {
+    if (addCategoryRef.current) {
+      addCategoryRef.current.click();
+    }
+  }, ['KeyE']);
 
   useEffect(() => {
     setFilterableBills(bills);
@@ -84,17 +97,32 @@ export default function SsrHome({ user }: InferGetServerSidePropsType<typeof get
               <p className="text-sm">Here you can review your bills</p>
             </div>
           </div>
-          <div className="flex flex-col items-center gap-1.5">
-            <label
-              ref={addBillRef}
-              htmlFor="add-bill-modal"
-              className="btn btn-primary flex flex-col items-center justify-center"
-            >
-              Add Bill
-            </label>
-            <div className="flex flex-row items-center justify-center gap-1">
-              <span className="kbd kbd-sm">⌘</span>
-              <span className="kbd kbd-sm">A</span>
+          <div className="flex flex-row items-center justify-end gap-2 ">
+            <div className="flex flex-col items-center gap-1.5">
+              <label
+                ref={addCategoryRef}
+                htmlFor="add-category-modal"
+                className="btn btn-secondary flex flex-col items-center justify-center"
+              >
+                Add Category
+              </label>
+              <div className="flex flex-row items-center justify-center gap-1">
+                <span className="kbd kbd-sm">⌘</span>
+                <span className="kbd kbd-sm">E</span>
+              </div>
+            </div>
+            <div className="flex flex-col items-center gap-1.5">
+              <label
+                ref={addBillRef}
+                htmlFor="add-bill-modal"
+                className="btn btn-primary flex flex-col items-center justify-center"
+              >
+                Add Bill
+              </label>
+              <div className="flex flex-row items-center justify-center gap-1">
+                <span className="kbd kbd-sm">⌘</span>
+                <span className="kbd kbd-sm">A</span>
+              </div>
             </div>
           </div>
         </div>
@@ -226,7 +254,19 @@ export default function SsrHome({ user }: InferGetServerSidePropsType<typeof get
           </div>
         </div>
 
-        <AddBillModal bills={bills} mutateBills={mutateBills} userId={user?.id} loading={loadingAddBill} />
+        <AddBillModal
+          bills={bills}
+          categories={categories}
+          mutateBills={mutateBills}
+          userId={user?.id}
+          loading={loadingAddBill}
+        />
+        <AddCategoryModal
+          categories={categories}
+          mutateCategories={mutateCategories}
+          userId={user?.id}
+          loading={loadingAddCategory}
+        />
         <EditBillModal bills={bills} mutateBills={mutateBills} loading={loadingBillData} bill={selectedBill} />
         <ViewBillsFromCalendarModal
           bills={calendarSelectedBills}
