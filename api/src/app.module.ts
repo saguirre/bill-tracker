@@ -11,6 +11,7 @@ import { AuthController } from './auth.controller';
 import { UserService } from './user/user.service';
 import { AuthService } from './auth/auth.service';
 import { NotificationModule } from './notification/notification.module';
+import { HistoricModule } from './historic/historic.module';
 
 @Module({
   imports: [
@@ -23,6 +24,7 @@ import { NotificationModule } from './notification/notification.module';
     BillModule,
     UserGroupModule,
     NotificationModule,
+    HistoricModule,
   ],
   controllers: [AuthController],
   providers: [PrismaService, UserService, AuthService],

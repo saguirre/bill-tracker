@@ -34,7 +34,7 @@ export const AddBillModal: React.FC<AddBillModalProps> = ({ userId, bills, mutat
     formState: { errors },
   } = useForm<FormValues>({ mode: 'onChange' });
   const [channel, setChannel] = useState<Ably.Types.RealtimeChannelPromise | null>(null);
-
+  const [addAnother, setAddAnother] = useState(false);
   const [checked, setChecked] = useState(false);
   const closeRef = useRef<HTMLInputElement>(null);
 
@@ -102,9 +102,11 @@ export const AddBillModal: React.FC<AddBillModalProps> = ({ userId, bills, mutat
         ]);
       }
       const modal = document.getElementById('add-bill-modal') as any;
-      if (modal) modal.checked = false;
+      if (!addAnother) {
+        if (modal) modal.checked = false;
+        setChecked(false);
+      }
       reset();
-      setChecked(false);
       publishFromClient(billResponse);
       toast.success('Bill added successfully');
     } catch (error) {
@@ -227,14 +229,28 @@ export const AddBillModal: React.FC<AddBillModalProps> = ({ userId, bills, mutat
                 </div>
               </label>
             </div>
-            <div className="modal-action">
-              <label htmlFor="add-bill-modal" className="btn btn-ghost rounded-xl">
-                Cancel
-              </label>
-              <button className="btn btn-primary rounded-xl">
-                {loading && <Spinner className=" h-4 w-4 border-b-2 border-white bg-primary mr-3"></Spinner>}
-                Save
-              </button>
+            <div className="modal-action flex flex-row items-center justify-between">
+              <div className="form-control w-32">
+                <label className="label cursor-pointer">
+                  <span className="label-text text-sm font-semibold">Add another</span>
+                  <input
+                    type="checkbox"
+                    id="add-another"
+                    className="checkbox checkbox-sm checkbox-primary focus:ring-0 focus:outline-none"
+                    checked={addAnother}
+                    onChange={(e) => setAddAnother(e.target.checked)}
+                  />
+                </label>
+              </div>
+              <div className='flex flex-row items-center justify-end gap-2'>
+                <label htmlFor="add-bill-modal" className="btn btn-ghost rounded-xl">
+                  Cancel
+                </label>
+                <button className="btn btn-primary rounded-xl">
+                  {loading && <Spinner className=" h-4 w-4 border-b-2 border-white bg-primary mr-3"></Spinner>}
+                  Save
+                </button>
+              </div>
             </div>
           </form>
         </label>

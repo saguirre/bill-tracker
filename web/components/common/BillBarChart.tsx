@@ -9,13 +9,28 @@ import {
   Tooltip,
   Legend,
   Filler,
+  ChartOptions,
+  BarOptions,
+  ChartType,
+  BarControllerChartOptions,
+  CoreChartOptions,
+  ElementChartOptions,
+  PluginChartOptions,
+  DatasetChartOptions,
+  ScaleChartOptions,
 } from 'chart.js';
+import { _DeepPartialObject } from 'chart.js/dist/types/utils';
+import { useEffect, useState } from 'react';
 
 ChartJS.register(BarElement, CategoryScale, LinearScale, PointElement, LineElement, Title, Tooltip, Legend, Filler);
 
 import { Bar } from 'react-chartjs-2';
+import { HistoricBillsByMonth } from '../../models/historic/historic-bills-by-month';
 
-export const BillBarChart = () => {
+interface BillBarChartProps {
+  historicBillsByMonth?: HistoricBillsByMonth;
+}
+export const BillBarChart: React.FC<BillBarChartProps> = ({ historicBillsByMonth }) => {
   const data = {
     labels: [
       'January',
@@ -33,52 +48,48 @@ export const BillBarChart = () => {
     ],
     datasets: [
       {
-        label: 'Brutto',
         borderRadius: 10,
         data: [0.1, 0.4, 0.2, 0.3, 0.7, 0.4, 0.6, 0.3, 0.4],
         backgroundColor: 'rgba(32, 214, 155, 0.5)',
         borderColor: 'rgba(32, 214, 155, 1)',
         borderWidth: 0.1,
-        barThickness: 10,
-      },
-      {
-        label: 'Netto',
-        borderRadius: 10,
-        borderColor: 'rgba(32, 214, 155, 1)',
-        borderWidth: 0.1,
-        data: [0.07, 0.3, 0.15, 0.2, 0.5, 0.3, 0.8, 0.2, 0.4],
-        backgroundColor: 'rgba(1, 98, 255, 0.5)',
-        barThickness: 10,
+        barThickness: 20,
       },
     ],
   };
+  const [chartData, setChartData] = useState<any>(data);
 
-  const options: any = {
+  useEffect(() => {
+    setChartData((current: any) => {
+      return {
+        ...current,
+        labels: current.labels,
+        datasets: [
+          {
+            ...current.datasets[0],
+            data: historicBillsByMonth?.billsByMonth.map((month) => month.total) || [],
+          },
+        ],
+      };
+    });
+  }, [historicBillsByMonth]);
+
+  const options:
+    | _DeepPartialObject<
+        CoreChartOptions<'bar'> &
+          ElementChartOptions<'bar'> &
+          PluginChartOptions<'bar'> &
+          ScaleChartOptions<'bar'> &
+          DatasetChartOptions<'bar'> &
+          BarControllerChartOptions
+      >
+    | undefined = {
     plugins: {
       legend: {
-        position: 'top',
-        align: 'start',
-        labels: {
-          boxWidth: 7,
-          usePointStyle: true,
-          pointStyle: 'circle',
-        },
-      },
-    },
-    scales: {
-      xAxis: {
         display: false,
       },
-      yAxis: {
-        max: 1,
-      },
     },
-    elements: {
-      bar: {
-        barPercentage: 0.3,
-        categoryPercentage: 1,
-      },
-    },
+    scales: {},
   };
 
   return (
@@ -87,7 +98,7 @@ export const BillBarChart = () => {
         <span className="text-xl font-bold text-center">Bills per Month</span>
         <span className="text-sm text-center mt-1">View the bills you have paid per month</span>
       </div>
-      <Bar data={data} width={60} height={60} options={options} />
+      <Bar data={chartData} width={60} height={60} options={options} />
     </div>
   );
 };

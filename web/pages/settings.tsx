@@ -7,7 +7,7 @@ import { User } from '../models/user/user';
 
 export default function Settings({ user }: InferGetServerSidePropsType<typeof getServerSideProps>) {
   return (
-    <Layout>
+    <Layout user={user}>
       <div className="flex flex-col items-center h-full px-12 pt-6">
         <div className="h-[600px] w-full bg-base-100 px-6">
           <div className="h-full flex flex-row relative">
