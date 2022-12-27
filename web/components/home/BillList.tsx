@@ -57,9 +57,25 @@ export const BillList: React.FC<BillListProps> = ({
             />
           ))}
           {bills?.length === 0 && (
-            <div className="flex flex-col items-center justify-center w-full h-full">
-              {title === 'Expired Bills' && <img src="/images/no_bills_3.svg" alt="Empty" className="w-[250px]" />}
-              {title === 'Upcoming Bills' && <img src="/images/no_bills_4.svg" alt="Empty" className="w-[250px]" />}
+            <div className="flex flex-col items-center justify-center w-full h-fit">
+              {title === 'Expired Bills' && (
+                <div className="flex flex-col items-center justify-center gap-1.5">
+                  <p className="text-sm text-base-content/60 mt-8 -mb-9">No Expired Bills</p>
+                  <img src="/images/no_bills_3.svg" alt="No Expired Bills" className="w-[250px]" />
+                </div>
+              )}
+              {title === 'Upcoming Bills' && (
+                <div className="flex flex-col items-center justify-center gap-1.5">
+                  <p className="text-sm text-base-content/60 mt-8 -mb-9">No Upcoming Bills</p>
+                  <img src="/images/no_bills_4.svg" alt="No Upcoming Bills" className="w-[250px]" />
+                </div>
+              )}
+              {title === 'Paid Bills' && (
+                <div className="flex flex-col items-center justify-center gap-1.5">
+                  <p className="text-sm text-base-content/60 mt-8 -mb-9">No Paid Bills</p>
+                  <img src="/images/no_bills_paid.svg" alt="No Bills Paid" className="w-[250px]" />
+                </div>
+              )}
             </div>
           )}
         </div>
