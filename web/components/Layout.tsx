@@ -1,9 +1,18 @@
-import { BanknotesIcon, ChartPieIcon, InboxIcon, UserGroupIcon } from '@heroicons/react/24/outline';
+import {
+  ArrowLeftOnRectangleIcon,
+  BanknotesIcon,
+  ChartPieIcon,
+  Cog6ToothIcon,
+  InboxIcon,
+  UserGroupIcon,
+} from '@heroicons/react/24/outline';
 import { useRouter } from 'next/router';
 import { SidebarItem } from './common/SidebarItem';
 import { Navbar } from './common/Navbar';
 import { useEffect, useState } from 'react';
 import { User } from '../models/user/user';
+import fetchJson from '../lib/fetchJson';
+import { toast } from 'react-toastify';
 
 interface LayoutProps {
   search?: (value: string) => void;
@@ -38,28 +47,61 @@ export const Layout: React.FC<LayoutProps> = ({ showSearch, user, children, sear
           />
         </ul>
         <div className="divider my-0.5 px-3"></div>
-        <ul className="flex flex-col justify-start h-full bg-base-100 px-2 py-1">
-          <SidebarItem
-            iconClassName="h-5 w-5"
-            icon={InboxIcon}
-            onClick={() => {
-              router.push('/');
-            }}
-          />
-          <SidebarItem
-            iconClassName="h-5 w-5"
-            icon={UserGroupIcon}
-            onClick={() => {
-              router.push('/groups');
-            }}
-          />
-          <SidebarItem
-            iconClassName="h-5 w-5"
-            icon={ChartPieIcon}
-            onClick={() => {
-              router.push('/historic');
-            }}
-          />
+        <ul className="flex flex-col justify-between h-full bg-base-100 px-2 py-1">
+          <div className="flex flex-col items-start">
+            <SidebarItem
+              popoverText="Inbox"
+              iconClassName="h-5 w-5"
+              icon={InboxIcon}
+              onClick={() => {
+                router.push('/');
+              }}
+            />
+            <SidebarItem
+              popoverText="Groups"
+              iconClassName="h-5 w-5"
+              icon={UserGroupIcon}
+              onClick={() => {
+                router.push('/groups');
+              }}
+            />
+            <SidebarItem
+              iconClassName="h-5 w-5"
+              icon={ChartPieIcon}
+              popoverText="Historic Data"
+              onClick={() => {
+                router.push('/historic');
+              }}
+            />
+          </div>
+          <div className="flex flex-col items-end">
+            <SidebarItem
+              iconClassName="h-5 w-5"
+              icon={Cog6ToothIcon}
+              popoverText="Settings"
+              onClick={() => {
+                router.push('/settings');
+              }}
+            />
+            <SidebarItem
+              iconClassName="h-5 w-5"
+              popoverText="Logout"
+              icon={ArrowLeftOnRectangleIcon}
+              onClick={async () => {
+                try {
+                  await fetchJson('/api/logout', {
+                    method: 'POST',
+                  });
+                  router.push('/signin');
+                } catch (error) {
+                  toast.error(
+                    'There was an error logging you out. If the error persists, please close the browser tab.'
+                  );
+                  console.error('Error logging out');
+                }
+              }}
+            />
+          </div>
         </ul>
       </div>
     </div>
