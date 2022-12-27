@@ -93,7 +93,7 @@ export default function SsrHome({ user }: InferGetServerSidePropsType<typeof get
         <div className="flex flex-row w-full gap-5 items-center justify-between px-6">
           <div className="flex flex-row items-center justify-start">
             <div className="flex flex-col items-start justify-start">
-              <h2 className="card-title">Welcome back, {user?.name}</h2>
+              <h2 className="card-title text-xl">Welcome back, {user?.name}</h2>
               <p className="text-sm">Here you can review your bills</p>
             </div>
           </div>

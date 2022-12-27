@@ -12,7 +12,7 @@ export default function Groups({ user }: InferGetServerSidePropsType<typeof getS
           <div className="h-full flex flex-row relative">
             <div className="flex flex-col w-full">
               <div className="flex flex-col items-start justify-start">
-                <h2 className="card-title">
+                <h2 className="card-title text-xl">
                   Groups
                   <div className="badge">COMING SOON</div>
                 </h2>

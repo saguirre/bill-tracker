@@ -18,7 +18,7 @@ export default function Historic({ user }: InferGetServerSidePropsType<typeof ge
           <div className="h-full flex flex-row relative">
             <div className="flex flex-col w-full">
               <div className="flex flex-col items-start justify-start">
-                <h2 className="card-title">
+                <h2 className="card-title text-xl">
                   Historic Data
                   <div className="badge">NEW</div>
                 </h2>
