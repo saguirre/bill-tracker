@@ -242,7 +242,7 @@ export const AddBillModal: React.FC<AddBillModalProps> = ({ userId, bills, mutat
                   />
                 </label>
               </div>
-              <div className='flex flex-row items-center justify-end gap-2'>
+              <div className="flex flex-row items-center justify-end gap-2">
                 <label htmlFor="add-bill-modal" className="btn btn-ghost rounded-xl">
                   Cancel
                 </label>

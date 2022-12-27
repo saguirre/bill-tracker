@@ -20,6 +20,7 @@ interface NavbarProps {
 }
 export const Navbar: React.FC<NavbarProps> = ({ showSearch, user, scrolling, search }) => {
   const router = useRouter();
+  const notificationLabelRef = useRef<HTMLLabelElement>(null);
   const commandPlusF = useRef<HTMLInputElement>(null);
   const [channel, setChannel] = useState<Ably.Types.RealtimeChannelPromise | null>(null);
   const { notifications, mutateNotifications } = useNotifications(user);
@@ -90,7 +91,7 @@ export const Navbar: React.FC<NavbarProps> = ({ showSearch, user, scrolling, sea
       <div className="flex flex-row items-center justify-end">
         <ThemeChanger />
         <div className="dropdown dropdown-end">
-          <label tabIndex={0} className="btn btn-ghost btn-circle mr-3">
+          <label ref={notificationLabelRef} tabIndex={0} className="btn btn-ghost btn-circle mr-3">
             <div className="indicator">
               <BellIcon className="h-6 w-6" />
               {notifications && notifications?.filter((notification) => !notification.read)?.length > 0 && (
@@ -140,8 +141,7 @@ export const Navbar: React.FC<NavbarProps> = ({ showSearch, user, scrolling, sea
                     <div className="flex flex-row items-center gap-1.5">
                       <button
                         onClick={(e) => {
-                          e.stopPropagation();
-                          e.preventDefault();
+                          notificationLabelRef?.current?.focus();
                           markNotificationAsRead(notification.id);
                         }}
                         className="btn btn-sm btn-outline btn-primary w-fit"
@@ -150,8 +150,7 @@ export const Navbar: React.FC<NavbarProps> = ({ showSearch, user, scrolling, sea
                       </button>
                       <button
                         onClick={(e) => {
-                          e.stopPropagation();
-                          e.preventDefault();
+                          notificationLabelRef?.current?.focus();
                           deleteNotification(notification.id);
                         }}
                         className="btn btn-sm btn-outline btn-error w-fit"

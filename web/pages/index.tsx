@@ -38,7 +38,7 @@ export default function SsrHome({ user }: InferGetServerSidePropsType<typeof get
       });
       if (response.status === 200) {
         toast.success('Bill deleted successfully!');
-        mutateBills();
+        mutateBills(bills?.filter((b) => b.id !== bill.id));
       }
     } catch (error) {
       console.error(error);
