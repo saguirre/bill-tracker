@@ -76,15 +76,15 @@ export default function SsrHome({ user }: InferGetServerSidePropsType<typeof get
         setFilterableBills(filteredBills);
       }}
     >
-      <div className="flex flex-col items-start px-12">
-        <div className="flex flex-row mt-6 mb-2 w-full gap-5 items-center justify-between px-5">
+      <div className="flex flex-col items-center px-12">
+        <div className="flex flex-row w-full gap-5 items-center justify-between px-6">
           <div className="flex flex-row items-center justify-start">
-            <div className="flex flex-col items-start justify-center">
-              <div className="text-2xl font-semibold">Welcome back, {user?.name}</div>
-              <div className="text-sm text-base-content">Here you can review your bills</div>
+            <div className="flex flex-col items-start justify-start">
+              <h2 className="card-title">Welcome back, {user?.name}</h2>
+              <p className="text-sm">Here you can review your bills</p>
             </div>
           </div>
-          <div className="flex flex-col gap-1.5">
+          <div className="flex flex-col items-center gap-1.5">
             <label
               ref={addBillRef}
               htmlFor="add-bill-modal"

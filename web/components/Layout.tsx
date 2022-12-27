@@ -1,4 +1,4 @@
-import { BanknotesIcon, ChartPieIcon, InboxIcon } from '@heroicons/react/24/outline';
+import { BanknotesIcon, ChartPieIcon, InboxIcon, UserGroupIcon } from '@heroicons/react/24/outline';
 import { useRouter } from 'next/router';
 import { SidebarItem } from './common/SidebarItem';
 import { Navbar } from './common/Navbar';
@@ -44,6 +44,13 @@ export const Layout: React.FC<LayoutProps> = ({ showSearch, user, children, sear
             icon={InboxIcon}
             onClick={() => {
               router.push('/');
+            }}
+          />
+          <SidebarItem
+            iconClassName="h-5 w-5"
+            icon={UserGroupIcon}
+            onClick={() => {
+              router.push('/groups');
             }}
           />
           <SidebarItem
