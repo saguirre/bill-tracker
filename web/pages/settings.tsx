@@ -44,8 +44,8 @@ export default function Settings({ user }: InferGetServerSidePropsType<typeof ge
               <div className="divider my-1"></div>
               <div className="flex flex-col gap-6 h-full">
                 <div className="flex flex-col gap-3 justify-between h-full">
-                  <div className="flex flex-col gap-3 mt-3 w-full max-w-sm">
-                    <div className="flex flex-col gap-3 w-full max-w-sm">
+                  <div className="flex flex-col gap-3 mt-3 w-full max-w-lg">
+                    <div className="flex flex-col gap-3 w-full">
                       <span className="text-lg font-semibold">Notifications</span>
                       <div className="divider -mt-3 -mb-1 w-full"></div>
                       <div className="text-base font-semibold flex flex-row items-center justify-between gap-3">
@@ -103,7 +103,7 @@ export default function Settings({ user }: InferGetServerSidePropsType<typeof ge
                         You can change your notification preferences at any time.
                       </p>
                     </div>
-                    <div className="flex flex-col gap-3 mt-3 w-full max-w-sm">
+                    <div className="flex flex-col gap-3 mt-3 w-full max-w-lg">
                       <span className="text-lg font-semibold">Usage statistics</span>
                       <div className="divider -mt-3 -mb-1 w-full"></div>
                       <div className="text-base font-semibold flex flex-row items-center justify-between gap-3">
