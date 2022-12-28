@@ -1,4 +1,3 @@
-import { TrashIcon } from '@heroicons/react/24/outline';
 import { withIronSessionSsr } from 'iron-session/next';
 import { InferGetServerSidePropsType } from 'next';
 import { useTheme } from 'next-themes';
@@ -10,11 +9,28 @@ import { getCorrespondingThemeImage } from '../utils/get-page-image-by-theme';
 
 export default function Settings({ user }: InferGetServerSidePropsType<typeof getServerSideProps>) {
   const { theme } = useTheme();
-  const [notifications, setNotifications] = useState<boolean>(true);
-  const [inAppNotifications, setInAppNotifications] = useState<boolean>(true);
-  const [emailNotifications, setEmailNotifications] = useState<boolean>(true);
-  const [smsNotifications, setSmsNotifications] = useState<boolean>(true);
-  const [usageStatistics, setUsageStatistics] = useState<boolean>(true);
+  const [notifications, setNotifications] = useState<boolean | undefined>(user?.notifications);
+  const [inAppNotifications, setInAppNotifications] = useState<boolean | undefined>(user?.inAppNotifications);
+  const [emailNotifications, setEmailNotifications] = useState<boolean | undefined>(user?.emailNotifications);
+  const [smsNotifications, setSmsNotifications] = useState<boolean | undefined>(user?.smsNotifications);
+  const [usageStatistics, setUsageStatistics] = useState<boolean | undefined>(user?.usageStatistics);
+
+  const updateSettings = async (type: 'notifications' | 'inApp' | 'email' | 'sms' | 'usage', value: boolean) => {
+    await fetch('/api/user/settings', {
+      method: 'PUT',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({
+        notifications: type === 'notifications' ? value : notifications,
+        inAppNotifications: type === 'inApp' ? value : inAppNotifications,
+        emailNotifications: type === 'email' ? value : emailNotifications,
+        smsNotifications: type === 'sms' ? value : smsNotifications,
+        usageStatistics: type === 'usage' ? value : usageStatistics,
+      }),
+    });
+  };
+
   return (
     <Layout user={user}>
       <div className="flex flex-col items-center h-full px-12 pt-6">
@@ -37,7 +53,10 @@ export default function Settings({ user }: InferGetServerSidePropsType<typeof ge
                         <input
                           type="checkbox"
                           checked={notifications}
-                          onChange={(e) => setNotifications(e.target.checked)}
+                          onChange={(e) => {
+                            updateSettings('notifications', e.target.checked);
+                            setNotifications(e.target.checked);
+                          }}
                           className="toggle toggle-primary max-w-xs"
                         />
                       </div>
@@ -47,7 +66,10 @@ export default function Settings({ user }: InferGetServerSidePropsType<typeof ge
                           type="checkbox"
                           disabled={!notifications}
                           checked={notifications && inAppNotifications}
-                          onChange={(e) => setInAppNotifications(e.target.checked)}
+                          onChange={(e) => {
+                            updateSettings('inApp', e.target.checked);
+                            setInAppNotifications(e.target.checked);
+                          }}
                           className="toggle toggle-primary max-w-xs"
                         />
                       </div>
@@ -57,7 +79,10 @@ export default function Settings({ user }: InferGetServerSidePropsType<typeof ge
                           type="checkbox"
                           disabled={!notifications}
                           checked={notifications && emailNotifications}
-                          onChange={(e) => setEmailNotifications(e.target.checked)}
+                          onChange={(e) => {
+                            updateSettings('email', e.target.checked);
+                            setEmailNotifications(e.target.checked);
+                          }}
                           className="toggle toggle-primary max-w-xs"
                         />
                       </div>
@@ -67,7 +92,10 @@ export default function Settings({ user }: InferGetServerSidePropsType<typeof ge
                           type="checkbox"
                           disabled={!notifications}
                           checked={notifications && smsNotifications}
-                          onChange={(e) => setSmsNotifications(e.target.checked)}
+                          onChange={(e) => {
+                            updateSettings('sms', e.target.checked);
+                            setSmsNotifications(e.target.checked);
+                          }}
                           className="toggle toggle-primary max-w-xs"
                         />
                       </div>
@@ -83,7 +111,10 @@ export default function Settings({ user }: InferGetServerSidePropsType<typeof ge
                         <input
                           type="checkbox"
                           checked={usageStatistics}
-                          onChange={(e) => setUsageStatistics(e.target.checked)}
+                          onChange={(e) => {
+                            updateSettings('usage', e.target.checked);
+                            setUsageStatistics(e.target.checked);
+                          }}
                           className="toggle toggle-primary max-w-xs"
                         />
                       </div>

@@ -21,20 +21,25 @@ model UserGroup {
 }
 
 model User {
-  id           Int            @id @default(autoincrement())
-  email        String         @unique
-  name         String?
-  password     String
-  phone        String?
-  countryCode  String?
-  bills        Bill[]
-  profile      Profile?
-  createdAt    DateTime       @default(now())
-  updatedAt    DateTime       @updatedAt
-  userGroup    UserGroup?     @relation(fields: [userGroupId], references: [id])
-  userGroupId  Int?
-  notification Notification[]
-  category     Category[]
+  id                 Int            @id @default(autoincrement())
+  email              String         @unique
+  name               String?
+  password           String
+  phone              String?
+  countryCode        String?
+  notifications      Boolean        @default(true)
+  inAppNotifications Boolean        @default(true)
+  emailNotifications Boolean        @default(true)
+  smsNotifications   Boolean        @default(false)
+  usageStatistics    Boolean        @default(true)
+  bills              Bill[]
+  profile            Profile?
+  createdAt          DateTime       @default(now())
+  updatedAt          DateTime       @updatedAt
+  userGroup          UserGroup?     @relation(fields: [userGroupId], references: [id])
+  userGroupId        Int?
+  notification       Notification[]
+  category           Category[]
 }
 
 model Profile {

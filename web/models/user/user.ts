@@ -5,6 +5,11 @@ export interface User {
   phone?: string;
   avatar?: string;
   isLoggedIn?: boolean;
+  notifications?: boolean;
+  inAppNotifications?: boolean;
+  emailNotifications?: boolean;
+  smsNotifications?: boolean;
+  usageStatistics?: boolean;
   countryCode?: string;
   createdAt?: Date;
   updatedAt?: Date;

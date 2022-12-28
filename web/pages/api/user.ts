@@ -7,11 +7,15 @@ export default withIronSessionApiRoute(userRoute, sessionOptions);
 
 async function userRoute(req: NextApiRequest, res: NextApiResponse<User>) {
   if (req.session.user) {
-    // Request user info
-    res.json({
-      ...req.session.user,
-      isLoggedIn: true,
-    });
+    try {
+      res.json({
+        ...req.session.user,
+        isLoggedIn: true,
+      });
+    } catch (error) {
+      console.error(error);
+      res.status(500);
+    }
   } else {
     res.json({
       isLoggedIn: false,
