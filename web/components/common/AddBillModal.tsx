@@ -197,23 +197,20 @@ export const AddBillModal: React.FC<AddBillModalProps> = ({ categories, userId, 
                   ))}
                 </select>
               </div>
-              {checked && <div className="divider my-1"></div>}
 
-              <div className="flex flex-row w-full items-center justify-end gap-3">
-                {!checked && (
-                  <div className="form-control w-32">
-                    <label className="label cursor-pointer">
-                      <input
-                        type="checkbox"
-                        id="paid"
-                        className="checkbox checkbox-sm checkbox-primary focus:ring-0 focus:outline-none"
-                        checked={checked}
-                        onChange={(e) => setChecked(e.target.checked)}
-                      />
-                      <span className="label-text text-sm font-semibold">Already Paid?</span>
-                    </label>
-                  </div>
-                )}
+              <div className="flex flex-col items-end w-full justify-end">
+                <div className="form-control">
+                  <label className="label cursor-pointer flex flex-row items-center gap-3">
+                    <input
+                      type="checkbox"
+                      id="paid"
+                      className="toggle toggle-sm toggle-primary"
+                      checked={checked}
+                      onChange={(e) => setChecked(e.target.checked)}
+                    />
+                    <span className="label-text text-sm font-semibold">Already Paid?</span>
+                  </label>
+                </div>
 
                 {checked && (
                   <div className="flex flex-row items-end gap-2 w-full">
@@ -228,16 +225,6 @@ export const AddBillModal: React.FC<AddBillModalProps> = ({ categories, userId, 
                       errors={errors}
                       {...register('paidDate')}
                     />
-                    <button
-                      className="btn btn-circle btn-ghost"
-                      onClick={(e) => {
-                        e.preventDefault();
-                        e.stopPropagation();
-                        setChecked(false);
-                      }}
-                    >
-                      <XMarkIcon className="h-6 w-6" />
-                    </button>
                   </div>
                 )}
               </div>
@@ -254,12 +241,12 @@ export const AddBillModal: React.FC<AddBillModalProps> = ({ categories, userId, 
             </div>
             <div className="modal-action flex flex-row items-center justify-between">
               <div className="form-control w-32">
-                <label className="label cursor-pointer">
-                  <span className="label-text text-sm font-semibold">Add another</span>
+                <label className="label cursor-pointer flex flex-row items-center gap-3">
+                  <span className="label-text text-sm font-semibold whitespace-nowrap">Add another</span>
                   <input
                     type="checkbox"
                     id="add-another"
-                    className="checkbox checkbox-sm checkbox-primary focus:ring-0 focus:outline-none"
+                    className="toggle toggle-sm toggle-primary"
                     checked={addAnother}
                     onChange={(e) => setAddAnother(e.target.checked)}
                   />
