@@ -51,7 +51,7 @@ export class BillController {
   @Get('/group/:id')
   async getBillsByGroupId(@Param('id') id: string): Promise<Bill[]> {
     const bills = await this.billService.bills({
-      where: { userGroupId: Number(id) },
+      where: { groupId: Number(id) },
     });
     return bills;
   }
@@ -64,7 +64,7 @@ export class BillController {
     @Param('id') id: string,
   ): Promise<Bill[]> {
     const bills = await this.billService.bills({
-      where: { userGroupId: Number(groupId), userId: Number(id) },
+      where: { groupId: Number(groupId), userId: Number(id) },
     });
     return bills;
   }
@@ -109,7 +109,7 @@ export class BillController {
     const createdBill = await this.billService.createBill({
       ...bill,
       user: { connect: { id: Number(id) } },
-      userGroup: { connect: { id: Number(id) } },
+      group: { connect: { id: Number(id) } },
     });
     return createdBill;
   }

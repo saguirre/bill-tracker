@@ -10,13 +10,15 @@ datasource db {
   url      = env("DATABASE_URL")
 }
 
-model UserGroup {
+model Group {
   id           Int            @id @default(autoincrement())
   name         String
   createdAt    DateTime       @default(now())
   updatedAt    DateTime       @updatedAt
   bills        Bill[]
-  members      User[]
+  members      User[]         @relation(name: "members")
+  admin        User           @relation(name: "admin", fields: [adminId], references: [id])
+  adminId      Int
   notification Notification[]
 }
 
@@ -36,10 +38,11 @@ model User {
   profile            Profile?
   createdAt          DateTime       @default(now())
   updatedAt          DateTime       @updatedAt
-  userGroup          UserGroup?     @relation(fields: [userGroupId], references: [id])
-  userGroupId        Int?
+  group              Group?         @relation(name: "members", fields: [groupId], references: [id])
+  groupId            Int?
   notification       Notification[]
   category           Category[]
+  groups             Group[]        @relation(name: "admin")
 }
 
 model Profile {
@@ -50,21 +53,21 @@ model Profile {
 }
 
 model Bill {
-  id          Int        @id @default(autoincrement())
-  title       String
-  amount      Float
-  paid        Boolean    @default(false)
-  user        User       @relation(fields: [userId], references: [id])
-  userId      Int
-  dueDate     DateTime
-  paidDate    DateTime?
-  createdAt   DateTime   @default(now())
-  updatedAt   DateTime   @updatedAt
-  file        File[]
-  category    Category?  @relation(fields: [categoryId], references: [id])
-  categoryId  Int?
-  userGroup   UserGroup? @relation(fields: [userGroupId], references: [id])
-  userGroupId Int?
+  id         Int       @id @default(autoincrement())
+  title      String
+  amount     Float
+  paid       Boolean   @default(false)
+  user       User      @relation(fields: [userId], references: [id])
+  userId     Int
+  dueDate    DateTime
+  paidDate   DateTime?
+  createdAt  DateTime  @default(now())
+  updatedAt  DateTime  @updatedAt
+  file       File[]
+  category   Category? @relation(fields: [categoryId], references: [id])
+  categoryId Int?
+  group      Group?    @relation(fields: [groupId], references: [id])
+  groupId    Int?
 }
 
 model BaseCategory {
@@ -95,15 +98,15 @@ model File {
 }
 
 model Notification {
-  id        Int        @id @default(autoincrement())
+  id        Int      @id @default(autoincrement())
   title     String
   message   String
-  read      Boolean    @default(false)
-  deleted   Boolean    @default(false)
-  createdAt DateTime   @default(now())
-  updatedAt DateTime   @updatedAt
-  group     UserGroup? @relation(fields: [groupId], references: [id])
+  read      Boolean  @default(false)
+  deleted   Boolean  @default(false)
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  group     Group?   @relation(fields: [groupId], references: [id])
   groupId   Int?
-  user      User       @relation(fields: [userId], references: [id])
+  user      User     @relation(fields: [userId], references: [id])
   userId    Int
 }

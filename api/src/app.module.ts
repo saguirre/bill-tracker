@@ -6,13 +6,13 @@ import { PrismaService } from './prisma.service';
 import { AuthModule } from './auth/auth.module';
 import { UserModule } from './user/user.module';
 import { BillModule } from './bill/bill.module';
-import { UserGroupModule } from './user-group/user-group.module';
 import { AuthController } from './auth.controller';
 import { UserService } from './user/user.service';
 import { AuthService } from './auth/auth.service';
 import { NotificationModule } from './notification/notification.module';
 import { HistoricModule } from './historic/historic.module';
 import { CategoryModule } from './category/category.module';
+import { GroupModule } from './group/group.module';
 
 @Module({
   imports: [
@@ -23,10 +23,10 @@ import { CategoryModule } from './category/category.module';
     AuthModule,
     UserModule,
     BillModule,
-    UserGroupModule,
     NotificationModule,
     HistoricModule,
     CategoryModule,
+    GroupModule,
   ],
   controllers: [AuthController],
   providers: [PrismaService, UserService, AuthService],
