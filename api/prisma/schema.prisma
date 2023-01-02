@@ -20,6 +20,16 @@ model Group {
   admin        User           @relation(name: "admin", fields: [adminId], references: [id])
   adminId      Int
   notification Notification[]
+  groupInvite  GroupInvite[]
+}
+
+model GroupInvite {
+  id        Int      @id @default(autoincrement())
+  email     String
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  group     Group    @relation(fields: [groupId], references: [id])
+  groupId   Int
 }
 
 model User {

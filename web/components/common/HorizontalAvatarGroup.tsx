@@ -1,8 +1,9 @@
+import { Member } from '../../models/group/member';
 import { User } from '../../models/user/user';
 
 interface HorizontalAvatarGroupProps {
   admin?: User;
-  members?: { id: number; name: string; email: string }[];
+  members?: Member[];
   maxAvatars?: number;
   showCount?: boolean;
 }

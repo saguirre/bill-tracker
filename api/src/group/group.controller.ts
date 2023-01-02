@@ -9,7 +9,7 @@ import {
   UseGuards,
 } from '@nestjs/common';
 import { ApiCreatedResponse, ApiOkResponse } from '@nestjs/swagger';
-import { Group } from '@prisma/client';
+import { Group, GroupInvite } from '@prisma/client';
 import { JwtAuthGuard } from 'src/auth/jwt-auth.guard';
 import { CreateGroupEntity } from './entities/create-group.entity';
 import { GroupEntity } from './entities/group.entity';
@@ -33,7 +33,12 @@ export class GroupController {
   @Get('/user/:id')
   async getGroupsByUserId(@Param('id') id: string): Promise<Group[]> {
     const groups = await this.groupService.groups({
-      where: { members: { some: { id: Number(id) } } },
+      where: {
+        OR: {
+          members: { some: { id: Number(id) } },
+          admin: { id: Number(id) },
+        },
+      },
     });
     return groups;
   }
@@ -42,8 +47,11 @@ export class GroupController {
   @ApiCreatedResponse({ type: GroupEntity })
   @Post()
   async createGroup(@Body() group: CreateGroupEntity): Promise<Group> {
+    const { adminId, ...rest } = group;
     const createdGroup = await this.groupService.createGroup({
-      ...group,
+      ...rest,
+      admin: { connect: { id: Number(adminId) } },
+      members: { connect: { id: Number(adminId) } },
     });
     return createdGroup;
   }
@@ -60,6 +68,34 @@ export class GroupController {
       data: group,
     });
     return updatedGroup;
+  }
+
+  @UseGuards(JwtAuthGuard)
+  @ApiCreatedResponse({ type: GroupEntity })
+  @Post('/:id/members')
+  async addGroupInvite(
+    @Param('id') id: string,
+    @Body() members: { email: string }[],
+  ): Promise<Group> {
+    const group = await this.groupService.createGroupInvitations({
+      groupId: Number(id),
+      emails: members,
+    });
+    return group;
+  }
+
+  @UseGuards(JwtAuthGuard)
+  @ApiOkResponse({ type: GroupEntity })
+  @Put('/:id/members')
+  async acceptGroupInvite(
+    @Param('id') id: string,
+    @Body() member: { email: string },
+  ): Promise<Group> {
+    const group = await this.groupService.acceptGroupInvite({
+      groupId: Number(id),
+      email: member.email,
+    });
+    return group;
   }
 
   @UseGuards(JwtAuthGuard)

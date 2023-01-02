@@ -1,11 +1,10 @@
-import { ClipboardDocumentIcon, UserGroupIcon, UserPlusIcon } from '@heroicons/react/24/outline';
-import { useRef, useState } from 'react';
+import { UserGroupIcon } from '@heroicons/react/24/outline';
+import { useRef } from 'react';
 import { SubmitHandler, useForm } from 'react-hook-form';
 import { toast } from 'react-toastify';
 import { useKeyPress } from '../../hooks/useKeyPress.hook';
 import fetchJson from '../../lib/fetchJson';
 import { Group } from '../../models/group/group';
-import { User } from '../../models/user/user';
 import { FormInput } from './FormInput';
 import { Spinner } from './Spinner';
 
@@ -43,8 +42,9 @@ export const AddGroupModal: React.FC<AddGroupModalProps> = ({ userId, groups, mu
 
   const onSubmit: SubmitHandler<FormValues> = async (data: FormValues) => {
     try {
-      const newGroup: Group = {
+      const newGroup = {
         ...data,
+        adminId: userId,
       };
 
       mutateGroups([...(groups || []), { id: (groups?.length || 0) + 1, ...newGroup }]);
@@ -57,7 +57,7 @@ export const AddGroupModal: React.FC<AddGroupModalProps> = ({ userId, groups, mu
       if (groupResponse) {
         mutateGroups([
           ...(groups || [])?.map((group: Group) => {
-            if (group.id === newGroup.id) {
+            if (group.name === newGroup.name) {
               return groupResponse;
             }
             return group;
@@ -110,7 +110,7 @@ export const AddGroupModal: React.FC<AddGroupModalProps> = ({ userId, groups, mu
               />
             </div>
             <div className="modal-action flex flex-row items-center justify-end">
-              <label htmlFor="add-category-modal" className="btn btn-ghost rounded-xl">
+              <label htmlFor="add-group-modal" className="btn btn-ghost rounded-xl">
                 Cancel
               </label>
               <button className="btn btn-primary rounded-xl">

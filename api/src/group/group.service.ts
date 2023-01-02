@@ -1,5 +1,5 @@
 import { Injectable } from '@nestjs/common';
-import { Group, Prisma } from '@prisma/client';
+import { Group, GroupInvite, Prisma } from '@prisma/client';
 import { PrismaService } from 'src/prisma.service';
 
 @Injectable()
@@ -48,6 +48,7 @@ export class GroupService {
             name: true,
           },
         },
+        groupInvite: true,
         bills: true,
       },
     });
@@ -67,6 +68,98 @@ export class GroupService {
         bills: true,
       },
     });
+  }
+
+  async createGroupInvitations(params: {
+    groupId: number;
+    emails: { email: string }[];
+  }): Promise<Group> {
+    const { groupId, emails } = params;
+    const group = await this.prisma.group.update({
+      where: {
+        id: groupId,
+      },
+      data: {
+        groupInvite: {
+          create: emails.map((obj) => ({
+            email: obj.email,
+          })),
+        },
+      },
+    });
+
+    return group;
+  }
+
+  async getPendingInvites(params: { groupId: number }): Promise<GroupInvite[]> {
+    const { groupId } = params;
+    const groupInvites = await this.prisma.groupInvite.findMany({
+      where: {
+        id: groupId,
+      },
+    });
+
+    return groupInvites;
+  }
+
+  async generateGroupInviteLink(params: {
+    groupId: number;
+    email: string;
+  }): Promise<string> {
+    const { groupId, email } = params;
+    const groupInvite = await this.prisma.groupInvite.create({
+      data: {
+        email,
+        group: {
+          connect: {
+            id: groupId,
+          },
+        },
+      },
+      include: {
+        group: true,
+      },
+    });
+
+    return `${process.env.CLIENT_URL}/group/${groupInvite.group.id}/invite/${groupInvite.id}`;
+  }
+
+  async acceptGroupInvite(params: {
+    groupId: number;
+    email: string;
+  }): Promise<Group> {
+    const { groupId, email } = params;
+    const group = await this.prisma.group.update({
+      where: {
+        id: groupId,
+      },
+      data: {
+        members: {
+          connect: {
+            email,
+          },
+        },
+      },
+      include: {
+        members: {
+          select: {
+            id: true,
+            email: true,
+            name: true,
+          },
+        },
+        bills: true,
+      },
+    });
+
+    await this.prisma.groupInvite.deleteMany({
+      where: {
+        email,
+        groupId,
+      },
+    });
+
+    return group;
   }
 
   async updateGroup(params: {

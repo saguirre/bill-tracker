@@ -1,9 +1,14 @@
+import { Bill } from '../bill/bill';
 import { User } from '../user/user';
+import { GroupInvite } from './group-invite';
+import { Member } from './member';
 
 export interface Group {
   id?: number;
   name?: string;
-  users?: User[];
+  members?: Member[];
+  bills?: Bill[];
+  groupInvite?: GroupInvite[];
   admin?: User;
   createdAt?: Date;
   updatedAt?: Date;

@@ -3,33 +3,32 @@ import { NextApiRequest, NextApiResponse } from 'next';
 import fetchJson from '../../../../lib/fetchJson';
 import { getServiceUrl } from '../../../../lib/httpHelpers';
 import { sessionOptions } from '../../../../lib/session';
-import { Group } from '../../../../models/group/group';
-import { User } from '../../../../models/user/user';
 
-export default withIronSessionApiRoute(userGroupHandler, sessionOptions);
+export default withIronSessionApiRoute(individualGroupHandler, sessionOptions);
 
-async function userGroupHandler(req: NextApiRequest, res: NextApiResponse) {
+async function individualGroupHandler(req: NextApiRequest, res: NextApiResponse) {
   try {
-    const { method } = req;
+    const { query, body, method } = req;
 
     switch (method) {
-      case 'GET':
-        // Get user groups
+      case 'POST':
+        // Add members
         const user = req.session.user;
 
         if (!user || user.isLoggedIn === false) {
           res.status(401).end();
           return;
         }
-        const userGroups: Group[] = await fetchJson(getServiceUrl(`group/user/${req.query.id}`), {
-          method: 'GET',
+        await fetchJson(getServiceUrl(`group/${query.groupId}/members`), {
+          method: 'POST',
           headers: { Authorization: `Bearer ${req.session.accessToken}`, 'Content-Type': 'application/json' },
+          body: JSON.stringify(body),
         });
 
-        res.status(200).json(userGroups as User);
+        res.status(201).json({ success: true });
         break;
       default:
-        res.setHeader('Allow', ['GET']);
+        res.setHeader('Allow', ['POST']);
         res.status(405).end(`Method ${method} Not Allowed`);
     }
   } catch (error: any) {

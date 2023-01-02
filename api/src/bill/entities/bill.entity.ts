@@ -23,5 +23,5 @@ export class BillEntity implements Bill {
   @ApiProperty()
   updatedAt: Date;
   @ApiProperty()
-  userGroupId: number;
+  groupId: number;
 }

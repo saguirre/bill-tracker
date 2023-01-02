@@ -1,11 +1,11 @@
 import { ApiProperty } from '@nestjs/swagger';
 import { Prisma } from '@prisma/client';
 
-export class CreateGroupEntity implements Prisma.GroupCreateInput {
+export class CreateGroupEntity implements Partial<Prisma.GroupCreateInput> {
   @ApiProperty()
   name: string;
   @ApiProperty()
-  admin: Prisma.UserCreateNestedOneWithoutGroupsInput;
-  @ApiProperty()
-  members: Prisma.UserCreateNestedManyWithoutGroupInput;
+  adminId: number;
+  @ApiProperty({ required: false })
+  members?: Prisma.UserCreateNestedManyWithoutGroupInput;
 }

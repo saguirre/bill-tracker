@@ -27,7 +27,7 @@ export interface FormInputProps {
 export const FormInput: React.FC<FormInputProps> = forwardRef<HTMLInputElement, FormInputProps>(
   ({ labelText, htmlFor, errors, ...props }, ref) => {
     return (
-      <div className="flex flex-col space-y-0.5 w-full">
+      <div className="flex flex-col space-y-1 w-full">
         <label htmlFor={htmlFor} className="flex flex-row items-center text-sm font-semibold">
           {labelText}
           {props.required && <span className="block text-sm align-super text-secondary">*</span>}
