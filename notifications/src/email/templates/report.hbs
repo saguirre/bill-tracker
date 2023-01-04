@@ -1,0 +1,40 @@
+{{#each context}}
+  <b>Fecha:</b>
+  {{month}}
+  <br />
+  <br />
+  <table>
+    <thead>
+      <th style='padding-right: 10px;'>Nombre de Gasto</th>
+      <th style='padding-right: 10px;'>Nombre de Categoría</th>
+      <th style='padding-right: 10px;'>Monto</th>
+      <th style='padding-right: 10px;'>Fecha</th>
+    </thead>
+    <tbody>
+      {{#each expenses as |expense|}}
+        <tr>
+          <td style='text-align: center;'>
+            {{name}}
+          </td>
+          <td style='text-align: center;'>
+            {{categoryName}}
+          </td>
+          <td style='text-align: center;'>
+            {{amount}}
+          </td>
+          <td style='text-align: center;'>
+            {{addedDate}}
+          </td>
+        </tr>
+      {{/each}}
+    </tbody>
+  </table>
+  <br />
+  <div style='justify-content: flex-end;'>
+    <b>Total:</b>
+    {{total}}
+  </div>
+  <br />
+  <br />
+  <br />
+{{/each}}

@@ -1,10 +1,18 @@
+import { InjectQueue } from '@nestjs/bull';
 import { Injectable } from '@nestjs/common';
 import { Group, GroupInvite, Prisma } from '@prisma/client';
+import { Queue } from 'bull';
 import { PrismaService } from 'src/prisma.service';
+import * as dotenv from 'dotenv';
+dotenv.config();
 
 @Injectable()
 export class GroupService {
-  constructor(private prisma: PrismaService) {}
+  constructor(
+    private prisma: PrismaService,
+    @InjectQueue(process.env.INVITATION_QUEUE as string)
+    private readonly invitationQueue: Queue,
+  ) {}
 
   async group(
     groupWhereUniqueInput: Prisma.GroupWhereUniqueInput,

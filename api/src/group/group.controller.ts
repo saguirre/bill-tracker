@@ -9,7 +9,7 @@ import {
   UseGuards,
 } from '@nestjs/common';
 import { ApiCreatedResponse, ApiOkResponse } from '@nestjs/swagger';
-import { Group, GroupInvite } from '@prisma/client';
+import { Group } from '@prisma/client';
 import { JwtAuthGuard } from 'src/auth/jwt-auth.guard';
 import { CreateGroupEntity } from './entities/create-group.entity';
 import { GroupEntity } from './entities/group.entity';
