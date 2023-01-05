@@ -8,7 +8,7 @@ services:
     ports:
       - '5434:5432'
     environment:
-      - POSTGRES_DB=expense_tracker
+      - POSTGRES_DB=bill_tracker
       - POSTGRES_USER=dev
       - POSTGRES_PASSWORD=dev
 
@@ -19,7 +19,7 @@ services:
     ports:
       - '5435:5432'
     environment:
-      - POSTGRES_DB=notifications_db
+      - POSTGRES_DB=bt_notifications
       - POSTGRES_USER=dev
       - POSTGRES_PASSWORD=dev
 
