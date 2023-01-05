@@ -9,16 +9,15 @@ export default withIronSessionApiRoute(individualGroupHandler, sessionOptions);
 async function individualGroupHandler(req: NextApiRequest, res: NextApiResponse) {
   try {
     const { query, body, method } = req;
+    const user = req.session.user;
 
+    if (!user || user.isLoggedIn === false) {
+      res.status(401).end();
+      return;
+    }
     switch (method) {
       case 'POST':
         // Add members
-        const user = req.session.user;
-
-        if (!user || user.isLoggedIn === false) {
-          res.status(401).end();
-          return;
-        }
         await fetchJson(getServiceUrl(`group/${query.groupId}/members`), {
           method: 'POST',
           headers: { Authorization: `Bearer ${req.session.accessToken}`, 'Content-Type': 'application/json' },
@@ -27,8 +26,18 @@ async function individualGroupHandler(req: NextApiRequest, res: NextApiResponse)
 
         res.status(201).json({ success: true });
         break;
+      case 'PUT':
+        // Accept invitation
+        const updatedGroup = await fetchJson(getServiceUrl(`group/${query.groupId}/members`), {
+          method: 'PUT',
+          headers: { Authorization: `Bearer ${req.session.accessToken}`, 'Content-Type': 'application/json' },
+          body: JSON.stringify(body),
+        });
+
+        res.status(200).json(updatedGroup);
+        break;
       default:
-        res.setHeader('Allow', ['POST']);
+        res.setHeader('Allow', ['POST', 'PUT']);
         res.status(405).end(`Method ${method} Not Allowed`);
     }
   } catch (error: any) {

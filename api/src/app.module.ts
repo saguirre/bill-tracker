@@ -14,6 +14,8 @@ import { HistoricModule } from './historic/historic.module';
 import { CategoryModule } from './category/category.module';
 import { GroupModule } from './group/group.module';
 import { BullModule } from '@nestjs/bull';
+import * as dotenv from 'dotenv';
+dotenv.config();
 
 @Module({
   imports: [
@@ -25,14 +27,6 @@ import { BullModule } from '@nestjs/bull';
         host: process.env.REDIS_HOST,
         port: Number(process.env.REDIS_PORT),
         password: process.env.REDIS_PASSWORD,
-        tls: {
-          host: process.env.REDIS_HOST,
-          port: Number(process.env.REDIS_PORT),
-        },
-        reconnectOnError: (err) => {
-          console.log('Redis error: ', err);
-          return true;
-        },
       },
     }),
     BullModule.registerQueue({

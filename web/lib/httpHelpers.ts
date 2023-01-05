@@ -6,6 +6,10 @@ export const getServiceUrl = (completing?: string): string => {
   return `${serviceUrl}${completing?.length && `/${completing}`}`;
 };
 
+export const getClientUrl = (completing?: string): string => {
+  return `${process.env.NEXT_PUBLIC_CLIENT_URL}${completing?.length && `/${completing}`}`;
+};
+
 export const getAuthHeaders = (req?: any) => {
   let token;
   if (req) {

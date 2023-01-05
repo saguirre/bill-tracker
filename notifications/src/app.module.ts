@@ -7,7 +7,8 @@ import { EmailModule } from './email/email.module';
 import { HealthModule } from './health/health.module';
 import { InvitationModule } from './invitation/invitation.module';
 import { AppLoggerMiddleware } from './logger.middleware';
-
+import * as dotenv from 'dotenv';
+dotenv.config();
 @Module({
   imports: [
     ConfigModule.forRoot({
@@ -18,14 +19,6 @@ import { AppLoggerMiddleware } from './logger.middleware';
         host: process.env.REDIS_HOST,
         port: Number(process.env.REDIS_PORT),
         password: process.env.REDIS_PASSWORD,
-        tls: {
-          host: process.env.REDIS_HOST,
-          port: Number(process.env.REDIS_PORT),
-        },
-        reconnectOnError: (err) => {
-          console.log('Redis error: ', err);
-          return true;
-        },
       },
     }),
     BullModule.registerQueue({

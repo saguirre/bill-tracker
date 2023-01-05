@@ -3,6 +3,7 @@ import {
   Controller,
   Delete,
   Get,
+  Logger,
   Param,
   Post,
   Put,
@@ -34,10 +35,10 @@ export class GroupController {
   async getGroupsByUserId(@Param('id') id: string): Promise<Group[]> {
     const groups = await this.groupService.groups({
       where: {
-        OR: {
-          members: { some: { id: Number(id) } },
-          admin: { id: Number(id) },
-        },
+        OR: [
+          { members: { some: { id: Number(id) } } },
+          { admin: { id: Number(id) } },
+        ],
       },
     });
     return groups;

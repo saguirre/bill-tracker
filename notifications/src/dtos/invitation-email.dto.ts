@@ -4,7 +4,8 @@ import { Email } from './email.dto';
 export class InvitationEmail extends Email {
   @ApiProperty({
     description: 'Invitation Email context data',
-    example: '{ "url": "http://localhost:3000/join?token=JWT_TOKEN" }',
+    example:
+      '{ "adminName": "John Doe", "groupName": "Family", "url": "http://localhost:3000/join?token=JWT_TOKEN" }',
   })
-  context?: { url: string };
+  context?: { adminName: string; groupName: string; url: string };
 }

@@ -20,16 +20,11 @@ export class InvitationProcessor {
   async sendInvitationEmail(job: Job) {
     try {
       this.logger.debug('Start sending invitation email...');
-      Logger.log(`Queue string`, process.env.REPORT_NOTIFICATION_QUEUE as string);
-      Logger.log(`Job string`, process.env.REPORT_NOTIFICATION_JOB as string);
-      Logger.log(`Redis host`, process.env.REDIS_HOST as string);
-      Logger.log(`Redis port`, process.env.REDIS_PORT as string);
-  
       this.logger.debug(job.data);
       const model = {
         from: process.env.EMAIL_USER as string,
-        to: job.data.to,
-        subject: job.data.subject,
+        to: job.data.email,
+        subject: 'You have been invited to join a group',
         context: job.data.context,
       };
       const invitationEmail = await this.prisma.invitation.create({

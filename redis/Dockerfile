@@ -1,5 +1,4 @@
-ARG REDIS_VERSION=6.2.6
-FROM redis/redis-stack:latest
+FROM redis
 
 EXPOSE 6379
 EXPOSE 8001

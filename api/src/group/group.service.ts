@@ -1,15 +1,17 @@
 import { InjectQueue } from '@nestjs/bull';
-import { Injectable } from '@nestjs/common';
+import { Injectable, Logger } from '@nestjs/common';
 import { Group, GroupInvite, Prisma } from '@prisma/client';
 import { Queue } from 'bull';
 import { PrismaService } from 'src/prisma.service';
 import * as dotenv from 'dotenv';
+import { JwtService } from '@nestjs/jwt';
 dotenv.config();
 
 @Injectable()
 export class GroupService {
   constructor(
     private prisma: PrismaService,
+    private jwtService: JwtService,
     @InjectQueue(process.env.INVITATION_QUEUE as string)
     private readonly invitationQueue: Queue,
   ) {}
@@ -94,6 +96,34 @@ export class GroupService {
           })),
         },
       },
+      include: {
+        admin: {
+          select: {
+            name: true,
+          },
+        },
+      },
+    });
+
+    emails.forEach((obj) => {
+      const token = this.jwtService.sign({ groupId, email: obj.email });
+      const url = `${process.env.CLIENT_URL}/group/join?token=${token}`;
+
+      Logger.warn('Adding invitation to queue');
+      this.invitationQueue.add(
+        process.env.INVITATION_JOB,
+        {
+          context: {
+            url,
+            groupName: group.name,
+            adminName: group.admin.name,
+          },
+          email: obj.email,
+        },
+        {
+          delay: 1000,
+        },
+      );
     });
 
     return group;

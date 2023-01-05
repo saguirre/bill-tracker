@@ -8,14 +8,16 @@ import { useKeyPress } from '../hooks/useKeyPress.hook';
 import { AddGroupModal } from '../components/common/AddGroupModal';
 import useGroups from '../lib/useGroups';
 import { HorizontalAvatarGroup } from '../components/common/HorizontalAvatarGroup';
-import { DocumentTextIcon, PlusIcon } from '@heroicons/react/24/outline';
+import { DocumentTextIcon } from '@heroicons/react/24/outline';
 import { AddMemberModal } from '../components/common/AddMemberModal';
 import { Group } from '../models/group/group';
+import { getCorrespondingThemeImage } from '../utils/get-page-image-by-theme';
+import { useTheme } from 'next-themes';
 
 export default function Groups({ user }: InferGetServerSidePropsType<typeof getServerSideProps>) {
   const addGroupRef = useRef<HTMLLabelElement>(null);
   const { groups, mutateGroups } = useGroups(user);
-
+  const { theme } = useTheme();
   const [selectedGroup, setSelectedGroup] = useState<Group | undefined>();
 
   useKeyPress(() => {
@@ -59,47 +61,54 @@ export default function Groups({ user }: InferGetServerSidePropsType<typeof getS
           </div>
         </div>
         <div className="flex flex-col items-center justify-center p-2 w-full">
-          <div className="grid grid-cols-2 gap-4 w-full px-4 py-2">
-            {groups?.map((group) => (
-              <div
-                onClick={() => {}}
-                key={group.id}
-                className="card w-full border rounded-box cursor-pointer bg-base-100 hover:bg-base-200 hover:border-primary"
-              >
-                <div className="card-body">
-                  <div className="flex flex-row justify-between">
-                    <div className="flex flex-col">
-                      <h2 className="card-title">{group.name}</h2>
-                    </div>
-                    <div className="flex flex-row gap-3 items-center justify-between w-fit">
-                      <div className="flex flex-row gap-1 items-center justify-end badge badge-lg badge-primary badge-outline h-8">
-                        <p className="text-md font-bold">{group.bills?.length === 0 ? 'No' : group.bills?.length}</p>
-                        <span className="text-md font-bold">Bills</span>
+          {!groups || (groups.length === 0 && 
+          <div className="flex flex-col items-center justify-center gap-1.5">
+          <p className="text-sm text-base-content/60 -mb-28 mt-8">No Groups</p>
+          <img src={getCorrespondingThemeImage('no_groups', theme)} alt="No Groups" className="w-96" />
+        </div>)}
+          {groups && groups.length > 0 && (
+            <div className="grid grid-cols-2 gap-4 w-full px-4 py-2">
+              {groups?.map((group) => (
+                <div
+                  onClick={() => {}}
+                  key={group.id}
+                  className="card w-full border rounded-box cursor-pointer bg-base-100 hover:bg-base-200 hover:border-primary"
+                >
+                  <div className="card-body">
+                    <div className="flex flex-row justify-between">
+                      <div className="flex flex-col">
+                        <h2 className="card-title">{group.name}</h2>
+                      </div>
+                      <div className="flex flex-row gap-3 items-center justify-between w-fit">
+                        <div className="flex flex-row gap-1 items-center justify-end badge badge-lg badge-primary badge-outline h-8">
+                          <p className="text-md font-bold">{group.bills?.length === 0 ? 'No' : group.bills?.length}</p>
+                          <span className="text-md font-bold">Bills</span>
+                        </div>
                       </div>
                     </div>
-                  </div>
-                  <div className="divider m-0" />
-                  <div className="flex flex-row items-center justify-between w-full ">
-                    <HorizontalAvatarGroup members={group.members} maxAvatars={3} showCount />
-                    <div className="flex flex-row items-center w-fit gap-3">
-                      <div className="flex flex-row w-fit gap-1 h-6 items-center justify-end badge badge-ghost badge-outline">
-                        <DocumentTextIcon className="h-4 w-4" /> <p className="text-sm font-semibold">No Files</p>
+                    <div className="divider m-0" />
+                    <div className="flex flex-row items-center justify-between w-full ">
+                      <HorizontalAvatarGroup members={group.members} maxAvatars={3} showCount />
+                      <div className="flex flex-row items-center w-fit gap-3">
+                        <div className="flex flex-row w-fit gap-1 h-6 items-center justify-end badge badge-ghost badge-outline">
+                          <DocumentTextIcon className="h-4 w-4" /> <p className="text-sm font-semibold">No Files</p>
+                        </div>
+                        <label
+                          onClick={() => {
+                            setSelectedGroup(group);
+                          }}
+                          htmlFor="add-member-modal"
+                          className="btn btn-sm btn-secondary"
+                        >
+                          Add Member
+                        </label>
                       </div>
-                      <label
-                        onClick={() => {
-                          setSelectedGroup(group);
-                        }}
-                        htmlFor="add-member-modal"
-                        className="btn btn-sm btn-secondary"
-                      >
-                        Add Member
-                      </label>
                     </div>
                   </div>
                 </div>
-              </div>
-            ))}
-          </div>
+              ))}
+            </div>
+          )}
         </div>
       </div>
       <AddGroupModal groups={groups} mutateGroups={mutateGroups} userId={user?.id} loading={false} />
