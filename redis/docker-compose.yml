@@ -35,5 +35,7 @@ services:
       - redis:/data
 
 volumes:
+  bt_backend_data:
+  notifications_db_data:
   redis:
     driver: local
