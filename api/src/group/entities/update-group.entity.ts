@@ -7,5 +7,5 @@ export class UpdateGroupEntity implements Partial<Prisma.GroupUpdateInput> {
   @ApiProperty({ required: false })
   admin?: Prisma.UserUpdateOneRequiredWithoutGroupsNestedInput;
   @ApiProperty({ required: false })
-  members?: Prisma.UserUpdateManyWithoutGroupNestedInput;
+  members?: Prisma.UserGroupsUpdateManyWithoutGroupNestedInput;
 }

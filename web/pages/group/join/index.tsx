@@ -4,6 +4,7 @@ import jwtDecode from 'jwt-decode';
 import { InferGetServerSidePropsType } from 'next';
 import { useTheme } from 'next-themes';
 import { useRouter } from 'next/router';
+import { useEffect, useState } from 'react';
 import { Layout } from '../../../components/Layout';
 import fetchJson from '../../../lib/fetchJson';
 import { getServiceUrl } from '../../../lib/httpHelpers';
@@ -14,6 +15,10 @@ import { getCorrespondingThemeImage } from '../../../utils/get-page-image-by-the
 export default function JoinGroup({ user, groupId }: InferGetServerSidePropsType<typeof getServerSideProps>) {
   const router = useRouter();
   const { theme } = useTheme();
+  const [imagePath, setImagePath] = useState<string>('');
+  useEffect(() => {
+    setImagePath(getCorrespondingThemeImage('joined_group', theme));
+  }, []);
   return (
     <Layout user={user}>
       <div className="flex flex-col items-center h-full px-12 pt-6">
@@ -25,7 +30,7 @@ export default function JoinGroup({ user, groupId }: InferGetServerSidePropsType
                   <UserGroupIcon className="w-10" /> Group Joined!
                 </div>
               </h1>
-              <img src={getCorrespondingThemeImage('joined_group', theme)} alt="Profile" className="h-96" />
+              <img src={imagePath} alt="Joined Group" className="h-96" />
               <button className="btn btn-secondary btn-md -mt-8" onClick={() => router.push({ pathname: '/groups' })}>
                 View My Groups
               </button>

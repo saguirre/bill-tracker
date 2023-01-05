@@ -1,5 +1,7 @@
 export const getCorrespondingThemeImage = (page: string, theme?: string) => {
-  if (!theme) return `/images/${page}_light_dark.png`;
+  console.log('theme', theme)
+  console.log('page', page)
+  if (!theme) return `/images/${page}/${page}_light_dark.png`;
 
   switch (theme) {
     case 'light':

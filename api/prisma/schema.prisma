@@ -16,11 +16,20 @@ model Group {
   createdAt    DateTime       @default(now())
   updatedAt    DateTime       @updatedAt
   bills        Bill[]
-  members      User[]         @relation(name: "members")
   admin        User           @relation(name: "admin", fields: [adminId], references: [id])
   adminId      Int
   notification Notification[]
   groupInvite  GroupInvite[]
+  members      UserGroups[]
+}
+
+model UserGroups {
+  group   Group @relation(fields: [groupId], references: [id])
+  groupId Int
+  user    User  @relation(fields: [userId], references: [id])
+  userId  Int
+
+  @@id([groupId, userId])
 }
 
 model GroupInvite {
@@ -48,11 +57,10 @@ model User {
   profile            Profile?
   createdAt          DateTime       @default(now())
   updatedAt          DateTime       @updatedAt
-  group              Group?         @relation(name: "members", fields: [groupId], references: [id])
-  groupId            Int?
   notification       Notification[]
   category           Category[]
-  groups             Group[]        @relation(name: "admin")
+  groups             UserGroups[]
+  groupAdmin         Group[]        @relation(name: "admin")
 }
 
 model Profile {

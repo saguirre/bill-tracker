@@ -1,0 +1,127 @@
+---
+title: "You've been invited to join a group"
+preheader: 'Review the details below and click the button to join the group.'
+bodyClass: bg-slate-50
+---
+
+<extends src="src/layouts/main.html">
+  <block name="template">
+    <table class="w-full font-sans">
+      <tr>
+        <td align="center" class="bg-slate-50">
+          <table class="w-150 sm:w-full">
+            <tr>
+              <td class="p-12 sm:py-8 sm:px-6 text-center">
+                <a
+                  href="https://localhost:3000/"
+                  class="flex items-center justify-start gap-2 flex-shrink-0"
+                >
+                  <svg
+                    xmlns="http://www.w3.org/2000/svg"
+                    fill="none"
+                    viewBox="0 0 24 24"
+                    stroke-width="1.5"
+                    stroke="currentColor"
+                    class="h-12 w-12 text-[#6419E6]"
+                  >
+                    <path
+                      stroke-linecap="round"
+                      stroke-linejoin="round"
+                      d="M2.25 18.75a60.07 60.07 0 0115.797 2.101c.727.198 1.453-.342 1.453-1.096V18.75M3.75 4.5v.75A.75.75 0 013 6h-.75m0 0v-.375c0-.621.504-1.125 1.125-1.125H20.25M2.25 6v9m18-10.5v.75c0 .414.336.75.75.75h.75m-1.5-1.5h.375c.621 0 1.125.504 1.125 1.125v9.75c0 .621-.504 1.125-1.125 1.125h-.375m1.5-1.5H21a.75.75 0 00-.75.75v.75m0 0H3.75m0 0h-.375a1.125 1.125 0 01-1.125-1.125V15m1.5 1.5v-.75A.75.75 0 003 15h-.75M15 10.5a3 3 0 11-6 0 3 3 0 016 0zm3 0h.008v.008H18V10.5zm-12 0h.008v.008H6V10.5z"
+                    />
+                  </svg>
+                </a>
+              </td>
+            </tr>
+            <tr>
+              <td align="center" class="sm:px-6">
+                <table class="w-full">
+                  <tr>
+                    <td
+                      class="p-12 sm:px-6 bg-white text-slate-700 text-base text-left leading-6 rounded shadow-sm"
+                    >
+                      <p>Hello,</p>
+                      <p
+                        class="text-2xl sm:leading-8 text-black font-semibold m-0 mb-6"
+                      >
+                        @{{adminName}} has invited you to join the
+                        @{{groupName}} group.
+                      </p>
+                      <p class="m-0 mb-6">
+                        In order to join, please click the button bellow:
+                      </p>
+                      <div class="leading-full">
+                        <a
+                          href="@{{url}}"
+                          class="inline-block py-3.5 px-4 rounded text-base font-semibold text-center [text-decoration:none] text-white bg-[#6419E6] hover:bg-[#6419E6]/80"
+                        >
+                          <outlook>
+                            <i
+                              class="tracking-6 -mso-font-width-full mso-text-raise-7.5"
+                              >&#8202;</i
+                            >
+                          </outlook>
+                          <span class="mso-text-raise-4"
+                            >Join Group &rarr;</span
+                          >
+                          <outlook>
+                            <i class="tracking-6 -mso-font-width-full"
+                              >&#8202;</i
+                            >
+                          </outlook>
+                        </a>
+                      </div>
+                      <table class="w-full" role="separator">
+                        <tr>
+                          <td class="py-8">
+                            <div class="bg-slate-200 h-px leading-px">
+                              &zwnj;
+                            </div>
+                          </td>
+                        </tr>
+                      </table>
+                      <p class="m-0 mb-4 text-sm">
+                        If you didn't sign up for Bill Tracker or don't know
+                        @{{adminName}}, you can safely ignore this email. If you
+                        wish to sign up for Bill Tracker, please visit our
+                        website!
+                      </p>
+                      <p class="m-0 mb-4 text-sm">
+                        Thanks, <br />The Bill Tracker Team
+                      </p>
+                    </td>
+                  </tr>
+                  <tr role="separator">
+                    <td class="h-12"></td>
+                  </tr>
+                  <tr>
+                    <td class="text-center text-slate-600 text-xs px-6">
+                      <p class="m-0 mb-4 uppercase">Bill Tracker</p>
+                      <p class="m-0 italic">
+                        Let's get your bills straightened out!
+                      </p>
+                      <p class="cursor-default">
+                        <a
+                          href="https://localhost:3000/"
+                          class="text-indigo-700 [text-decoration:none] hover:[text-decoration:underline]"
+                          >Website</a
+                        >
+                        &bull;
+                        <a
+                          href="https://github.com/saguirre/bill-tracker"
+                          class="text-indigo-700 [text-decoration:none] hover:[text-decoration:underline]"
+                          >Github</a
+                        >
+                        &bull;
+                      </p>
+                    </td>
+                  </tr>
+                </table>
+              </td>
+            </tr>
+          </table>
+        </td>
+      </tr>
+    </table>
+  </block>
+</extends>

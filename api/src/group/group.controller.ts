@@ -3,7 +3,6 @@ import {
   Controller,
   Delete,
   Get,
-  Logger,
   Param,
   Post,
   Put,
@@ -36,8 +35,8 @@ export class GroupController {
     const groups = await this.groupService.groups({
       where: {
         OR: [
-          { members: { some: { id: Number(id) } } },
           { admin: { id: Number(id) } },
+          { members: { some: { userId: { equals: Number(id) } } } },
         ],
       },
     });
@@ -52,7 +51,6 @@ export class GroupController {
     const createdGroup = await this.groupService.createGroup({
       ...rest,
       admin: { connect: { id: Number(adminId) } },
-      members: { connect: { id: Number(adminId) } },
     });
     return createdGroup;
   }

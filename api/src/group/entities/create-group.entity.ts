@@ -7,5 +7,5 @@ export class CreateGroupEntity implements Partial<Prisma.GroupCreateInput> {
   @ApiProperty()
   adminId: number;
   @ApiProperty({ required: false })
-  members?: Prisma.UserCreateNestedManyWithoutGroupInput;
+  members?: Prisma.UserGroupsCreateNestedManyWithoutGroupInput;
 }

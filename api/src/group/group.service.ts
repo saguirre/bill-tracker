@@ -24,9 +24,13 @@ export class GroupService {
       include: {
         members: {
           select: {
-            id: true,
-            email: true,
-            name: true,
+            user: {
+              select: {
+                id: true,
+                email: true,
+                name: true,
+              },
+            },
           },
         },
         bills: true,
@@ -53,9 +57,13 @@ export class GroupService {
       include: {
         members: {
           select: {
-            id: true,
-            email: true,
-            name: true,
+            user: {
+              select: {
+                id: true,
+                email: true,
+                name: true,
+              },
+            },
           },
         },
         groupInvite: true,
@@ -65,19 +73,46 @@ export class GroupService {
   }
 
   async createGroup(data: Prisma.GroupCreateInput): Promise<Group> {
-    return this.prisma.group.create({
+    const createdGroup = await this.prisma.group.create({
       data,
+    });
+
+    await this.prisma.userGroups.create({
+      data: {
+        userId: data.admin.connect.id,
+        groupId: createdGroup.id,
+      },
+    });
+
+    const updatedGroup = await this.prisma.group.update({
+      where: {
+        id: createdGroup.id,
+      },
+      data: {
+        members: {
+          connect: {
+            groupId_userId: {
+              groupId: createdGroup.id,
+              userId: data.admin.connect.id,
+            },
+          },
+        },
+      },
       include: {
         members: {
           select: {
-            id: true,
-            email: true,
-            name: true,
+            user: {
+              select: {
+                id: true,
+                email: true,
+                name: true,
+              },
+            },
           },
         },
-        bills: true,
       },
     });
+    return updatedGroup;
   }
 
   async createGroupInvitations(params: {
@@ -167,6 +202,19 @@ export class GroupService {
     email: string;
   }): Promise<Group> {
     const { groupId, email } = params;
+    const user = await this.prisma.user.findUnique({
+      where: {
+        email,
+      },
+    });
+
+    await this.prisma.userGroups.create({
+      data: {
+        userId: user.id,
+        groupId,
+      },
+    });
+
     const group = await this.prisma.group.update({
       where: {
         id: groupId,
@@ -174,16 +222,23 @@ export class GroupService {
       data: {
         members: {
           connect: {
-            email,
+            groupId_userId: {
+              groupId,
+              userId: user.id,
+            },
           },
         },
       },
       include: {
         members: {
           select: {
-            id: true,
-            email: true,
-            name: true,
+            user: {
+              select: {
+                id: true,
+                email: true,
+                name: true,
+              },
+            },
           },
         },
         bills: true,
@@ -211,9 +266,13 @@ export class GroupService {
       include: {
         members: {
           select: {
-            id: true,
-            email: true,
-            name: true,
+            user: {
+              select: {
+                id: true,
+                email: true,
+                name: true,
+              },
+            },
           },
         },
         bills: true,
@@ -227,9 +286,13 @@ export class GroupService {
       include: {
         members: {
           select: {
-            id: true,
-            email: true,
-            name: true,
+            user: {
+              select: {
+                id: true,
+                email: true,
+                name: true,
+              },
+            },
           },
         },
         bills: true,
