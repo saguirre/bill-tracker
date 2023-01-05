@@ -1,6 +1,28 @@
 version: '3.7'
 
 services:
+  bt-backend-db:
+    image: postgres
+    volumes:
+      - bt_backend_data:/var/lib/postgresql/data/
+    ports:
+      - '5434:5432'
+    environment:
+      - POSTGRES_DB=expense_tracker
+      - POSTGRES_USER=dev
+      - POSTGRES_PASSWORD=dev
+
+  bt-notifications-db:
+    image: postgres
+    volumes:
+      - notifications_db_data:/var/lib/postgresql/data/
+    ports:
+      - '5435:5432'
+    environment:
+      - POSTGRES_DB=notifications_db
+      - POSTGRES_USER=dev
+      - POSTGRES_PASSWORD=dev
+
   redis:
     image: redis:6.2-alpine
     restart: always
