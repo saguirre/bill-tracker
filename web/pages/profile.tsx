@@ -2,8 +2,10 @@ import { TrashIcon } from '@heroicons/react/24/outline';
 import { withIronSessionSsr } from 'iron-session/next';
 import { InferGetServerSidePropsType } from 'next';
 import { useTheme } from 'next-themes';
+import { UploadAvatarModal } from '../components/common/UploadAvatarModal';
 import { Layout } from '../components/Layout';
 import { sessionOptions } from '../lib/session';
+import useUser from '../lib/useUser';
 import { User } from '../models/user/user';
 import { getCorrespondingThemeImage } from '../utils/get-page-image-by-theme';
 
@@ -38,7 +40,7 @@ export default function Profile({ user }: InferGetServerSidePropsType<typeof get
                       )}
                     </div>
                     <div className="flex flex-col justify-center gap-2 h-full ml-4">
-                      <label className="btn btn-primary btn-sm">Change Photo</label>
+                      <label className="btn btn-primary btn-sm" htmlFor='upload-avatar-modal'>Change Photo</label>
                       <label className="btn btn-error btn-sm btn-disabled flex flex-row items-center justify-start gap-2">
                         <TrashIcon className="h-5 w-5" /> Remove Photo
                       </label>
@@ -73,6 +75,7 @@ export default function Profile({ user }: InferGetServerSidePropsType<typeof get
           </div>
         </div>
       </div>
+      <UploadAvatarModal userId={user?.id} />
     </Layout>
   );
 }

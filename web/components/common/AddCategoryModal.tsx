@@ -118,12 +118,12 @@ export const AddCategoryModal: React.FC<AddCategoryModalProps> = ({
             </div>
             <div className="modal-action flex flex-row items-center justify-between">
               <div className="form-control w-32">
-                <label className="label cursor-pointer">
-                  <span className="label-text text-sm font-semibold">Add another</span>
+                <label className="label cursor-pointer flex flex-row items-center gap-3">
+                  <span className="label-text text-sm font-semibold whitespace-nowrap">Add another</span>
                   <input
                     type="checkbox"
                     id="add-another"
-                    className="checkbox checkbox-sm checkbox-primary focus:ring-0 focus:outline-none"
+                    className="toggle toggle-sm toggle-primary"
                     checked={addAnother}
                     onChange={(e) => setAddAnother(e.target.checked)}
                   />
