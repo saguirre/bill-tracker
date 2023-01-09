@@ -1,5 +1,5 @@
 import { InjectQueue } from '@nestjs/bull';
-import { Injectable, Logger } from '@nestjs/common';
+import { Injectable, Logger, NotFoundException } from '@nestjs/common';
 import { Group, GroupInvite, Prisma } from '@prisma/client';
 import { Queue } from 'bull';
 import { PrismaService } from 'src/prisma.service';
@@ -207,6 +207,10 @@ export class GroupService {
         email,
       },
     });
+
+    if (!user) {
+      throw new NotFoundException('User not found');
+    }
 
     await this.prisma.userGroups.create({
       data: {
