@@ -1,5 +1,8 @@
 export interface Member {
-  id?: number;
-  name?: string;
-  email?: string;
+  user: {
+    id?: number;
+    name?: string;
+    email?: string;
+    avatar?: string;
+  };
 }
