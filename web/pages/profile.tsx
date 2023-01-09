@@ -2,15 +2,18 @@ import { TrashIcon } from '@heroicons/react/24/outline';
 import { withIronSessionSsr } from 'iron-session/next';
 import { InferGetServerSidePropsType } from 'next';
 import { useTheme } from 'next-themes';
+import { useRouter } from 'next/router';
+import { useState } from 'react';
 import { UploadAvatarModal } from '../components/common/UploadAvatarModal';
 import { Layout } from '../components/Layout';
 import { sessionOptions } from '../lib/session';
-import useUser from '../lib/useUser';
 import { User } from '../models/user/user';
 import { getCorrespondingThemeImage } from '../utils/get-page-image-by-theme';
 
 export default function Profile({ user }: InferGetServerSidePropsType<typeof getServerSideProps>) {
   const { theme } = useTheme();
+  const router = useRouter();
+  const [uploadedAvatar, setUploadedAvatar] = useState<boolean>(false);
   return (
     <Layout user={user}>
       <div className="flex flex-col items-center h-full px-12 pt-6">
@@ -40,7 +43,9 @@ export default function Profile({ user }: InferGetServerSidePropsType<typeof get
                       )}
                     </div>
                     <div className="flex flex-col justify-center gap-2 h-full ml-4">
-                      <label className="btn btn-primary btn-sm" htmlFor='upload-avatar-modal'>Change Photo</label>
+                      <label className="btn btn-primary btn-sm" htmlFor="upload-avatar-modal">
+                        Change Photo
+                      </label>
                       <label className="btn btn-error btn-sm btn-disabled flex flex-row items-center justify-start gap-2">
                         <TrashIcon className="h-5 w-5" /> Remove Photo
                       </label>
@@ -75,7 +80,39 @@ export default function Profile({ user }: InferGetServerSidePropsType<typeof get
           </div>
         </div>
       </div>
-      <UploadAvatarModal userId={user?.id} />
+      {uploadedAvatar && (
+        <div className="toast toast-bottom toast-center w-[80%] mb-10">
+          <div className="alert shadow-lg">
+            <div>
+              <svg
+                xmlns="http://www.w3.org/2000/svg"
+                fill="none"
+                viewBox="0 0 24 24"
+                className="stroke-info flex-shrink-0 w-6 h-6"
+              >
+                <path
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  strokeWidth="2"
+                  d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"
+                ></path>
+              </svg>
+              <span>Your Profile Photo has been updated. Please refresh to see the changes.</span>
+            </div>
+            <div className="flex-none">
+              <button onClick={() => router.reload()} className="btn btn-sm btn-primary">
+                Refresh
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
+      <UploadAvatarModal
+        userId={user?.id}
+        uploadedAvatar={() => {
+          setUploadedAvatar(true);
+        }}
+      />
     </Layout>
   );
 }

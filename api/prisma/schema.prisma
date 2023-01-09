@@ -46,6 +46,7 @@ model User {
   email              String         @unique
   name               String?
   password           String
+  avatar             String?
   phone              String?
   countryCode        String?
   notifications      Boolean        @default(true)

@@ -167,7 +167,14 @@ export const Navbar: React.FC<NavbarProps> = ({ showSearch, user, scrolling, sea
         <div className="dropdown dropdown-end">
           <label tabIndex={0} className="btn btn-ghost btn-circle avatar">
             <div className="w-10 rounded-full">
-              <img src="https://placeimg.com/80/80/people" />
+              {user?.avatar && <img src={user?.avatar} alt="avatar" className="rounded-full h-10 w-10" />}
+              {!user?.avatar && (
+                <img
+                  src="https://www.gravatar.com/avatar/00000000000000000000000000000000?d=mp&f=y"
+                  alt="avatar"
+                  className="rounded-full h-10 w-10"
+                />
+              )}
             </div>
           </label>
           <ul

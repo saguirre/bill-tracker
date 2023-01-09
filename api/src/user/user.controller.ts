@@ -3,6 +3,7 @@ import { ApiOkResponse } from '@nestjs/swagger';
 import { User } from '@prisma/client';
 import { IsSameUserGuard } from 'src/auth/is-same-user.guard';
 import { JwtAuthGuard } from 'src/auth/jwt-auth.guard';
+import { UpdateUserProfileEntity } from './entities/update-user-profile-entity';
 import { UpdateUserSettingsEntity } from './entities/update-user-settings.entity';
 import { UserEntity } from './entities/user.entity';
 import { UserService } from './user.service';
@@ -22,8 +23,23 @@ export class UserController {
 
   @UseGuards(JwtAuthGuard, IsSameUserGuard)
   @ApiOkResponse({ type: UserEntity, isArray: true })
+  @Put('/profile/:id')
+  async updateUserProfile(
+    @Param('id') id: string,
+    @Body() user: UpdateUserProfileEntity,
+  ): Promise<Partial<User>> {
+    const updatedUser = await this.userService.updateUser({
+      where: { id: Number(id) },
+      data: user,
+    });
+    delete updatedUser.password;
+    return updatedUser;
+  }
+
+  @UseGuards(JwtAuthGuard, IsSameUserGuard)
+  @ApiOkResponse({ type: UserEntity, isArray: true })
   @Put('/settings/:id')
-  async updateUserById(
+  async updateUserSettings(
     @Param('id') id: string,
     @Body() user: UpdateUserSettingsEntity,
   ): Promise<Partial<User>> {

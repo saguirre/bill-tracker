@@ -1,13 +1,15 @@
 import { CloudArrowUpIcon, PhotoIcon } from '@heroicons/react/24/outline';
 import { createRef, useRef, useState } from 'react';
-import { SubmitHandler } from 'react-hook-form';
 import { toast } from 'react-toastify';
 import { useKeyPress } from '../../hooks/useKeyPress.hook';
 import { Cropper, ReactCropperElement } from 'react-cropper';
 import 'cropperjs/dist/cropper.css';
+import fetchJson from '../../lib/fetchJson';
+import { uuid } from 'uuidv4';
 
 interface UploadAvatarModalProps {
   userId?: number;
+  uploadedAvatar: () => void;
 }
 
 interface FormValues {
@@ -22,13 +24,14 @@ const file2Base64 = (file: File): Promise<string> => {
   });
 };
 
-export const UploadAvatarModal: React.FC<UploadAvatarModalProps> = ({ userId }) => {
+export const UploadAvatarModal: React.FC<UploadAvatarModalProps> = ({ userId, uploadedAvatar }) => {
   const closeRef = useRef<HTMLInputElement>(null);
   const fileRef = createRef<HTMLInputElement>();
   const cropperRef = createRef<ReactCropperElement>();
   const [uploaded, setUploaded] = useState(null as string | null);
   const [cropped, setCropped] = useState(null as string | null);
-
+  const [croppedFile, setCroppedFile] = useState<File>();
+  const [uploadedFile, setUploadedFile] = useState<File>();
   useKeyPress(
     () => {
       if (closeRef.current) {
@@ -41,6 +44,7 @@ export const UploadAvatarModal: React.FC<UploadAvatarModalProps> = ({ userId }) 
 
   const onFileInputChange: React.ChangeEventHandler<HTMLInputElement> = (e) => {
     const file = e.target?.files?.[0];
+    setUploadedFile(file);
     if (file) {
       file2Base64(file).then((base64) => {
         setUploaded(base64);
@@ -54,6 +58,9 @@ export const UploadAvatarModal: React.FC<UploadAvatarModalProps> = ({ userId }) 
     const imageElement: any = cropperRef?.current;
     const cropper: any = imageElement?.cropper;
     setCropped(cropper.getCroppedCanvas().toDataURL());
+    cropper.getCroppedCanvas().toBlob((blob: any) => {
+      setCroppedFile(blob);
+    });
   };
 
   const resetCrop = (e: any) => {
@@ -62,11 +69,48 @@ export const UploadAvatarModal: React.FC<UploadAvatarModalProps> = ({ userId }) 
     setCropped(null);
   };
 
-  const onSubmit: SubmitHandler<FormValues> = async (data: FormValues) => {
+  const uploadPhoto = async () => {
+    const file = croppedFile;
+    if (file && uploadedFile) {
+      const filename = encodeURIComponent(`${userId}-avatar`);
+      const fileType = encodeURIComponent(uploadedFile.type);
+
+      const res = await fetch(`/api/user/upload-avatar?file=${filename}&fileType=${fileType}`);
+      const { url, fields } = await res.json();
+      const formData = new FormData();
+
+      Object.entries({ ...fields, file }).forEach(([key, value]) => {
+        formData.append(key, value as string);
+      });
+
+      const upload = await fetch(url, {
+        method: 'POST',
+        body: formData,
+      });
+
+      if (upload.ok) {
+        const avatarUrl = `${process.env.NEXT_PUBLIC_BUCKET_URL}/${fields.key}`;
+        await fetchJson(`/api/user`, {
+          method: 'PUT',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify({
+            avatar: avatarUrl,
+          }),
+        });
+        uploadedAvatar();
+      } else {
+        console.error('Upload failed.');
+      }
+    }
+  };
+
+  const onSubmit = async () => {
     try {
+      await uploadPhoto();
       const modal = document.getElementById('upload-avatar-modal') as any;
       if (modal) modal.checked = false;
-      toast.success('Photo uploaded successfully');
     } catch (error) {
       console.error(error);
       toast.error('There was an error uploading your photo. Please try again later.');
@@ -91,10 +135,7 @@ export const UploadAvatarModal: React.FC<UploadAvatarModalProps> = ({ userId }) 
           <div className="flex flex-col items-start justify-center space-y-3">
             {!uploaded ? (
               <label className="w-full p-4 rounded-box hover:border-primary hover:border-solid cursor-pointer border border-base-content/40 border-dashed">
-                <div
-                  className="flex flex-row items-center justify-center gap-2"
-                  onClick={() => fileRef.current?.click()}
-                >
+                <div className="flex flex-row items-center justify-center gap-2">
                   <input
                     id="input-file"
                     className="hidden"
@@ -119,31 +160,31 @@ export const UploadAvatarModal: React.FC<UploadAvatarModalProps> = ({ userId }) 
                       viewMode={3}
                       guides={false}
                       ref={cropperRef}
+                      crossOrigin="anonymous"
                     />
                   )}
                   {cropped && (
                     <img src={cropped} className="rounded-full border-2 w-72 border-primary" alt="Cropped!" />
                   )}
                 </div>
-                {!cropped && (
-                  <label onClick={onCrop} className="btn btn-md btn-primary">
-                    Crop
-                  </label>
-                )}
-                {cropped && (
-                  <label onClick={resetCrop} className="btn btn-md btn-outline btn-primary">
-                    Try again
-                  </label>
-                )}
               </div>
             )}
           </div>
 
           <div className="modal-action flex flex-row items-center justify-end">
-            <label htmlFor="upload-avatar-modal" className="btn btn-ghost rounded-xl">
-              Cancel
-            </label>
-            <button className="btn btn-primary rounded-xl">Save</button>
+            {!cropped && (
+              <label onClick={onCrop} className="btn btn-secondary rounded-xl">
+                Crop
+              </label>
+            )}
+            {cropped && (
+              <label onClick={resetCrop} className="btn rounded-xl btn-outline btn-secondary">
+                Try again
+              </label>
+            )}
+            <button onClick={() => onSubmit()} disabled={!cropped} className="btn btn-primary rounded-xl">
+              Save
+            </button>
           </div>
         </label>
       </label>

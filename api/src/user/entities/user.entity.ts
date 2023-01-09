@@ -9,6 +9,8 @@ export class UserEntity implements Partial<User> {
   @ApiProperty()
   name: string;
   @ApiProperty()
+  avatar: string;
+  @ApiProperty()
   phone: string;
   @ApiProperty()
   countryCode: string;
