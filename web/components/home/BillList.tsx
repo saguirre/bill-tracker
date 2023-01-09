@@ -43,7 +43,7 @@ export const BillList: React.FC<BillListProps> = ({
           )}
         </h2>
       </div>
-      <div className="divider my-0"></div>
+      {bills && bills?.length > 0 || title !== 'Expired Bills' && <div className="divider my-0"></div>}
       <div className="w-full bg-base-100">
         <div className="flex flex-col gap-3 items-center justify-start w-full">
           {bills?.map((bill) => (
@@ -59,12 +59,6 @@ export const BillList: React.FC<BillListProps> = ({
           ))}
           {bills?.length === 0 && (
             <div className="flex flex-col items-center justify-center w-full h-fit">
-              {title === 'Expired Bills' && (
-                <div className="flex flex-col items-center justify-center gap-1.5">
-                  <p className="text-sm text-base-content/60 mt-8 -mb-9">No Expired Bills</p>
-                  <img src={getRandomMoneyImage()} alt="No Expired Bills" className="w-[250px]" />
-                </div>
-              )}
               {title === 'Upcoming Bills' && (
                 <div className="flex flex-col items-center justify-center gap-1.5">
                   <p className="text-sm text-base-content/60 mt-8 -mb-9">No Upcoming Bills</p>

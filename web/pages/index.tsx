@@ -203,7 +203,7 @@ export default function SsrHome({ user }: InferGetServerSidePropsType<typeof get
                       setSelectedBill={setSelectedBill}
                       setLoadingBillData={setLoadingBillData}
                     />
-                    <div className="divider mt-8 -mb-1">
+                    <div className="divider mt-0 mb-0">
                       <span className="badge badge-xs badge-ghost"></span>
                       <span className="badge badge-xs badge-ghost"></span>
                       <span className="badge badge-xs badge-ghost"></span>
