@@ -4,6 +4,8 @@ import { User } from '@prisma/client';
 import * as bcrypt from 'bcryptjs';
 import { UserService } from 'src/user/user.service';
 import { excludeUserField } from 'src/user/utils';
+import * as dotenv from 'dotenv';
+dotenv.config();
 
 @Injectable()
 export class AuthService {
@@ -31,6 +33,10 @@ export class AuthService {
     const dbUser = await this.userService.user({ email: user.email });
     if (!dbUser) {
       throw new HttpException('Unauthorized', HttpStatus.UNAUTHORIZED);
+    }
+
+    if (dbUser && !dbUser.activated) {
+      throw new HttpException('User not activated', HttpStatus.UNAUTHORIZED);
     }
 
     const payload = {

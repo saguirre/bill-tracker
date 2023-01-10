@@ -19,6 +19,8 @@ export class UserEntity implements Partial<User> {
   @ApiProperty()
   updatedAt: Date;
   @ApiProperty()
+  activated: boolean;
+  @ApiProperty()
   notifications?: boolean;
   @ApiProperty()
   inAppNotifications?: boolean;

@@ -34,11 +34,7 @@ export class AuthController {
 
   @Post('/signup')
   async signUp(@Body() body: Prisma.UserCreateInput) {
-    const createdUser = await this.userService.createUser(body);
-    const user = await this.login({
-      email: createdUser.email,
-      password: body.password,
-    });
+    const { password, ...user } = await this.userService.createUser(body);
     return user;
   }
 }

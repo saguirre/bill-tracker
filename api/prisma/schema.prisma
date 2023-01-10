@@ -49,6 +49,8 @@ model User {
   avatar             String?
   phone              String?
   countryCode        String?
+  activated          Boolean        @default(false)
+  activationToken    String?
   notifications      Boolean        @default(true)
   inAppNotifications Boolean        @default(true)
   emailNotifications Boolean        @default(true)

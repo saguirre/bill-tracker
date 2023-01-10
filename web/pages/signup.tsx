@@ -8,10 +8,7 @@ import useUser from '../lib/useUser';
 
 export default function SignUp() {
   const router = useRouter();
-  const { mutateUser } = useUser({
-    redirectTo: '/',
-    redirectIfFound: true,
-  });
+  const { mutateUser } = useUser();
   const [loadingRequest, setLoadingRequest] = useState(false);
 
   const onSubmit = async (data: any) => {

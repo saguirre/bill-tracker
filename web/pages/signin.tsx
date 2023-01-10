@@ -8,10 +8,7 @@ import { useRouter } from 'next/router';
 
 export default function SignIn() {
   const router = useRouter();
-  const { mutateUser } = useUser({
-    redirectTo: '/',
-    redirectIfFound: true,
-  });
+  const { mutateUser } = useUser();
   const [loadingRequest, setLoadingRequest] = useState(false);
 
   const onSubmit = async (data: any) => {

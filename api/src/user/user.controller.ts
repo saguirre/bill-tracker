@@ -36,6 +36,17 @@ export class UserController {
     return updatedUser;
   }
 
+  @ApiOkResponse()
+  @Put('/activate/:id')
+  async activateUser(@Param('id') id: string, @Body() body: { token: string }) {
+    const { password, ...activatedUser } = await this.userService.activateUser({
+      where: { id: Number(id) },
+      data: { activationToken: body.token },
+    });
+
+    return activatedUser;
+  }
+
   @UseGuards(JwtAuthGuard, IsSameUserGuard)
   @ApiOkResponse({ type: UserEntity, isArray: true })
   @Put('/settings/:id')

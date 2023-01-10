@@ -32,6 +32,9 @@ dotenv.config();
     BullModule.registerQueue({
       name: process.env.INVITATION_QUEUE,
     }),
+    BullModule.registerQueue({
+      name: process.env.ACTIVATION_QUEUE,
+    }),
     HealthModule,
     AuthModule,
     UserModule,

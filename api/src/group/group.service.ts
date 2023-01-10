@@ -147,7 +147,7 @@ export class GroupService {
       const token = this.jwtService.sign({ groupId, email: obj.email });
       const url = `${process.env.CLIENT_URL}/group/join?token=${token}`;
 
-      Logger.warn('Adding invitation to queue');
+      Logger.log('Adding invitation to queue');
       this.invitationQueue.add(
         process.env.INVITATION_JOB,
         {

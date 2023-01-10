@@ -7,6 +7,9 @@ import { PrismaService } from '../prisma.service';
 import { UserModule } from 'src/user/user.module';
 import { JwtStrategy } from './jwt.strategy';
 import { UserService } from 'src/user/user.service';
+import { BullModule } from '@nestjs/bull';
+import * as dotenv from 'dotenv';
+dotenv.config();
 
 @Module({
   imports: [
@@ -19,6 +22,9 @@ import { UserService } from 'src/user/user.service';
       }),
       global: true,
     },
+    BullModule.registerQueue({
+      name: process.env.ACTIVATION_QUEUE,
+    }),
   ],
   providers: [
     AuthService,

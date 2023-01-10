@@ -4,6 +4,7 @@ import { EmailService } from 'src/email/email.service';
 import { PrismaService } from '../prisma.service';
 import { InvitationProcessor } from './invitation.processor';
 import * as dotenv from 'dotenv';
+import { ActivationProcessor } from './activation.processor';
 dotenv.config();
 
 @Module({
@@ -11,7 +12,15 @@ dotenv.config();
     BullModule.registerQueue({
       name: process.env.INVITATION_QUEUE,
     }),
+    BullModule.registerQueue({
+      name: process.env.ACTIVATION_QUEUE,
+    }),
   ],
-  providers: [PrismaService, EmailService, InvitationProcessor],
+  providers: [
+    PrismaService,
+    EmailService,
+    InvitationProcessor,
+    ActivationProcessor,
+  ],
 })
-export class InvitationModule {}
+export class EmailProcessingModule {}
