@@ -8,7 +8,7 @@ export function useDecorativeImage(imageGroup: string, defaultTheme?: string) {
 
   useEffect(() => {
     setImagePath(getCorrespondingThemeImage(imageGroup, defaultTheme ? defaultTheme : theme));
-  }, []);
+  }, [theme]);
 
   return { imagePath };
 }
