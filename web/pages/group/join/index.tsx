@@ -1,24 +1,18 @@
-import { TrashIcon, UserGroupIcon } from '@heroicons/react/24/outline';
+import { UserGroupIcon } from '@heroicons/react/24/outline';
 import { withIronSessionSsr } from 'iron-session/next';
 import jwtDecode from 'jwt-decode';
 import { InferGetServerSidePropsType } from 'next';
-import { useTheme } from 'next-themes';
 import { useRouter } from 'next/router';
-import { useEffect, useState } from 'react';
 import { Layout } from '../../../components/Layout';
+import { useDecorativeImage } from '../../../hooks/useDecorativeImage.hook';
 import fetchJson from '../../../lib/fetchJson';
 import { getServiceUrl } from '../../../lib/httpHelpers';
 import { sessionOptions } from '../../../lib/session';
 import { User } from '../../../models/user/user';
-import { getCorrespondingThemeImage } from '../../../utils/get-page-image-by-theme';
 
 export default function JoinGroup({ user, groupId }: InferGetServerSidePropsType<typeof getServerSideProps>) {
   const router = useRouter();
-  const { theme } = useTheme();
-  const [imagePath, setImagePath] = useState<string>('');
-  useEffect(() => {
-    setImagePath(getCorrespondingThemeImage('joined_group', theme));
-  }, []);
+  const { imagePath } = useDecorativeImage('joined_group');
   return (
     <Layout user={user}>
       <div className="flex flex-col items-center h-full px-12 pt-6">
@@ -73,6 +67,7 @@ export const getServerSideProps = withIronSessionSsr(async function ({ req, res,
         console.error(error);
       }
 
+      // Would probably be nice to fetch the group name or include it in the token to display in the page.
       return {
         props: { user: req.session.user, groupId: decodedToken.groupId },
       };

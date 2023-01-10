@@ -6,13 +6,14 @@ import { useRouter } from 'next/router';
 import { useState } from 'react';
 import { UploadAvatarModal } from '../components/common/UploadAvatarModal';
 import { Layout } from '../components/Layout';
+import { useDecorativeImage } from '../hooks/useDecorativeImage.hook';
 import { sessionOptions } from '../lib/session';
 import { User } from '../models/user/user';
 import { getCorrespondingThemeImage } from '../utils/get-page-image-by-theme';
 
 export default function Profile({ user }: InferGetServerSidePropsType<typeof getServerSideProps>) {
-  const { theme } = useTheme();
   const router = useRouter();
+  const { imagePath } = useDecorativeImage('profile');
   const [uploadedAvatar, setUploadedAvatar] = useState<boolean>(false);
   return (
     <Layout user={user}>
@@ -67,13 +68,13 @@ export default function Profile({ user }: InferGetServerSidePropsType<typeof get
                   </div>
                   <div className="flex flex-col gap-1">
                     <span className="text-base font-semibold">Phone</span>
-                    <input className="input input-bordered w-full max-w-md" value={user?.phone} />
+                    <input className="input input-bordered w-full max-w-md" placeholder="+1 (999) 999-9999"value={user?.phone} />
                   </div>
                 </div>
               </div>
             </div>
             <img
-              src={getCorrespondingThemeImage('profile', theme)}
+              src={imagePath}
               alt="Profile"
               className="hidden xl:block absolute h-[90%] right-0 top-20"
             />

@@ -5,6 +5,7 @@ import { emailRegex } from '../../utils/email-regex.util';
 import Link from 'next/link';
 import classNames from 'classnames';
 import { useState } from 'react';
+import { useDecorativeImage } from '../../hooks/useDecorativeImage.hook';
 
 interface FormValues {
   name: string;
@@ -27,7 +28,7 @@ export const SignUpForm: React.FC<SignUpFormProps> = ({ submit, loadingRequest }
     watch,
     formState: { errors },
   } = useForm<FormValues>({ mode: 'onChange' });
-
+  const { imagePath } = useDecorativeImage('sign_up');
   const [passwordStrength, setPasswordStrength] = useState(0);
   const getPasswordSuccessPercentage = (password: string) => {
     let percentage = 0;
@@ -60,7 +61,7 @@ export const SignUpForm: React.FC<SignUpFormProps> = ({ submit, loadingRequest }
               <span className="font-bold text-3xl">Bill Tracker</span>
             </div>
             <div>
-              <h2 className="mt-3 text-3xl font-bold text-black">Create a new account</h2>
+              <h2 className="mt-3 text-3xl font-bold">Create a new account</h2>
               <div className="flex flex-row items-center gap-1 mt-1 text-sm text-gray-600">
                 Or{' '}
                 <Link href="/signin">
@@ -149,7 +150,7 @@ export const SignUpForm: React.FC<SignUpFormProps> = ({ submit, loadingRequest }
                       value={passwordStrength}
                       max="100"
                     ></progress>
-                    <div className='w-full flex items-center justify-center'>
+                    <div className="w-full flex items-center justify-center">
                       {passwordStrength <= 25 && (
                         <>
                           {errors.password && (
@@ -159,10 +160,10 @@ export const SignUpForm: React.FC<SignUpFormProps> = ({ submit, loadingRequest }
                       )}
                       {passwordStrength > 25 && passwordStrength < 100 && (
                         <>
-                        {errors.password && (
-                          <span className="text-sm text-center text-warning mt-1">{errors.password.message}</span>
-                        )}
-                      </>
+                          {errors.password && (
+                            <span className="text-sm text-center text-warning mt-1">{errors.password.message}</span>
+                          )}
+                        </>
                       )}
                       {passwordStrength === 100 && (
                         <span className="text-sm text-center text-success mt-1">Password is strong</span>
@@ -202,7 +203,7 @@ export const SignUpForm: React.FC<SignUpFormProps> = ({ submit, loadingRequest }
         </div>
       </div>
       <div className="hidden lg:block relative w-0 flex-1">
-        <img className="absolute inset-0 h-full w-full object-cover" src="/images/signup_background.jpg" alt="" />
+        <img className="absolute inset-0 h-full w-full object-cover" src={imagePath} alt="Sign Up" />
       </div>
     </div>
   );

@@ -3,6 +3,7 @@ import { FormInput } from '../../components/common/FormInput';
 import { BanknotesIcon } from '@heroicons/react/24/outline';
 import { emailRegex } from '../../utils/email-regex.util';
 import Link from 'next/link';
+import { useDecorativeImage } from '../../hooks/useDecorativeImage.hook';
 
 interface FormValues {
   email: string;
@@ -21,6 +22,7 @@ export const SignInForm: React.FC<SignInFormProps> = ({ submit, loadingRequest }
     formState: { errors },
   } = useForm<FormValues>({ mode: 'onTouched' });
 
+  const { imagePath } = useDecorativeImage('sign_in');
   const onSubmit: SubmitHandler<FormValues> = (data: FormValues) => {
     submit(data);
   };
@@ -35,7 +37,7 @@ export const SignInForm: React.FC<SignInFormProps> = ({ submit, loadingRequest }
               <span className="font-bold text-3xl">Bill Tracker</span>
             </div>
             <div>
-              <h2 className="mt-3 text-3xl font-bold text-black">Sign in with your account</h2>
+              <h2 className="mt-3 text-3xl font-bold">Sign in with your account</h2>
               <div className="flex flex-row items-center gap-1 mt-2 text-sm text-gray-600">
                 Or{' '}
                 <Link href="/signup">
@@ -107,7 +109,7 @@ export const SignInForm: React.FC<SignInFormProps> = ({ submit, loadingRequest }
         </div>
       </div>
       <div className="hidden lg:block relative w-0 flex-1">
-        <img className="absolute inset-0 h-full w-full object-cover" src="/images/signin_background.jpg" alt="" />
+        <img className="absolute inset-0 h-full w-full object-cover" src={imagePath} alt="Sign In" />
       </div>
     </div>
   );

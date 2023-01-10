@@ -3,12 +3,13 @@ import { InferGetServerSidePropsType } from 'next';
 import { useTheme } from 'next-themes';
 import { useState } from 'react';
 import { Layout } from '../components/Layout';
+import { useDecorativeImage } from '../hooks/useDecorativeImage.hook';
 import { sessionOptions } from '../lib/session';
 import { User } from '../models/user/user';
 import { getCorrespondingThemeImage } from '../utils/get-page-image-by-theme';
 
 export default function Settings({ user }: InferGetServerSidePropsType<typeof getServerSideProps>) {
-  const { theme } = useTheme();
+  const { imagePath } = useDecorativeImage('settings');
   const [notifications, setNotifications] = useState<boolean | undefined>(user?.notifications);
   const [inAppNotifications, setInAppNotifications] = useState<boolean | undefined>(user?.inAppNotifications);
   const [emailNotifications, setEmailNotifications] = useState<boolean | undefined>(user?.emailNotifications);
@@ -132,11 +133,7 @@ export default function Settings({ user }: InferGetServerSidePropsType<typeof ge
                 </div>
               </div>
             </div>
-            <img
-              src={getCorrespondingThemeImage('settings', theme)}
-              alt="Settings"
-              className="hidden xl:block absolute h-[90%] right-0 top-20"
-            />
+            <img src={imagePath} alt="Settings" className="hidden xl:block absolute h-[90%] right-0 top-20" />
           </div>
         </div>
       </div>

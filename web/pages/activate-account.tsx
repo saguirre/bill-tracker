@@ -1,22 +1,14 @@
-import { CheckBadgeIcon, UserGroupIcon } from '@heroicons/react/24/outline';
+import { CheckBadgeIcon } from '@heroicons/react/24/outline';
 import jwtDecode from 'jwt-decode';
 import { GetServerSidePropsContext } from 'next';
-import { useTheme } from 'next-themes';
 import { useRouter } from 'next/router';
-import { useEffect, useState } from 'react';
-import { Layout } from '../components/Layout';
+import { useDecorativeImage } from '../hooks/useDecorativeImage.hook';
 import fetchJson from '../lib/fetchJson';
 import { getServiceUrl } from '../lib/httpHelpers';
-import { getCorrespondingThemeImage } from '../utils/get-page-image-by-theme';
 
 export default function JoinGroup() {
   const router = useRouter();
-  const { theme } = useTheme();
-  const [imagePath, setImagePath] = useState<string>('');
-
-  useEffect(() => {
-    setImagePath(getCorrespondingThemeImage('account_activated', theme));
-  }, []);
+  const { imagePath } = useDecorativeImage('account_activated');
 
   return (
     <div className="flex flex-col items-center h-full px-12 pt-6">
