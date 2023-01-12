@@ -4,6 +4,7 @@ import { format } from 'date-fns';
 import { useState } from 'react';
 import { Bill } from '../../models/bill/bill';
 import { currencyFormat } from '../../utils/currency-format.util';
+import { RemoveItemButton } from '../common/RemoveItemButton';
 interface BillListItemProps {
   badgeColor: string;
   amountColor: string;
@@ -52,7 +53,7 @@ export const BillListItem: React.FC<BillListItemProps> = ({
               <div className="badge badge-outline badge-secondary">{bill?.category?.name}</div>
             </div>
           )}
-          {!bill?.category && <div className='max-w-sm w-full'></div>}
+          {!bill?.category && <div className="max-w-sm w-full"></div>}
           {bill.dueDate && !bill.paid && (
             <span
               className={classNames('font-bold badge badge-error badge-xs badge-outline h-5 mt-1 uppercase text-xs')}
@@ -74,28 +75,7 @@ export const BillListItem: React.FC<BillListItemProps> = ({
           })}
         ></div>
       </label>
-      <div className="absolute top-0 right-1 flex flex-row items-center justify-end w-full z-10">
-        <button
-          onMouseOver={handleMouseOver}
-          onMouseOut={handleMouseOut}
-          onClick={(e) => {
-            e.preventDefault();
-            e.stopPropagation();
-            removeBill(bill);
-          }}
-          className="transition-all duration-300 ease-in-out btn btn-error btn-xs z-10 flex flex-row items-center justify-start gap-2"
-        >
-          <span
-            className={classNames('text-xs text-primary-content', {
-              hidden: !isHovering,
-              flex: isHovering,
-            })}
-          >
-            Remove
-          </span>
-          <TrashIcon className="h-4 w-4 text-primary-content" />
-        </button>
-      </div>
+      <RemoveItemButton onRemove={() => removeBill(bill)} />
     </div>
   );
 };

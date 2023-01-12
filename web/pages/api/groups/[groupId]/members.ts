@@ -4,9 +4,9 @@ import fetchJson from '../../../../lib/fetchJson';
 import { getServiceUrl } from '../../../../lib/httpHelpers';
 import { sessionOptions } from '../../../../lib/session';
 
-export default withIronSessionApiRoute(individualGroupHandler, sessionOptions);
+export default withIronSessionApiRoute(groupMembersHandler, sessionOptions);
 
-async function individualGroupHandler(req: NextApiRequest, res: NextApiResponse) {
+async function groupMembersHandler(req: NextApiRequest, res: NextApiResponse) {
   try {
     const { query, body, method } = req;
     const user = req.session.user;

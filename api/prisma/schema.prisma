@@ -24,9 +24,9 @@ model Group {
 }
 
 model UserGroups {
-  group   Group @relation(fields: [groupId], references: [id])
+  group   Group @relation(fields: [groupId], references: [id], onDelete: Cascade)
   groupId Int
-  user    User  @relation(fields: [userId], references: [id])
+  user    User  @relation(fields: [userId], references: [id], onDelete: Cascade)
   userId  Int
 
   @@id([groupId, userId])
@@ -37,7 +37,7 @@ model GroupInvite {
   email     String
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
-  group     Group    @relation(fields: [groupId], references: [id])
+  group     Group    @relation(fields: [groupId], references: [id], onDelete: Cascade)
   groupId   Int
 }
 
@@ -88,7 +88,7 @@ model Bill {
   file       File[]
   category   Category? @relation(fields: [categoryId], references: [id])
   categoryId Int?
-  group      Group?    @relation(fields: [groupId], references: [id])
+  group      Group?    @relation(fields: [groupId], references: [id], onDelete: Cascade)
   groupId    Int?
 }
 
@@ -127,7 +127,7 @@ model Notification {
   deleted   Boolean  @default(false)
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
-  group     Group?   @relation(fields: [groupId], references: [id])
+  group     Group?   @relation(fields: [groupId], references: [id], onDelete: Cascade)
   groupId   Int?
   user      User     @relation(fields: [userId], references: [id])
   userId    Int

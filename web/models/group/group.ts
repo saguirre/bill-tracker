@@ -10,6 +10,7 @@ export interface Group {
   bills?: Bill[];
   groupInvite?: GroupInvite[];
   admin?: User;
+  adminId?: number;
   createdAt?: Date;
   updatedAt?: Date;
 }

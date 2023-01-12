@@ -15,6 +15,7 @@ import { CreateGroupEntity } from './entities/create-group.entity';
 import { GroupEntity } from './entities/group.entity';
 import { UpdateGroupEntity } from './entities/update-group.entity';
 import { GroupService } from './group.service';
+import { IsGroupAdminGuard } from './guards/is-group-admin.guard';
 
 @Controller('group')
 export class GroupController {
@@ -97,7 +98,7 @@ export class GroupController {
     return group;
   }
 
-  @UseGuards(JwtAuthGuard)
+  @UseGuards(JwtAuthGuard, IsGroupAdminGuard)
   @ApiOkResponse({ type: GroupEntity })
   @Delete('/:id')
   async deleteGroup(@Param('id') id: string): Promise<Group> {
