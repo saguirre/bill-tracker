@@ -5,9 +5,9 @@ import { getServiceUrl } from '../../../lib/httpHelpers';
 import { sessionOptions } from '../../../lib/session';
 import { User } from '../../../models/user/user';
 
-export default withIronSessionApiRoute(billHandler, sessionOptions);
+export default withIronSessionApiRoute(userSettingsHandler, sessionOptions);
 
-async function billHandler(req: NextApiRequest, res: NextApiResponse) {
+async function userSettingsHandler(req: NextApiRequest, res: NextApiResponse) {
   try {
     const { body, method } = req;
 

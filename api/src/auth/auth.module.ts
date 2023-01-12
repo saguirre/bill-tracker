@@ -17,13 +17,16 @@ dotenv.config();
     UserModule,
     {
       ...JwtModule.register({
-        secret: process.env.JWT_SECRET,
+        secret: `${process.env.JWT_SECRET}`,
         signOptions: { expiresIn: '7d' },
       }),
       global: true,
     },
     BullModule.registerQueue({
       name: process.env.ACTIVATION_QUEUE,
+    }),
+    BullModule.registerQueue({
+      name: process.env.FORGOT_PASSWORD_QUEUE,
     }),
   ],
   providers: [
@@ -34,6 +37,6 @@ dotenv.config();
     UserService,
     JwtStrategy,
   ],
-  exports: [AuthService],
+  exports: [AuthService, JwtService],
 })
 export class AuthModule {}

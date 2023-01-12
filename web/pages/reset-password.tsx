@@ -1,34 +1,31 @@
-import { useForm, SubmitHandler } from 'react-hook-form';
-import { FormInput } from '../common/FormInput';
-import { BanknotesIcon } from '@heroicons/react/24/outline';
-import { emailRegex } from '../../utils/email-regex.util';
-import Link from 'next/link';
-import classNames from 'classnames';
 import { useState } from 'react';
-import { useDecorativeImage } from '../../hooks/useDecorativeImage.hook';
+import 'react-toastify/dist/ReactToastify.css';
+import { toast } from 'react-toastify';
+import fetchJson, { FetchError } from '../lib/fetchJson';
+import { LockClosedIcon } from '@heroicons/react/24/outline';
+import { useForm, SubmitHandler } from 'react-hook-form';
+import { FormInput } from '../components/common/FormInput';
+import { useDecorativeImage } from '../hooks/useDecorativeImage.hook';
+import classNames from 'classnames';
+import { useRouter } from 'next/router';
+import { GetServerSidePropsContext } from 'next';
 
 interface FormValues {
-  name: string;
-  familyName: string;
-  email: string;
   password: string;
   repeatPassword: string;
 }
 
-interface SignUpFormProps {
-  submit: (data: FormValues) => void;
-  loadingRequest: boolean;
-  isInvitation?: boolean;
-}
-
-export const SignUpForm: React.FC<SignUpFormProps> = ({ submit, loadingRequest }) => {
+export default function RecoverPassword({ token }: { token: string }) {
   const {
     register,
     handleSubmit,
     watch,
     formState: { errors },
   } = useForm<FormValues>({ mode: 'onChange' });
-  const { imagePath } = useDecorativeImage('sign_up');
+
+  const router = useRouter();
+  const [loadingRequest, setLoadingRequest] = useState(false);
+  const { imagePath } = useDecorativeImage('reset_password');
   const [passwordStrength, setPasswordStrength] = useState(0);
   const getPasswordSuccessPercentage = (password: string) => {
     let percentage = 0;
@@ -47,69 +44,41 @@ export const SignUpForm: React.FC<SignUpFormProps> = ({ submit, loadingRequest }
     return percentage;
   };
 
-  const onSubmit: SubmitHandler<FormValues> = (data: FormValues) => {
-    submit(data);
+  const onSubmit: SubmitHandler<FormValues> = async (data: FormValues) => {
+    setLoadingRequest(true);
+    try {
+      await fetchJson('/api/user/reset-password', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ password: data.password, token }),
+      });
+      toast.success('Your password was reset!');
+      router.push('/signin');
+    } catch (error) {
+      if (error instanceof FetchError) {
+        toast.error(error.data.message);
+      } else {
+        toast.error('An unexpected error happened');
+        console.error('An unexpected error happened:', error);
+      }
+    }
+    setLoadingRequest(false);
   };
 
   return (
-    <div className="flex h-screen">
+    <div className="flex h-screen bg-base-100">
       <div className="flex-1 flex flex-col justify-center py-12 px-4 sm:px-6 lg:flex-none lg:px-20 xl:px-24">
         <div className="mx-auto w-full max-w-sm lg:w-96">
-          <div>
+          <div className="space-y-4">
             <div className="flex items-center justify-start gap-2 flex-shrink-0">
-              <BanknotesIcon className="h-12 w-12 text-primary" />
-              <span className="font-bold text-3xl">Bill Tracker</span>
+              <LockClosedIcon className="h-12 w-12 text-primary" />
+              <span className="font-bold text-3xl">Reset Password</span>
             </div>
-            <div>
-              <h2 className="mt-3 text-3xl font-bold">Create a new account</h2>
-              <div className="flex flex-row items-center gap-1 mt-1 text-sm">
-                Or{' '}
-                <Link href="/signin">
-                  <div className="font-medium text-primary hover:text-primary/80 hover:cursor-pointer">sign in.</div>
-                </Link>
-              </div>
-            </div>
+            <div className="mt-2 text-sm">Enter your new password.</div>
           </div>
-
           <div className="mt-8">
             <div className="mt-6">
-              <form onSubmit={handleSubmit(onSubmit)} className="space-y-6">
-                <FormInput
-                  id="name"
-                  type="name"
-                  labelText="Name"
-                  htmlFor="name"
-                  errors={errors}
-                  placeholder="Steve Jobs"
-                  {...register('name', {
-                    required: 'Name is required',
-                    maxLength: {
-                      value: 50,
-                      message: 'Name should not exceed 50 characters',
-                    },
-                  })}
-                  autoComplete="name"
-                />
-                <FormInput
-                  id="email"
-                  type="email"
-                  labelText="Email"
-                  htmlFor="email"
-                  errors={errors}
-                  placeholder="steve.jobs@microsoft.com"
-                  {...register('email', {
-                    required: 'Email is required',
-                    pattern: {
-                      value: emailRegex,
-                      message: 'Email is not valid',
-                    },
-                    maxLength: {
-                      value: 50,
-                      message: 'Email should not exceed 50 characters',
-                    },
-                  })}
-                  autoComplete="email"
-                />
+              <form onSubmit={handleSubmit(onSubmit)}>
                 <div>
                   <FormInput
                     id="password"
@@ -172,7 +141,7 @@ export const SignUpForm: React.FC<SignUpFormProps> = ({ submit, loadingRequest }
                   </div>
                 </div>
 
-                <div className="w-full">
+                <div className="w-full mt-4">
                   <FormInput
                     htmlFor="repeatPassword"
                     type="password"
@@ -190,21 +159,29 @@ export const SignUpForm: React.FC<SignUpFormProps> = ({ submit, loadingRequest }
                     <span className="text-sm text-rose-500 mt-1">Passwords don't match</span>
                   )}
                 </div>
-                <button
-                  onClick={handleSubmit(onSubmit)}
-                  disabled={Object.entries(errors)?.length > 0}
-                  className="btn btn-primary rounded-xl w-full"
-                >
-                  Sign In
-                </button>
+
+                <div className="mt-6">
+                  <button onClick={handleSubmit(onSubmit)} className="btn btn-primary rounded-xl w-full">
+                    Reset Password
+                  </button>
+                </div>
               </form>
             </div>
           </div>
         </div>
       </div>
-      <div className="hidden lg:block relative w-0 flex-1">
-        <img className="absolute inset-0 h-full w-full object-cover" src={imagePath} alt="Sign Up" />
+      <div className="hidden lg:block relative w-0 flex-1 -ml-20">
+        <img className="absolute inset-0 h-full w-full object-cover" src={imagePath} alt="Recover Password" />
       </div>
     </div>
   );
-};
+}
+
+export async function getServerSideProps({ query }: GetServerSidePropsContext) {
+  const { token } = query;
+  return {
+    props: {
+      token,
+    },
+  };
+}

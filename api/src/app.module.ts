@@ -35,6 +35,9 @@ dotenv.config();
     BullModule.registerQueue({
       name: process.env.ACTIVATION_QUEUE,
     }),
+    BullModule.registerQueue({
+      name: process.env.FORGOT_PASSWORD_QUEUE,
+    }),
     HealthModule,
     AuthModule,
     UserModule,

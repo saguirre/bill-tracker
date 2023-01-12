@@ -6,7 +6,7 @@ import { useDecorativeImage } from '../hooks/useDecorativeImage.hook';
 import fetchJson from '../lib/fetchJson';
 import { getServiceUrl } from '../lib/httpHelpers';
 
-export default function JoinGroup() {
+export default function ActivateAccount() {
   const router = useRouter();
   const { imagePath } = useDecorativeImage('account_activated');
 

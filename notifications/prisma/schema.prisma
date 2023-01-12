@@ -39,3 +39,19 @@ model Activation {
   error          String?   @db.VarChar(255)
   sent           Boolean   @default(false)
 }
+
+model ForgotPassword {
+  id             Int       @id @default(autoincrement())
+  createdAt      DateTime  @default(now())
+  subject        String
+  body           String?
+  recipientEmail String
+  replyTo        String?
+  recipientName  String?
+  senderEmail    String
+  senderName     String?
+  sentAt         DateTime?
+  context        String?
+  error          String?   @db.VarChar(255)
+  sent           Boolean   @default(false)
+}

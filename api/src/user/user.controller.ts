@@ -1,4 +1,12 @@
-import { Body, Controller, Get, Param, Put, UseGuards } from '@nestjs/common';
+import {
+  Body,
+  Controller,
+  Get,
+  Param,
+  Post,
+  Put,
+  UseGuards,
+} from '@nestjs/common';
 import { ApiOkResponse } from '@nestjs/swagger';
 import { User } from '@prisma/client';
 import { IsSameUserGuard } from 'src/auth/is-same-user.guard';
@@ -45,6 +53,20 @@ export class UserController {
     });
 
     return activatedUser;
+  }
+
+  @ApiOkResponse()
+  @Post('/forgot-password')
+  async forgotPassword(@Body() body: { email: string }) {
+    return this.userService.forgotPassword(body.email);
+  }
+
+  @ApiOkResponse()
+  @Post('/reset-password')
+  async recoverPassword(@Body() body: { password: string; token: string }) {
+    const { password, passwordRecoveryToken, activationToken, ...user } =
+      await this.userService.recoverPassword(body.password, body.token);
+    return user;
   }
 
   @UseGuards(JwtAuthGuard, IsSameUserGuard)

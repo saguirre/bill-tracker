@@ -21,6 +21,8 @@ export class UserService {
     private jwtService: JwtService,
     @InjectQueue(process.env.ACTIVATION_QUEUE as string)
     private readonly activationQueue: Queue,
+    @InjectQueue(process.env.FORGOT_PASSWORD_QUEUE as string)
+    private readonly forgotPasswordQueue: Queue,
   ) {}
 
   async user(
@@ -128,6 +130,73 @@ export class UserService {
       data,
       where,
     });
+  }
+
+  async forgotPassword(email: string) {
+    const user = await this.prisma.user.findUnique({
+      where: {
+        email,
+      },
+    });
+
+    if (!user) {
+      throw new NotFoundException('User not found');
+    }
+
+    const passwordRecoveryToken = this.jwtService.sign(
+      { userId: user.id },
+      { secret: process.env.JWT_SECRET },
+    );
+    await this.prisma.user.update({
+      where: { id: Number(user.id) },
+      data: {
+        passwordRecoveryToken,
+      },
+    });
+
+    const url = `${process.env.CLIENT_URL}/reset-password?token=${passwordRecoveryToken}`;
+    Logger.debug('Adding forgot password job to queue');
+    this.forgotPasswordQueue.add(process.env.FORGOT_PASSWORD_JOB, {
+      context: {
+        name: user.name,
+        url,
+      },
+      email,
+    });
+  }
+
+  async recoverPassword(password: string, token: string) {
+    const decodedToken = this.jwtService.decode(token);
+
+    if (!decodedToken || !decodedToken['userId']) {
+      throw new UnauthorizedException('Invalid token');
+    }
+    const userId = decodedToken['userId'];
+    const user = await this.prisma.user.findUnique({
+      where: {
+        id: Number(userId),
+      },
+    });
+
+    if (!user) {
+      throw new NotFoundException('User not found');
+    }
+
+    if (user.passwordRecoveryToken !== token) {
+      throw new UnauthorizedException('Invalid token');
+    }
+
+    const salt = await bcrypt.genSalt();
+    const newPassword = await bcrypt.hash(password, salt);
+    const updatedUser = await this.prisma.user.update({
+      where: { id: Number(user.id) },
+      data: {
+        password: newPassword,
+        passwordRecoveryToken: null,
+      },
+    });
+
+    return updatedUser;
   }
 
   async inactivateUser(
