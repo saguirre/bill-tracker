@@ -16,6 +16,10 @@ import { toast } from 'react-toastify';
 import { ViewBillsFromCalendarModal } from '../components/common/ViewBillsFromCalendarModal';
 import { AddCategoryModal } from '../components/common/AddCategoryModal';
 import useCategories from '../lib/useCategories';
+import { AddGroupModal } from '../components/common/AddGroupModal';
+import useGroups from '../lib/useGroups';
+import { ChevronDownIcon } from '@heroicons/react/24/outline';
+import { Group } from '../models/group/group';
 
 export default function SsrHome({ user }: InferGetServerSidePropsType<typeof getServerSideProps>) {
   const [selectedBill, setSelectedBill] = useState<Bill | null>(null);
@@ -25,7 +29,15 @@ export default function SsrHome({ user }: InferGetServerSidePropsType<typeof get
   const [loadingAddCategory, setLoadingAddCategory] = useState(false);
   const addBillRef = useRef<HTMLLabelElement>(null);
   const addCategoryRef = useRef<HTMLLabelElement>(null);
+  const addGroupRef = useRef<HTMLLabelElement>(null);
+  const [searchString, setSearchString] = useState<string>('');
   const [selectedTab, setSelectedTab] = useState<'inbox' | 'paid'>('inbox');
+  const [selectedFilter, setSelectedFilter] = useState<string>('all');
+  const { groups, mutateGroups } = useGroups(user);
+  const [availableFilters, setAvailableFilters] = useState<string[]>([
+    'all',
+    ...(groups || [])?.map((group: Group) => group.name?.toLowerCase() || ''),
+  ]);
   const { bills, mutateBills } = useBills({
     ...user,
   });
@@ -53,6 +65,35 @@ export default function SsrHome({ user }: InferGetServerSidePropsType<typeof get
     }
   };
 
+  const filterBillsByDropdown = (filter: string) => {
+    if (filter === 'all') {
+      filterBySearchInput(searchString);
+    } else {
+      const filteredBills = filterableBills?.filter(
+        (bill) => bill?.group && bill?.group?.name?.toLowerCase() === filter
+      );
+      setFilterableBills(filteredBills);
+    }
+  };
+
+  const filterBySearchInput = (value: string, shouldImpactState = true) => {
+    let filteredBills = bills?.filter((bill) => bill.title?.toLowerCase()?.includes(value.toLowerCase()));
+    if (selectedFilter !== 'all') {
+      filteredBills = filteredBills?.filter(
+        (bill) => bill?.group && bill?.group?.name?.toLowerCase() === selectedFilter
+      );
+    }
+    if (filteredBills && filteredBills.length > 0) {
+      if (shouldImpactState && selectedTab === 'paid' && !filteredBills?.some((bill) => bill.paid)) {
+        setSelectedTab('inbox');
+      } else if (shouldImpactState && selectedTab === 'inbox' && !filteredBills?.some((bill) => !bill.paid)) {
+        setSelectedTab('paid');
+      }
+    }
+    if (shouldImpactState) setFilterableBills(filteredBills);
+    return filteredBills;
+  };
+
   useKeyPress(() => {
     if (addBillRef.current) {
       addBillRef.current.click();
@@ -65,6 +106,20 @@ export default function SsrHome({ user }: InferGetServerSidePropsType<typeof get
     }
   }, ['KeyE']);
 
+  useKeyPress(() => {
+    if (addGroupRef.current) {
+      addGroupRef.current.click();
+    }
+  }, ['KeyG']);
+
+  useEffect(() => {
+    filterBySearchInput(searchString);
+  }, [searchString]);
+
+  useEffect(() => {
+    filterBillsByDropdown(selectedFilter);
+  }, [selectedFilter]);
+
   useEffect(() => {
     setFilterableBills(bills);
   }, [bills]);
@@ -74,21 +129,7 @@ export default function SsrHome({ user }: InferGetServerSidePropsType<typeof get
   }, [selectedBill]);
 
   return (
-    <Layout
-      showSearch={true}
-      user={user}
-      search={(value: string) => {
-        const filteredBills = bills?.filter((bill) => bill.title?.toLowerCase()?.includes(value.toLowerCase()));
-        if (filteredBills && filteredBills.length > 0) {
-          if (selectedTab === 'paid' && !filteredBills?.some((bill) => bill.paid)) {
-            setSelectedTab('inbox');
-          } else if (selectedTab === 'inbox' && !filteredBills?.some((bill) => !bill.paid)) {
-            setSelectedTab('paid');
-          }
-        }
-        setFilterableBills(filteredBills);
-      }}
-    >
+    <Layout showSearch={true} user={user} search={(value: string) => setSearchString(value)}>
       <div className="flex flex-col items-center px-12">
         <div className="flex flex-row w-full gap-5 items-center justify-between px-6">
           <div className="flex flex-row items-center justify-start">
@@ -98,6 +139,19 @@ export default function SsrHome({ user }: InferGetServerSidePropsType<typeof get
             </div>
           </div>
           <div className="flex flex-row items-center justify-end gap-2 ">
+            <div className="flex flex-col items-center gap-1.5">
+              <label
+                ref={addBillRef}
+                htmlFor="add-bill-modal"
+                className="btn btn-primary flex flex-col items-center justify-center"
+              >
+                Add Bill
+              </label>
+              <div className="flex flex-row items-center justify-center gap-1">
+                <span className="kbd kbd-sm">⌘</span>
+                <span className="kbd kbd-sm">A</span>
+              </div>
+            </div>
             <div className="flex flex-col items-center gap-1.5">
               <label
                 ref={addCategoryRef}
@@ -113,62 +167,81 @@ export default function SsrHome({ user }: InferGetServerSidePropsType<typeof get
             </div>
             <div className="flex flex-col items-center gap-1.5">
               <label
-                ref={addBillRef}
-                htmlFor="add-bill-modal"
-                className="btn btn-primary flex flex-col items-center justify-center"
+                ref={addGroupRef}
+                htmlFor="add-group-modal"
+                className="btn btn-accent flex flex-col items-center justify-center"
               >
-                Add Bill
+                Add Group
               </label>
               <div className="flex flex-row items-center justify-center gap-1">
                 <span className="kbd kbd-sm">⌘</span>
-                <span className="kbd kbd-sm">A</span>
+                <span className="kbd kbd-sm">G</span>
               </div>
             </div>
           </div>
         </div>
         <div className="flex flex-row w-full mb-20">
           <div className="grid w-full px-5 pt-4">
-            <div className="tabs z-10 -mb-px w-full">
-              <a
-                onClick={() => setSelectedTab('inbox')}
-                className={classNames(
-                  'text-base flex flex-col gap-0.5 rounded-t-box w-32 h-10 font-semibold tab tab-lifted',
-                  {
-                    'tab-active pt-4 ': selectedTab === 'inbox',
-                    'border-b-transparent hover:text-base-content': selectedTab !== 'inbox',
-                  }
-                )}
-              >
-                <span
-                  className={classNames('badge badge-outline badge-md uppercase', {
-                    badge: selectedTab === 'inbox',
-                    'badge-ghost': selectedTab !== 'inbox',
-                  })}
+            <div className="flex flex-row items-center w-full">
+              <div className="tabs z-10 -mb-px w-full">
+                <a
+                  onClick={() => setSelectedTab('inbox')}
+                  className={classNames(
+                    'text-base flex flex-col gap-0.5 rounded-t-box w-32 h-10 font-semibold tab tab-lifted',
+                    {
+                      'tab-active pt-4 ': selectedTab === 'inbox',
+                      'border-b-transparent hover:text-base-content': selectedTab !== 'inbox',
+                    }
+                  )}
                 >
-                  Inbox
-                </span>
-              </a>
-              <a
-                onClick={() => setSelectedTab('paid')}
-                className={classNames(
-                  'text-base rounded-t-box flex flex-col gap-0.5 w-32 h-10 font-semibold tab tab-lifted',
-                  {
-                    'tab-active pt-4 ': selectedTab === 'paid',
-                    'hover:text-base-content': selectedTab !== 'paid',
-                  }
-                )}
-              >
-                <span
-                  className={classNames('badge badge-outline badge-md uppercase', {
-                    'badge-success': selectedTab === 'paid',
-                    'badge-ghost': selectedTab !== 'paid',
-                  })}
+                  <span
+                    className={classNames('badge badge-outline badge-md uppercase', {
+                      badge: selectedTab === 'inbox',
+                      'badge-ghost': selectedTab !== 'inbox',
+                    })}
+                  >
+                    Inbox
+                  </span>
+                </a>
+                <a
+                  onClick={() => setSelectedTab('paid')}
+                  className={classNames(
+                    'text-base rounded-t-box flex flex-col gap-0.5 w-32 h-10 font-semibold tab tab-lifted',
+                    {
+                      'tab-active pt-4 ': selectedTab === 'paid',
+                      'hover:text-base-content': selectedTab !== 'paid',
+                    }
+                  )}
                 >
-                  Paid
-                </span>
-              </a>
-              <div className="tab tab-lifted cursor-default [--tab-border-color:transparent]"></div>
+                  <span
+                    className={classNames('badge badge-outline badge-md uppercase', {
+                      'badge-success': selectedTab === 'paid',
+                      'badge-ghost': selectedTab !== 'paid',
+                    })}
+                  >
+                    Paid
+                  </span>
+                </a>
+              </div>
+              <div className="flex flex-row items-center gap-1 justify-end -mt-2">
+                Viewing
+                <div className="dropdown dropdown-end">
+                  <label tabIndex={0} className="btn btn-sm btn-outline m-1">
+                    <span className="whitespace-nowrap uppercase">{selectedFilter} Bills</span>
+                  </label>
+                  <ul tabIndex={0} className="dropdown-content menu p-2 border shadow bg-base-100 rounded-box w-52">
+                    {availableFilters?.map((filter) => (
+                      <li key={filter}>
+                        <a onClick={() => setSelectedFilter(filter)} className="whitespace-nowrap capitalize">
+                          {filter}
+                        </a>
+                      </li>
+                    ))}
+                  </ul>
+                </div>
+              </div>
             </div>
+
             <div
               className={classNames(
                 'flex flex-col bg-base-100 rounded-tr-box relative overflow-x-auto items-center justify-start rounded-b-box gap-5 w-full',
@@ -253,9 +326,9 @@ export default function SsrHome({ user }: InferGetServerSidePropsType<typeof get
             />
           </div>
         </div>
-
         <AddBillModal
           bills={bills}
+          groups={groups}
           categories={categories}
           mutateBills={mutateBills}
           userId={user?.id}
@@ -274,6 +347,7 @@ export default function SsrHome({ user }: InferGetServerSidePropsType<typeof get
           setSelectedBill={setSelectedBill}
           setLoadingBillData={setLoadingBillData}
         />
+        <AddGroupModal groups={groups} mutateGroups={mutateGroups} userId={user?.id} loading={false} />
       </div>
     </Layout>
   );

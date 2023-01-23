@@ -195,7 +195,7 @@ export const SignUpForm: React.FC<SignUpFormProps> = ({ submit, loadingRequest }
                   disabled={Object.entries(errors)?.length > 0}
                   className="btn btn-primary rounded-xl w-full"
                 >
-                  Sign In
+                  Sign Up
                 </button>
               </form>
             </div>

@@ -6,6 +6,7 @@ export interface Bill {
   amount?: number;
   paid?: boolean;
   userId?: number;
+  group?: { id: number; name: string };
   category?: CategoryModel;
   dueDate?: Date | null;
   paidDate?: Date | null;

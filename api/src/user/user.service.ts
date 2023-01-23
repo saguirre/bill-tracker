@@ -61,7 +61,10 @@ export class UserService {
       data,
     });
 
-    const activationToken = this.jwtService.sign({ userId: newUser.id });
+    const activationToken = this.jwtService.sign(
+      { userId: newUser.id },
+      { secret: process.env.JWT_SECRET },
+    );
 
     await this.prisma.user.update({
       where: {

@@ -30,14 +30,6 @@ export class BillController {
 
   @UseGuards(JwtAuthGuard)
   @ApiOkResponse({ type: BillEntity, isArray: true })
-  @Get()
-  async getBills(): Promise<Bill[]> {
-    const bills = await this.billService.bills({});
-    return bills;
-  }
-
-  @UseGuards(JwtAuthGuard)
-  @ApiOkResponse({ type: BillEntity, isArray: true })
   @Get('/user/:id')
   async getBillsByUserId(@Param('id') id: string): Promise<Bill[]> {
     const bills = await this.billService.bills({
@@ -77,12 +69,29 @@ export class BillController {
     @Body() bill: CreateBillEntity,
   ): Promise<Bill> {
     let createBillInput;
-    if (bill.categoryId) {
+    if (bill.categoryId && bill.groupId) {
+      const { categoryId, groupId, ...rest } = bill;
+      createBillInput = {
+        ...rest,
+        amount: Number(bill.amount),
+        category: { connect: { id: Number(categoryId) } },
+        group: { connect: { id: Number(groupId) } },
+        user: { connect: { id: Number(id) } },
+      };
+    } else if (bill.categoryId) {
       const { categoryId, ...rest } = bill;
       createBillInput = {
         ...rest,
         amount: Number(bill.amount),
         category: { connect: { id: Number(categoryId) } },
+        user: { connect: { id: Number(id) } },
+      };
+    } else if (bill.groupId) {
+      const { groupId, ...rest } = bill;
+      createBillInput = {
+        ...rest,
+        amount: Number(bill.amount),
+        group: { connect: { id: Number(groupId) } },
         user: { connect: { id: Number(id) } },
       };
     } else {

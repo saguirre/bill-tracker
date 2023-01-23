@@ -10,12 +10,14 @@ import { Spinner } from './Spinner';
 import * as Ably from 'ably/promises';
 import { configureAbly } from '@ably-labs/react-hooks';
 import { CategoryModel } from '../../models/category';
+import { Group } from '../../models/group/group';
 
 interface AddBillModalProps {
   userId?: number;
   loading: boolean;
   bills: Bill[] | undefined;
   mutateBills: (bills: Bill[]) => void;
+  groups: Group[] | undefined;
   categories?: CategoryModel[];
 }
 
@@ -25,10 +27,18 @@ interface FormValues {
   dueDate: string;
   paidDate?: string;
   categoryId?: number;
+  groupId?: number;
   paid: boolean;
 }
 
-export const AddBillModal: React.FC<AddBillModalProps> = ({ categories, userId, bills, mutateBills, loading }) => {
+export const AddBillModal: React.FC<AddBillModalProps> = ({
+  groups,
+  categories,
+  userId,
+  bills,
+  mutateBills,
+  loading,
+}) => {
   const {
     register,
     handleSubmit,
@@ -197,7 +207,24 @@ export const AddBillModal: React.FC<AddBillModalProps> = ({ categories, userId, 
                   ))}
                 </select>
               </div>
-
+              <div className="form-control w-full">
+                <label className="label pt-0 pb-1">
+                  <span className="label-text text-sm font-semibold">Group</span>
+                </label>
+                <select
+                  placeholder="Select a group"
+                  defaultValue={''}
+                  {...register('groupId')}
+                  className="select select-bordered border-base-content select-primary focus:border-none focus:border-transparent focus:outline-none focus:ring-2 focus:ring-primary"
+                >
+                  <option value="">Select a group</option>
+                  {groups?.map((group: Group) => (
+                    <option key={group.id} value={group.id}>
+                      {group.name}
+                    </option>
+                  ))}
+                </select>
+              </div>
               <div className="flex flex-col items-end w-full justify-end">
                 <div className="form-control">
                   <label className="label cursor-pointer flex flex-row items-center gap-3">

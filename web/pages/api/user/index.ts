@@ -30,7 +30,7 @@ async function userRoute(req: NextApiRequest, res: NextApiResponse) {
         }
         break;
       case 'PUT':
-        // Edit user settings
+        // Edit user profile
         const user = req.session.user;
 
         if (!user || user.isLoggedIn === false) {

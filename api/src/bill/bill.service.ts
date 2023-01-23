@@ -48,6 +48,12 @@ export class BillService {
             name: true,
           },
         },
+        group: {
+          select: {
+            id: true,
+            name: true,
+          },
+        },
         category: true,
       },
     });
