@@ -61,7 +61,7 @@ export const ViewBillsFromCalendarModal: React.FC<ViewBillsFromCalendarModalProp
                 <BillListItem
                   key={bill.id}
                   removeBill={(bill) => {
-                    if (closeRef.current) {
+                    if (bills?.length === 1 && closeRef.current) {
                       closeRef.current.checked = false;
                     }
                     removeBill(bill);
