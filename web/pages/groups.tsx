@@ -26,7 +26,7 @@ export default function Groups({ user }: InferGetServerSidePropsType<typeof getS
     if (addGroupRef.current) {
       addGroupRef.current.click();
     }
-  }, ['KeyA']);
+  }, ['KeyG']);
 
   const isGroupAdmin = (group: Group) => {
     return group?.adminId === user?.id;
@@ -72,7 +72,7 @@ export default function Groups({ user }: InferGetServerSidePropsType<typeof getS
                     </label>
                     <div className="flex flex-row items-center justify-center gap-1">
                       <span className="kbd kbd-sm">⌘</span>
-                      <span className="kbd kbd-sm">A</span>
+                      <span className="kbd kbd-sm">G</span>
                     </div>
                   </div>
                 </div>
@@ -92,14 +92,8 @@ export default function Groups({ user }: InferGetServerSidePropsType<typeof getS
           {groups && groups.length > 0 && (
             <div className="grid grid-cols-2 gap-4 w-full px-4 py-2">
               {groups?.map((group) => (
-                <div
-                  onClick={() => {
-                    console.log(group);
-                  }}
-                  key={group.id}
-                  className="relative pr-2 pt-2"
-                >
-                  <div className="card w-full border rounded-box cursor-pointer bg-base-100 hover:bg-base-200 hover:border-primary">
+                <div key={group.id} className="relative pr-2 pt-2">
+                  <div className="card w-full border rounded-box bg-base-100">
                     <div className="card-body">
                       <div className="flex flex-row justify-between">
                         <div className="flex flex-col">
