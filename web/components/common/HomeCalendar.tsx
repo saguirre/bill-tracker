@@ -31,25 +31,24 @@ export const HomeCalendar: React.FC<HomeCalendarProps> = ({ bills, onSelectDate 
         const billDueDates = bills.filter(
           (bill) => bill?.dueDate && isSameDay(new Date(bill.dueDate), new Date(currentDay.date))
         );
-        if (billDueDates?.length > 0) {
-          return {
-            ...currentDay,
-            billCount: billDueDates.length,
-          };
-        }
-        return currentDay;
+        return {
+          ...currentDay,
+          billCount: billDueDates.length,
+        };
       });
     });
   };
 
   useEffect(() => {
     if (bills) {
+      console.log('Bills changed');
+      console.log(bills);
       markBillDueDatesInCalendar(bills);
     }
   }, [bills, currentMonthName]);
 
   return (
-    <div className='w-full'>
+    <div className="w-full">
       <div className="px-2 py-6 rounded-box border border-base-300 text-center lg:col-start-8 lg:col-end-13 lg:row-start-1 xl:col-start-9">
         <div className="flex flex-row w-full px-4 items-center justify-between text-base-content">
           <div className="flex-start text-lg font-semibold">

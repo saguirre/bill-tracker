@@ -36,7 +36,7 @@ export const CalendarButton: React.FC<Props> = ({ day, dayIdx, selectedDay, bill
       >
         {day?.formattedDate?.split('-')?.shift()?.replace(/^0/, '')}
       </time>
-      {billCount && (
+      {billCount !== undefined && billCount > 0 && (
         <>
           {billCount === 1 && (
             <>
