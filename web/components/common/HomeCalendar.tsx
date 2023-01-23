@@ -41,8 +41,6 @@ export const HomeCalendar: React.FC<HomeCalendarProps> = ({ bills, onSelectDate 
 
   useEffect(() => {
     if (bills) {
-      console.log('Bills changed');
-      console.log(bills);
       markBillDueDatesInCalendar(bills);
     }
   }, [bills, currentMonthName]);
