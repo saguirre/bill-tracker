@@ -60,7 +60,12 @@ export const ViewBillsFromCalendarModal: React.FC<ViewBillsFromCalendarModalProp
               {bills?.map((bill) => (
                 <BillListItem
                   key={bill.id}
-                  removeBill={removeBill}
+                  removeBill={(bill) => {
+                    if (closeRef.current) {
+                      closeRef.current.checked = false;
+                    }
+                    removeBill(bill);
+                  }}
                   badgeColor={badgeColor(bill)}
                   setSelectedBill={(bill) => {
                     if (closeRef.current) {

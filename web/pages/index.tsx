@@ -317,7 +317,7 @@ export default function SsrHome({ user }: InferGetServerSidePropsType<typeof get
               </div>
             </div>
           </div>
-          <div className="w-[45%] px-5 pt-4">
+          <div className="w-[48%] pr-4 pt-4">
             <HomeCalendar
               bills={bills}
               onSelectDate={(bills: Bill[]) => {
