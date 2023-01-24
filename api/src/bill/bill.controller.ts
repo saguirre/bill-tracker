@@ -139,6 +139,54 @@ export class BillController {
 
   @UseGuards(JwtAuthGuard)
   @ApiOkResponse({ type: BillEntity })
+  @Put('/user/:id/bill/:billId')
+  async updateBillByUser(
+    @Param('id') id: string,
+    @Param('billId') billId: string,
+    @Body() bill: UpdateBillEntity,
+  ): Promise<Bill> {
+    let updateBillInput;
+    if (bill.categoryId && bill.groupId) {
+      const { categoryId, groupId, ...rest } = bill;
+      updateBillInput = {
+        ...rest,
+        amount: Number(bill.amount),
+        category: { connect: { id: Number(categoryId) } },
+        group: { connect: { id: Number(groupId) } },
+        user: { connect: { id: Number(id) } },
+      };
+    } else if (bill.categoryId) {
+      const { categoryId, ...rest } = bill;
+      updateBillInput = {
+        ...rest,
+        amount: Number(bill.amount),
+        category: { connect: { id: Number(categoryId) } },
+        user: { connect: { id: Number(id) } },
+      };
+    } else if (bill.groupId) {
+      const { groupId, ...rest } = bill;
+      updateBillInput = {
+        ...rest,
+        amount: Number(bill.amount),
+        group: { connect: { id: Number(groupId) } },
+        user: { connect: { id: Number(id) } },
+      };
+    } else {
+      updateBillInput = {
+        ...bill,
+        amount: Number(bill.amount),
+        user: { connect: { id: Number(id) } },
+      };
+    }
+    const updatedBill = await this.billService.updateBill({
+      where: { id: Number(billId) },
+      data: updateBillInput,
+    });
+    return updatedBill;
+  }
+
+  @UseGuards(JwtAuthGuard)
+  @ApiOkResponse({ type: BillEntity })
   @Delete('/:id')
   async deleteBill(@Param('id') id: string): Promise<Bill> {
     const deletedBill = await this.billService.deleteBill({

@@ -125,10 +125,6 @@ export default function SsrHome({ user }: InferGetServerSidePropsType<typeof get
     setFilterableBills(bills);
   }, [bills]);
 
-  useEffect(() => {
-    setLoadingBillData(false);
-  }, [selectedBill]);
-
   return (
     <Layout showSearch={true} user={user} search={(value: string) => setSearchString(value)}>
       <div className="flex flex-col items-center px-12">
@@ -347,9 +343,9 @@ export default function SsrHome({ user }: InferGetServerSidePropsType<typeof get
           <EditBillModal
             bills={bills}
             groups={groups}
+            userId={user?.id}
             categories={categories}
             mutateBills={mutateBills}
-            loading={loadingBillData}
             bill={selectedBill}
           />
         )}

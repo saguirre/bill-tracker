@@ -24,6 +24,7 @@ export interface FormInputProps {
   autoComplete?: string;
   className?: string;
   errors?: any;
+  lang?: string;
 }
 
 export const FormInput: React.FC<FormInputProps> = forwardRef<HTMLInputElement, FormInputProps>(

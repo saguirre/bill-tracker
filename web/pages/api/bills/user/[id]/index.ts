@@ -1,10 +1,10 @@
 import { withIronSessionApiRoute } from 'iron-session/next';
-import { sessionOptions } from '../../../../lib/session';
+import { sessionOptions } from '../../../../../lib/session';
 
 import { NextApiRequest, NextApiResponse } from 'next';
-import fetchJson from '../../../../lib/fetchJson';
-import { getServiceUrl } from '../../../../lib/httpHelpers';
-import { Bill } from '../../../../models/bill/bill';
+import fetchJson from '../../../../../lib/fetchJson';
+import { getServiceUrl } from '../../../../../lib/httpHelpers';
+import { Bill } from '../../../../../models/bill/bill';
 
 export default withIronSessionApiRoute(userBillHandler, sessionOptions);
 

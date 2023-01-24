@@ -9,6 +9,8 @@ export class UpdateBillEntity implements Partial<Prisma.BillUpdateInput> {
   @ApiProperty({ required: false })
   categoryId?: number;
   @ApiProperty({ required: false })
+  groupId?: number;
+  @ApiProperty({ required: false })
   paid?: boolean;
   @ApiProperty({ required: false })
   dueDate?: string | Date;

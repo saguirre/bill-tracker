@@ -92,6 +92,9 @@ export const AddBillModal: React.FC<AddBillModalProps> = ({
       if (!data.categoryId) {
         delete data.categoryId;
       }
+      if (!data.groupId) {
+        delete data.groupId;
+      }
       const newBill: Bill = {
         ...data,
         paid: checked,

@@ -12,10 +12,11 @@ import { configureAbly } from '@ably-labs/react-hooks';
 import { CategoryModel } from '../../models/category';
 import { Group } from '../../models/group/group';
 import { format } from 'date-fns';
+import classNames from 'classnames';
 
 interface EditBillModalProps {
   userId?: number;
-  loading: boolean;
+  loading?: boolean;
   bill: Bill;
   bills: Bill[] | undefined;
   mutateBills: (bills: Bill[]) => void;
@@ -46,22 +47,22 @@ export const EditBillModal: React.FC<EditBillModalProps> = ({
     register,
     handleSubmit,
     reset,
-    formState: { errors },
+    formState: { errors, isDirty },
   } = useForm<FormValues>({
     mode: 'onChange',
     defaultValues: {
       title: bill?.title,
       amount: bill?.amount,
-      dueDate: bill?.dueDate ? format(new Date(bill?.dueDate), 'dd/MM/yyyy') : '',
-      paidDate: bill?.paidDate ? format(new Date(bill?.paidDate), 'dd/MM/yyyy') : '',
+      dueDate: bill?.dueDate ? format(new Date(bill?.dueDate), 'yyyy-MM-dd') : '',
+      paidDate: bill?.paidDate ? format(new Date(bill?.paidDate), 'yyyy-MM-dd') : '',
       categoryId: bill?.category?.id,
       groupId: bill?.group?.id,
       paid: bill?.paid,
     },
   });
+
   const [channel, setChannel] = useState<Ably.Types.RealtimeChannelPromise | null>(null);
-  const [addAnother, setAddAnother] = useState(false);
-  const [checked, setChecked] = useState(false);
+  const [checked, setChecked] = useState(bill?.paid);
   const [editing, setEditing] = useState(false);
   const closeRef = useRef<HTMLInputElement>(null);
 
@@ -107,6 +108,9 @@ export const EditBillModal: React.FC<EditBillModalProps> = ({
       if (!data.categoryId) {
         delete data.categoryId;
       }
+      if (!data.groupId) {
+        delete data.groupId;
+      }
       const newBill: Bill = {
         ...data,
         paid: checked,
@@ -114,42 +118,50 @@ export const EditBillModal: React.FC<EditBillModalProps> = ({
         dueDate: new Date(data.dueDate).toISOString(),
       };
 
-      mutateBills([...(bills || []), { id: (bills?.length || 0) + 1, ...newBill }]);
-      const billResponse = await fetchJson(`/api/bills/user/${userId}`, {
-        method: 'POST',
+      mutateBills(bills?.map((billItem: Bill) => (bill?.id === billItem.id ? newBill : billItem)) || []);
+      const billResponse: Bill = await fetchJson(`/api/bills/user/${userId}/bill/${bill?.id}`, {
+        method: 'PUT',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(newBill),
       });
 
       if (billResponse) {
         mutateBills([
-          ...(bills || [])?.map((bill: Bill) => {
-            if (bill?.id === newBill.id) {
+          ...(bills || [])?.map((billItem: Bill) => {
+            if (billItem?.id === bill.id) {
               return billResponse;
             }
-            return bill;
+            return billItem;
           }),
         ]);
       }
       const modal = document.getElementById('edit-bill-modal') as any;
-      if (!addAnother) {
-        if (modal) modal.checked = false;
-        setChecked(false);
-      }
-      reset();
+      if (modal) modal.checked = false;
+      setEditing(false);
+      resetBill(billResponse);
       publishFromClient(billResponse);
       toast.success('Bill edited successfully');
     } catch (error) {
       console.error(error);
-      toast.error('There was an error adding your bill?. Please try again later.');
+      toast.error('There was an error editing your bill. Please try again later.');
     }
   };
 
+  const resetBill = (bill: Bill) => {
+    reset({
+      title: bill.title,
+      amount: bill.amount,
+      dueDate: bill?.dueDate ? format(new Date(bill?.dueDate), 'yyyy-MM-dd') : '',
+      paidDate: bill?.paidDate ? format(new Date(bill?.paidDate), 'yyyy-MM-dd') : '',
+      categoryId: bill?.category?.id,
+      groupId: bill?.group?.id,
+      paid: bill?.paid,
+    });
+  };
+
   useEffect(() => {
-    console.log('groups: ', groups);
-    console.log('categories: ', categories);
-    console.log('bill: ', bill);
-  }, [editing]);
+    resetBill(bill);
+  }, [bill]);
   return (
     <>
       <input ref={closeRef} type="checkbox" id="edit-bill-modal" className="modal-toggle" />
@@ -159,15 +171,18 @@ export const EditBillModal: React.FC<EditBillModalProps> = ({
             <div className="flex flex-row items-center justify-start gap-2">
               <button
                 onClick={() => setEditing(!editing)}
-                className="btn btn-outline btn-base-content border rounded-box p-1.5"
+                className={classNames(
+                  'btn btn-outline btn-base-content border rounded-box p-1.5',
+                  editing ? 'btn-primary' : ''
+                )}
               >
                 <PencilIcon className="h-8 w-8" />
               </button>
               <h1 className="text-2xl font-semibold">View Bill</h1>
-              <span className="text-xs"></span>
+              {editing && <span className="text-xs">(Currently editing Bill)</span>}
             </div>
             <span className="text-base-content text-sm font-normal">
-              View or edit your bill details. (You can click on the Pencil to edit your bill!)
+              View or edit your bill details. (You can click on the Pencil to edit your bill)
             </span>
           </div>
           <div className="divider my-1.5"></div>
@@ -280,9 +295,10 @@ export const EditBillModal: React.FC<EditBillModalProps> = ({
                     <input
                       type="checkbox"
                       id="paid"
+                      readOnly={!editing}
                       className="toggle toggle-sm toggle-primary"
-                      checked={checked}
-                      onChange={(e) => setChecked(e.target.checked)}
+                      checked={!editing ? bill?.paid : checked}
+                      onChange={(e) => editing && setChecked(e.target.checked)}
                     />
                     <span className="label-text text-sm font-semibold">Already Paid?</span>
                   </label>
@@ -293,6 +309,7 @@ export const EditBillModal: React.FC<EditBillModalProps> = ({
                     <FormInput
                       id="paidDate"
                       type="date"
+                      readOnly={!editing}
                       htmlFor="paidDate"
                       autoComplete="true"
                       placeholder="Paid Date"
@@ -305,8 +322,15 @@ export const EditBillModal: React.FC<EditBillModalProps> = ({
                 )}
               </div>
               <label
+                onClick={(e) => {
+                  if (!editing) {
+                    e.preventDefault();
+                  }
+                }}
                 htmlFor="input-file"
-                className="w-full p-4 rounded-box hover:border-primary hover:border-solid cursor-pointer border border-base-content/40 border-dashed"
+                className={classNames('w-full p-4 rounded-box border border-base-content/40 border-dashed', {
+                  'cursor-pointer hover:border-primary hover:border-solid': editing,
+                })}
               >
                 <div className="flex flex-row items-center justify-center gap-2">
                   <input id="input-file" className="hidden" type="file" />
@@ -317,13 +341,22 @@ export const EditBillModal: React.FC<EditBillModalProps> = ({
             </div>
             <div className="modal-action flex flex-row items-center justify-end">
               <div className="flex flex-row items-center justify-end gap-2">
-                <label htmlFor="edit-bill-modal" className="btn btn-ghost rounded-xl">
+                <label
+                  onClick={() => {
+                    reset();
+                    setEditing(false);
+                  }}
+                  htmlFor="edit-bill-modal"
+                  className="btn btn-ghost rounded-xl"
+                >
                   Cancel
                 </label>
-                <button className="btn btn-primary rounded-xl">
-                  {loading && <Spinner className=" h-4 w-4 border-b-2 border-white bg-primary mr-3"></Spinner>}
-                  Save
-                </button>
+                {editing && isDirty && (
+                  <button className="btn btn-primary rounded-xl" disabled={Object.entries(errors)?.length > 0}>
+                    {loading && <Spinner className=" h-4 w-4 border-b-2 border-white bg-primary mr-3"></Spinner>}
+                    Save
+                  </button>
+                )}
               </div>
             </div>
           </form>

@@ -23,13 +23,13 @@ async function billHandler(req: NextApiRequest, res: NextApiResponse) {
         break;
       case 'PUT':
         // Edit bill
-        const newBill = await fetchJson(getServiceUrl(`bill/${req.query.id}`), {
+        const updatedBill = await fetchJson(getServiceUrl(`bill/${req.query.id}`), {
           method: 'PUT',
           headers: { Authorization: `Bearer ${req.session.accessToken}`, 'Content-Type': 'application/json' },
           body: JSON.stringify(body),
         });
 
-        res.status(200).json(newBill as Bill);
+        res.status(200).json(updatedBill as Bill);
         break;
       default:
         res.setHeader('Allow', ['DELETE', 'PUT']);
