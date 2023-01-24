@@ -120,11 +120,33 @@ export default function Profile({ user }: InferGetServerSidePropsType<typeof get
                       />
                     </div>
                   </div>
-                  <div className='flex flex-row gap-3'>
-                    <div className="flex justify-end max-w-md w-full">
+                  {isDirty && (
+                    <div className="toast toast-bottom toast-center w-[80%] mb-10 z-10">
+                      <div className="alert shadow-lg">
+                        <div>
+                          <svg
+                            xmlns="http://www.w3.org/2000/svg"
+                            fill="none"
+                            viewBox="0 0 24 24"
+                            className="stroke-info flex-shrink-0 w-6 h-6"
+                          >
+                            <path
+                              strokeLinecap="round"
+                              strokeLinejoin="round"
+                              strokeWidth="2"
+                              d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"
+                            ></path>
+                          </svg>
+                          <span>
+                            Your Profile Info has been updated. If you wish to keep these changes, please press Save.
+                          </span>
+                        </div>
+                        <div className="flex-none">
+                          <button type="submit" className="btn btn-sm btn-primary">Save</button>
+                        </div>
+                      </div>
                     </div>
-                      {isDirty && <button className="btn btn-primary">Save</button>}
-                  </div>
+                  )}
                 </form>
               </div>
             </div>
