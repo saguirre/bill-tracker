@@ -15,6 +15,7 @@ import { getCorrespondingThemeImage } from '../utils/get-page-image-by-theme';
 import { useTheme } from 'next-themes';
 import { RemoveItemButton } from '../components/common/RemoveItemButton';
 import { toast } from 'react-toastify';
+import { ViewMembersModal } from '../components/common/ViewMembersGroupModal';
 
 export default function Groups({ user }: InferGetServerSidePropsType<typeof getServerSideProps>) {
   const addGroupRef = useRef<HTMLLabelElement>(null);
@@ -119,8 +120,17 @@ export default function Groups({ user }: InferGetServerSidePropsType<typeof getS
                             onClick={() => {
                               setSelectedGroup(group);
                             }}
-                            htmlFor="add-member-modal"
+                            htmlFor="view-members-modal"
                             className="btn btn-sm btn-secondary"
+                          >
+                            View Members
+                          </label>
+                          <label
+                            onClick={() => {
+                              setSelectedGroup(group);
+                            }}
+                            htmlFor="add-member-modal"
+                            className="btn btn-sm btn-primary"
                           >
                             Add Member
                           </label>
@@ -137,6 +147,7 @@ export default function Groups({ user }: InferGetServerSidePropsType<typeof getS
       </div>
       <AddGroupModal groups={groups} mutateGroups={mutateGroups} userId={user?.id} loading={false} />
       <AddMemberModal group={selectedGroup} mutateGroups={mutateGroups} />
+      <ViewMembersModal group={selectedGroup} mutateGroups={mutateGroups} />
     </Layout>
   );
 }

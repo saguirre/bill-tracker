@@ -21,7 +21,7 @@ export const HorizontalAvatarGroup: React.FC<HorizontalAvatarGroupProps> = ({
   return (
     <div className="avatar-group -space-x-5">
       {members?.slice(0, maxAvatars).map((member) => (
-        <div className="avatar">
+        <div key={member?.user?.id} className="avatar">
           <div className="w-11">
             {member?.user?.avatar && <img src={member?.user?.avatar} alt="avatar" className="rounded-full h-10 w-10" />}
             {!member?.user?.avatar && (

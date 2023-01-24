@@ -34,10 +34,7 @@ export default function SsrHome({ user }: InferGetServerSidePropsType<typeof get
   const [selectedTab, setSelectedTab] = useState<'inbox' | 'paid'>('inbox');
   const [selectedFilter, setSelectedFilter] = useState<string>('all');
   const { groups, mutateGroups } = useGroups(user);
-  const [availableFilters, setAvailableFilters] = useState<string[]>([
-    'all',
-    ...(groups || [])?.map((group: Group) => group.name?.toLowerCase() || ''),
-  ]);
+  const [availableFilters, setAvailableFilters] = useState<string[]>(['all']);
   const { bills, mutateBills } = useBills({
     ...user,
   });
@@ -113,6 +110,9 @@ export default function SsrHome({ user }: InferGetServerSidePropsType<typeof get
     }
   }, ['KeyG']);
 
+  useEffect(() => {
+    setAvailableFilters(['all', ...(groups || [])?.map((group: Group) => group.name?.toLowerCase() || '')]);
+  }, [groups]);
   useEffect(() => {
     filterBySearchInput(searchString);
   }, [searchString]);
