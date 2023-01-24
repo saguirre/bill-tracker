@@ -18,7 +18,6 @@ import { AddCategoryModal } from '../components/common/AddCategoryModal';
 import useCategories from '../lib/useCategories';
 import { AddGroupModal } from '../components/common/AddGroupModal';
 import useGroups from '../lib/useGroups';
-import { ChevronDownIcon } from '@heroicons/react/24/outline';
 import { Group } from '../models/group/group';
 
 export default function SsrHome({ user }: InferGetServerSidePropsType<typeof getServerSideProps>) {
@@ -113,6 +112,7 @@ export default function SsrHome({ user }: InferGetServerSidePropsType<typeof get
   useEffect(() => {
     setAvailableFilters(['all', ...(groups || [])?.map((group: Group) => group.name?.toLowerCase() || '')]);
   }, [groups]);
+
   useEffect(() => {
     filterBySearchInput(searchString);
   }, [searchString]);
@@ -343,7 +343,16 @@ export default function SsrHome({ user }: InferGetServerSidePropsType<typeof get
           userId={user?.id}
           loading={loadingAddCategory}
         />
-        <EditBillModal bills={bills} mutateBills={mutateBills} loading={loadingBillData} bill={selectedBill} />
+        {selectedBill && (
+          <EditBillModal
+            bills={bills}
+            groups={groups}
+            categories={categories}
+            mutateBills={mutateBills}
+            loading={loadingBillData}
+            bill={selectedBill}
+          />
+        )}
         <ViewBillsFromCalendarModal
           bills={calendarSelectedBills}
           removeBill={(bill) => removeBill(bill)}

@@ -8,9 +8,9 @@ export interface Bill {
   userId?: number;
   group?: { id: number; name: string };
   category?: CategoryModel;
-  dueDate?: Date | null;
-  paidDate?: Date | null;
-  createdAt?: Date;
-  updatedAt?: Date;
+  dueDate?: string | null;
+  paidDate?: string | null;
+  createdAt?: string;
+  updatedAt?: string;
   userGroupId?: number;
 }

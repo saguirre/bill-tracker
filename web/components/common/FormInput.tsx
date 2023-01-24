@@ -6,9 +6,11 @@ export interface FormInputProps {
   id?: string;
   type?: string;
   name: string;
+  readOnly?: boolean;
   value?: string;
   htmlFor?: string;
   labelText?: string;
+  defaultValue?: string;
   placeholder?: string;
   onChange?: ChangeHandler;
   onBlur?: ChangeHandler;
@@ -37,8 +39,10 @@ export const FormInput: React.FC<FormInputProps> = forwardRef<HTMLInputElement, 
           {...props}
           className={classNames(
             props.className || 'focus:border-transparent focus:outline-none focus:ring-2 focus:ring-primary',
-            'input border-base-content input-primary focus:border-none'
+            'input border-base-content input-primary focus:border-none',
+            props.readOnly ? 'cursor-default focus:ring-base-content focus:ring-1' : ''
           )}
+          readOnly={props.readOnly}
         />
         {errors && errors[props?.name] && (
           <span className="!mt-1 pl-1 text-sm text-error">{errors[props?.name]?.message}</span>

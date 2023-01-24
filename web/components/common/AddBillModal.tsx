@@ -95,8 +95,8 @@ export const AddBillModal: React.FC<AddBillModalProps> = ({
       const newBill: Bill = {
         ...data,
         paid: checked,
-        paidDate: data.paidDate ? new Date(data.paidDate) : undefined,
-        dueDate: new Date(data.dueDate),
+        paidDate: data.paidDate ? new Date(data.paidDate).toISOString() : undefined,
+        dueDate: new Date(data.dueDate).toISOString(),
       };
 
       mutateBills([...(bills || []), { id: (bills?.length || 0) + 1, ...newBill }]);
