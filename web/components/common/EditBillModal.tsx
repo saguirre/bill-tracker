@@ -81,7 +81,7 @@ export const EditBillModal: React.FC<EditBillModalProps> = ({
     if (channel === null) return;
 
     const notificationBody = {
-      title: `${bill?.user.name} added a new bill`,
+      title: `${bill?.user.name} edited a bill`,
       message: `${bill?.title} - ${bill?.amount}`,
     };
     channel.publish('update-from-client', { ...notificationBody });
