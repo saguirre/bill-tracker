@@ -6,6 +6,8 @@ import Link from 'next/link';
 import classNames from 'classnames';
 import { useState } from 'react';
 import { useDecorativeImage } from '../../hooks/useDecorativeImage.hook';
+import { usePasswordStrength } from '../../hooks/usePasswordStrength.hook';
+import { PasswordStrengthIndicator } from '../common/PasswordStrengthIndicator';
 
 interface FormValues {
   name: string;
@@ -29,23 +31,7 @@ export const SignUpForm: React.FC<SignUpFormProps> = ({ submit, loadingRequest }
     formState: { errors },
   } = useForm<FormValues>({ mode: 'onChange' });
   const { imagePath } = useDecorativeImage('sign_up');
-  const [passwordStrength, setPasswordStrength] = useState(0);
-  const getPasswordSuccessPercentage = (password: string) => {
-    let percentage = 0;
-    if (password.length >= 6) {
-      percentage += 25;
-    }
-    if (password.match(/[a-z]/)) {
-      percentage += 25;
-    }
-    if (password.match(/[A-Z]/)) {
-      percentage += 25;
-    }
-    if (password.match(/[0-9]/)) {
-      percentage += 25;
-    }
-    return percentage;
-  };
+  const { passwordStrength, updatePasswordStrength } = usePasswordStrength();
 
   const onSubmit: SubmitHandler<FormValues> = (data: FormValues) => {
     submit(data);
@@ -135,43 +121,13 @@ export const SignUpForm: React.FC<SignUpFormProps> = ({ submit, loadingRequest }
                       },
                       maxLength: { value: 50, message: 'Password should not exceed 50 characters' },
                       onChange: (e) => {
-                        setPasswordStrength(getPasswordSuccessPercentage(watch('password')));
+                        updatePasswordStrength(watch('password'));
                       },
                     })}
                     autoComplete="current-password"
                   />
-                  <div className="w-full mt-3 flex flex-col items-center justify-center">
-                    <progress
-                      className={classNames('progress w-56', {
-                        'progress-error': passwordStrength <= 25,
-                        'progress-warning': passwordStrength > 25 && passwordStrength < 100,
-                        'progress-success': passwordStrength === 100,
-                      })}
-                      value={passwordStrength}
-                      max="100"
-                    ></progress>
-                    <div className="w-full flex items-center justify-center">
-                      {passwordStrength <= 25 && (
-                        <>
-                          {errors.password && (
-                            <span className="text-sm text-center text-error mt-1">{errors.password.message}</span>
-                          )}
-                        </>
-                      )}
-                      {passwordStrength > 25 && passwordStrength < 100 && (
-                        <>
-                          {errors.password && (
-                            <span className="text-sm text-center text-warning mt-1">{errors.password.message}</span>
-                          )}
-                        </>
-                      )}
-                      {passwordStrength === 100 && (
-                        <span className="text-sm text-center text-success mt-1">Password is strong</span>
-                      )}
-                    </div>
-                  </div>
+                  <PasswordStrengthIndicator passwordStrength={passwordStrength} errors={errors} />
                 </div>
-
                 <div className="w-full">
                   <FormInput
                     htmlFor="repeatPassword"

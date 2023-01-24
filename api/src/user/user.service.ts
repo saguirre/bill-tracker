@@ -1,5 +1,7 @@
 import {
   ConflictException,
+  HttpException,
+  HttpStatus,
   Injectable,
   Logger,
   NotFoundException,
@@ -150,7 +152,7 @@ export class UserService {
       { userId: user.id },
       { secret: process.env.JWT_SECRET },
     );
-    await this.prisma.user.update({
+    const updatedUser = await this.prisma.user.update({
       where: { id: Number(user.id) },
       data: {
         passwordRecoveryToken,
@@ -166,6 +168,32 @@ export class UserService {
       },
       email,
     });
+    return updatedUser;
+  }
+
+  async changePassword(
+    userId: number,
+    oldPassword: string,
+    newPassword: string,
+  ) {
+    const user = await this.prisma.user.findUnique({
+      where: { id: Number(userId) },
+    });
+    const passwordIsValid = await bcrypt.compare(oldPassword, user.password);
+    if (!passwordIsValid) {
+      throw new HttpException('Password is incorrect', HttpStatus.UNAUTHORIZED);
+    }
+
+    const salt = await bcrypt.genSalt();
+    const newPasswordHash = await bcrypt.hash(newPassword, salt);
+    const updatedUser = await this.prisma.user.update({
+      where: { id: Number(userId) },
+      data: {
+        password: newPasswordHash,
+      },
+    });
+
+    return updatedUser;
   }
 
   async recoverPassword(password: string, token: string) {

@@ -15,7 +15,7 @@ export default async function resetPasswordHandler(req: NextApiRequest, res: Nex
           body: JSON.stringify(body),
         });
 
-        res.status(200).json(updatedUser as User);
+        res.status(200).json({ success: true });
         break;
       default:
         res.setHeader('Allow', ['POST']);

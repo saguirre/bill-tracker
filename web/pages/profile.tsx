@@ -5,6 +5,7 @@ import { useRouter } from 'next/router';
 import { useState } from 'react';
 import { useForm } from 'react-hook-form';
 import { toast } from 'react-toastify';
+import { ChangePasswordModal } from '../components/common/ChangePasswordModal';
 import { UploadAvatarModal } from '../components/common/UploadAvatarModal';
 import { Layout } from '../components/Layout';
 import { useDecorativeImage } from '../hooks/useDecorativeImage.hook';
@@ -15,11 +16,15 @@ import { User } from '../models/user/user';
 interface FormValues {
   name: string;
   phone: string;
+  password: string;
+  newPassword: string;
+  repeatPassword: string;
 }
 export default function Profile({ user }: InferGetServerSidePropsType<typeof getServerSideProps>) {
   const router = useRouter();
   const { imagePath } = useDecorativeImage('profile');
   const [uploadedAvatar, setUploadedAvatar] = useState<boolean>(false);
+  const [changePasswordSelected, setChangePasswordSelected] = useState<boolean>(false);
   const {
     register,
     handleSubmit,
@@ -89,7 +94,7 @@ export default function Profile({ user }: InferGetServerSidePropsType<typeof get
                     <span className="text-base font-semibold">Name</span>
                     <div className="flex flex-row gap-3 items-center w-full">
                       <input
-                        className="input input-bordered w-full max-w-md"
+                        className="input input-bordered border-base-content w-full max-w-md"
                         {...register('name', {
                           required: 'Name is required',
                         })}
@@ -104,17 +109,21 @@ export default function Profile({ user }: InferGetServerSidePropsType<typeof get
                     </div>
                   </div>
                   <div className="flex flex-col gap-1">
-                    <span className="text-base font-semibold">Password</span>
-                    <div className="flex flex-row gap-3 items-center w-full">
-                      <input className="input input-bordered w-full max-w-md" disabled value="********" />
-                      <label className="btn btn-outline btn-secondary">Modify</label>
+                    <div>
+                      <span className="text-base font-semibold">Password</span>
+                      <div className="flex flex-row gap-3 items-center w-full">
+                        <input className="input input-bordered w-full max-w-md" disabled value="********" />
+                        <label htmlFor="change-password-modal" className="btn btn-outline btn-secondary">
+                          Modify
+                        </label>
+                      </div>
                     </div>
                   </div>
                   <div className="flex flex-col gap-1">
                     <span className="text-base font-semibold">Phone</span>
                     <div className="flex flex-row gap-3 items-center w-full">
                       <input
-                        className="input input-bordered w-full max-w-md"
+                        className="input input-bordered border-base-content w-full max-w-md"
                         {...register('phone')}
                         placeholder="+1 (999) 999-9999"
                       />
@@ -142,7 +151,9 @@ export default function Profile({ user }: InferGetServerSidePropsType<typeof get
                           </span>
                         </div>
                         <div className="flex-none">
-                          <button type="submit" className="btn btn-sm btn-primary">Save</button>
+                          <button type="submit" className="btn btn-sm btn-primary">
+                            Save
+                          </button>
                         </div>
                       </div>
                     </div>
@@ -153,6 +164,7 @@ export default function Profile({ user }: InferGetServerSidePropsType<typeof get
             <img src={imagePath} alt="Profile" className="hidden xl:block absolute h-[90%] right-0 top-20" />
           </div>
         </div>
+        <div className="pb-10"></div>
       </div>
       {uploadedAvatar && (
         <div className="toast toast-bottom toast-center w-[80%] mb-10">
@@ -187,6 +199,7 @@ export default function Profile({ user }: InferGetServerSidePropsType<typeof get
           setUploadedAvatar(true);
         }}
       />
+      <ChangePasswordModal />
     </Layout>
   );
 }

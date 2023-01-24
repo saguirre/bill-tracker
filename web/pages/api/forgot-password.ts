@@ -15,7 +15,7 @@ export default async function forgotPasswordHandler(req: NextApiRequest, res: Ne
           body: JSON.stringify(body),
         });
 
-        res.status(200);
+        res.status(200).json({ success: true });
         break;
       default:
         res.setHeader('Allow', ['POST']);

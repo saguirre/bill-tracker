@@ -2,6 +2,7 @@ import {
   Body,
   Controller,
   Get,
+  Logger,
   Param,
   Post,
   Put,
@@ -58,7 +59,9 @@ export class UserController {
   @ApiOkResponse()
   @Post('/forgot-password')
   async forgotPassword(@Body() body: { email: string }) {
-    return this.userService.forgotPassword(body.email);
+    const { password, passwordRecoveryToken, activationToken, ...user } =
+      await this.userService.forgotPassword(body.email);
+    return user;
   }
 
   @ApiOkResponse()
@@ -66,6 +69,22 @@ export class UserController {
   async recoverPassword(@Body() body: { password: string; token: string }) {
     const { password, passwordRecoveryToken, activationToken, ...user } =
       await this.userService.recoverPassword(body.password, body.token);
+    return user;
+  }
+
+  @ApiOkResponse()
+  @UseGuards(JwtAuthGuard)
+  @Put('/:id/change-password')
+  async changePassword(
+    @Param('id') id: number,
+    @Body() body: { oldPassword: string; newPassword: string },
+  ) {
+    const { password, passwordRecoveryToken, activationToken, ...user } =
+      await this.userService.changePassword(
+        id,
+        body.oldPassword,
+        body.newPassword,
+      );
     return user;
   }
 
