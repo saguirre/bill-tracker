@@ -322,7 +322,9 @@ export default function SsrHome({ user }: InferGetServerSidePropsType<typeof get
             <HomeCalendar
               bills={bills}
               onSelectDate={(bills: Bill[]) => {
-                setCalendarSelectedBills(bills);
+                if (bills?.length > 0) {
+                  setCalendarSelectedBills(bills);
+                }
               }}
             />
           </div>

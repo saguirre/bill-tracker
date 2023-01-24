@@ -15,7 +15,13 @@ export const CalendarButton: React.FC<Props> = ({ day, dayIdx, selectedDay, bill
     <label
       htmlFor="view-bills-from-calendar-modal"
       key={day.weekday + day.formattedDate + dayIdx}
-      onClick={() => onClick(day)}
+      onClick={(e) => {
+        if (billCount === 0) {
+          e.preventDefault();
+          e.stopPropagation();
+        }
+        onClick(day);
+      }}
       className={classNames(
         'btn btn-circle btn-md btn-ghost relative',
         day.isValid ? 'bg-base-100 hover:bg-base-200 focus:z-10' : 'bg-base-content hover:cursor-not-allowed',
