@@ -58,7 +58,7 @@ export default function Groups({ user }: InferGetServerSidePropsType<typeof getS
                 <div className="flex flex-col w-full items-start justify-start">
                   <h2 className="card-title text-xl">
                     Groups
-                    <div className="badge">COMING SOON</div>
+                    <div className="badge">NEW</div>
                   </h2>
                   <p className="text-sm">Review your groups</p>
                 </div>

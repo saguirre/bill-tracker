@@ -105,7 +105,6 @@ export default function Profile({ user }: InferGetServerSidePropsType<typeof get
                     <span className="text-base font-semibold">Email</span>
                     <div className="flex flex-row gap-3 items-center w-full">
                       <input className="input input-bordered w-full max-w-md" disabled value={user?.email} />
-                      <label className="btn btn-outline btn-secondary">Modify</label>
                     </div>
                   </div>
                   <div className="flex flex-col gap-1">
