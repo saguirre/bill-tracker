@@ -59,8 +59,6 @@ export default function Profile({ user }: InferGetServerSidePropsType<typeof get
   };
   const formatPhoneNumberOnChange = (phoneNumberString: string) => {
     const cleaned = ('' + phoneNumberString).replace(/[+]1|\(*\)*_*-*\s*/g, '');
-    console.log('phoneNumberString: ', phoneNumberString);
-    console.log('cleaned: ', cleaned);
     return `+1 (${displayPhoneDigit(cleaned?.[0])}${displayPhoneDigit(cleaned?.[1])}${displayPhoneDigit(
       cleaned?.[2]
     )}) ${displayPhoneDigit(cleaned?.[3])}${displayPhoneDigit(cleaned?.[4])}${displayPhoneDigit(
