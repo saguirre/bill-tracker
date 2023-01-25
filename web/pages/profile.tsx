@@ -57,8 +57,13 @@ export default function Profile({ user }: InferGetServerSidePropsType<typeof get
     }
     return '_';
   };
+
+  const removePhoneFormatting = (phone: string) => {
+    return ('' + phone).replace(/[+]1|\(*\)*_*-*\s*/g, '');
+  };
+
   const formatPhoneNumberOnChange = (phoneNumberString: string) => {
-    const cleaned = ('' + phoneNumberString).replace(/[+]1|\(*\)*_*-*\s*/g, '');
+    const cleaned = removePhoneFormatting(phoneNumberString);
     return `+1 (${displayPhoneDigit(cleaned?.[0])}${displayPhoneDigit(cleaned?.[1])}${displayPhoneDigit(
       cleaned?.[2]
     )}) ${displayPhoneDigit(cleaned?.[3])}${displayPhoneDigit(cleaned?.[4])}${displayPhoneDigit(
