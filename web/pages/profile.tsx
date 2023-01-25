@@ -12,6 +12,7 @@ import { useDecorativeImage } from '../hooks/useDecorativeImage.hook';
 import fetchJson from '../lib/fetchJson';
 import { sessionOptions } from '../lib/session';
 import { User } from '../models/user/user';
+import { usPhoneRegex } from '../utils/regex-utils';
 
 interface FormValues {
   name: string;
@@ -48,6 +49,25 @@ export default function Profile({ user }: InferGetServerSidePropsType<typeof get
       reset(data);
     }
     toast.success('Profile updated successfully');
+  };
+
+  const displayPhoneDigit = (digit?: string) => {
+    if (digit) {
+      return digit;
+    }
+    return '_';
+  };
+  const formatPhoneNumberOnChange = (phoneNumberString: string) => {
+    const cleaned = ('' + phoneNumberString).replace(/[+]1|\(*\)*_*-*\s*/g, '');
+    console.log('phoneNumberString: ', phoneNumberString);
+    console.log('cleaned: ', cleaned);
+    return `+1 (${displayPhoneDigit(cleaned?.[0])}${displayPhoneDigit(cleaned?.[1])}${displayPhoneDigit(
+      cleaned?.[2]
+    )}) ${displayPhoneDigit(cleaned?.[3])}${displayPhoneDigit(cleaned?.[4])}${displayPhoneDigit(
+      cleaned?.[5]
+    )}-${displayPhoneDigit(cleaned?.[6])}${displayPhoneDigit(cleaned?.[7])}${displayPhoneDigit(
+      cleaned?.[8]
+    )}${displayPhoneDigit(cleaned?.[9])}`;
   };
 
   return (
@@ -122,13 +142,24 @@ export default function Profile({ user }: InferGetServerSidePropsType<typeof get
                     <span className="text-base font-semibold">Phone</span>
                     <div className="flex flex-row gap-3 items-center w-full">
                       <input
+                        maxLength={18}
                         className="input input-bordered border-base-content w-full max-w-md"
-                        {...register('phone')}
+                        {...register('phone', {
+                          pattern: {
+                            value: usPhoneRegex,
+                            message: 'The Phone is not valid',
+                          },
+                          onChange: (e) => {
+                            const { value } = e.target;
+                            const formattedValue = formatPhoneNumberOnChange(value);
+                            e.target.value = formattedValue;
+                          },
+                        })}
                         placeholder="+1 (999) 999-9999"
                       />
                     </div>
                   </div>
-                  {isDirty && (
+                  {isDirty && Object.entries(errors).length === 0 && (
                     <div className="toast toast-bottom toast-center w-[80%] mb-10 z-10">
                       <div className="alert shadow-lg">
                         <div>
@@ -150,6 +181,9 @@ export default function Profile({ user }: InferGetServerSidePropsType<typeof get
                           </span>
                         </div>
                         <div className="flex-none">
+                          <button onClick={() => reset()} type="button" className="btn btn-sm btn-ghost">
+                            Cancel
+                          </button>
                           <button type="submit" className="btn btn-sm btn-primary">
                             Save
                           </button>

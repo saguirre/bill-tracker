@@ -1,7 +1,7 @@
 import { useForm, SubmitHandler } from 'react-hook-form';
 import { FormInput } from '../common/FormInput';
 import { BanknotesIcon, LockClosedIcon } from '@heroicons/react/24/outline';
-import { emailRegex } from '../../utils/email-regex.util';
+import { emailRegex } from '../../utils/regex-utils';
 import { useDecorativeImage } from '../../hooks/useDecorativeImage.hook';
 
 interface FormValues {

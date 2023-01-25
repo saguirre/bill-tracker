@@ -5,7 +5,7 @@ import { toast } from 'react-toastify';
 import { useKeyPress } from '../../hooks/useKeyPress.hook';
 import fetchJson from '../../lib/fetchJson';
 import { Group } from '../../models/group/group';
-import { emailRegex } from '../../utils/email-regex.util';
+import { emailRegex } from '../../utils/regex-utils';
 import { FormInput } from './FormInput';
 
 interface ViewMembersModalProps {

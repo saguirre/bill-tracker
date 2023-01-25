@@ -1,7 +1,7 @@
 import { useForm, SubmitHandler } from 'react-hook-form';
 import { FormInput } from '../../components/common/FormInput';
 import { BanknotesIcon } from '@heroicons/react/24/outline';
-import { emailRegex } from '../../utils/email-regex.util';
+import { emailRegex } from '../../utils/regex-utils';
 import Link from 'next/link';
 import { useDecorativeImage } from '../../hooks/useDecorativeImage.hook';
 
