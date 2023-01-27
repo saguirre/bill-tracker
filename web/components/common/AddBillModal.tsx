@@ -1,4 +1,4 @@
-import { ClipboardDocumentIcon, CloudArrowUpIcon, XMarkIcon } from '@heroicons/react/24/outline';
+import { ArrowPathIcon, ClipboardDocumentIcon, CloudArrowUpIcon, XMarkIcon } from '@heroicons/react/24/outline';
 import { MouseEventHandler, MouseEvent, useEffect, useRef, useState } from 'react';
 import { SubmitHandler, useForm } from 'react-hook-form';
 import { toast } from 'react-toastify';
@@ -11,6 +11,7 @@ import * as Ably from 'ably/promises';
 import { configureAbly } from '@ably-labs/react-hooks';
 import { CategoryModel } from '../../models/category';
 import { Group } from '../../models/group/group';
+import { RecurringBillDropdown } from './RecurringBillDropdown';
 
 interface AddBillModalProps {
   userId?: number;
@@ -43,6 +44,7 @@ export const AddBillModal: React.FC<AddBillModalProps> = ({
     register,
     handleSubmit,
     reset,
+    watch,
     formState: { errors },
   } = useForm<FormValues>({ mode: 'onChange' });
   const [channel, setChannel] = useState<Ably.Types.RealtimeChannelPromise | null>(null);
@@ -137,7 +139,7 @@ export const AddBillModal: React.FC<AddBillModalProps> = ({
     <>
       <input ref={closeRef} type="checkbox" id="add-bill-modal" className="modal-toggle" />
       <label htmlFor="add-bill-modal" className="modal cursor-pointer">
-        <label className="modal-box relative" htmlFor="">
+        <label className="modal-box max-w-xl relative" htmlFor="">
           <div className="flex flex-col items-start justify-start gap-2">
             <div className="flex flex-row items-center justify-start gap-2">
               <div className="border rounded-box p-1.5">
@@ -149,7 +151,7 @@ export const AddBillModal: React.FC<AddBillModalProps> = ({
           </div>
           <div className="divider my-1.5"></div>
           <form onSubmit={handleSubmit(onSubmit)}>
-            <div className="flex flex-col items-start justify-center space-y-3">
+            <div className="flex flex-col items-start justify-center">
               <FormInput
                 id="title"
                 type="text"
@@ -167,20 +169,23 @@ export const AddBillModal: React.FC<AddBillModalProps> = ({
                   },
                 })}
               />
-              <div className="flex flex-row gap-3 w-full">
-                <FormInput
-                  id="dueDate"
-                  type="date"
-                  htmlFor="dueDate"
-                  autoComplete="true"
-                  placeholder="Due Date"
-                  labelText="Due Date"
-                  required={true}
-                  errors={errors}
-                  {...register('dueDate', {
-                    required: 'Due Date should not be empty',
-                  })}
-                />
+              <div className="flex flex-row gap-3 w-full mt-2">
+                <div className="flex flex-col items-start">
+                  <FormInput
+                    id="dueDate"
+                    type="date"
+                    htmlFor="dueDate"
+                    autoComplete="true"
+                    placeholder="Due Date"
+                    labelText="Due Date"
+                    required={true}
+                    errors={errors}
+                    {...register('dueDate', {
+                      required: 'Due Date should not be empty',
+                    })}
+                  />
+                  {/* <RecurringBillDropdown date={watch('dueDate')} /> */}
+                </div>
                 <FormInput
                   id="amount"
                   type="number"
@@ -192,7 +197,7 @@ export const AddBillModal: React.FC<AddBillModalProps> = ({
                   {...register('amount')}
                 />
               </div>
-              <div className="form-control w-full">
+              <div className="form-control w-full mt-1">
                 <label className="label pt-0 pb-1">
                   <span className="label-text text-sm font-semibold">Category</span>
                 </label>
@@ -210,7 +215,7 @@ export const AddBillModal: React.FC<AddBillModalProps> = ({
                   ))}
                 </select>
               </div>
-              <div className="form-control w-full">
+              <div className="form-control w-full mt-2">
                 <label className="label pt-0 pb-1">
                   <span className="label-text text-sm font-semibold">Group</span>
                 </label>
@@ -228,7 +233,7 @@ export const AddBillModal: React.FC<AddBillModalProps> = ({
                   ))}
                 </select>
               </div>
-              <div className="flex flex-col items-end w-full justify-end">
+              <div className="flex flex-col mt-2 items-end w-full justify-end">
                 <div className="form-control">
                   <label className="label cursor-pointer flex flex-row items-center gap-3">
                     <input
@@ -260,7 +265,7 @@ export const AddBillModal: React.FC<AddBillModalProps> = ({
               </div>
               <label
                 htmlFor="input-file"
-                className="w-full p-4 rounded-box hover:border-primary hover:border-solid cursor-pointer border border-base-content/40 border-dashed"
+                className="w-full p-4 mt-2 rounded-box hover:border-primary hover:border-solid cursor-pointer border border-base-content/40 border-dashed"
               >
                 <div className="flex flex-row items-center justify-center gap-2">
                   <input id="input-file" className="hidden" type="file" />
