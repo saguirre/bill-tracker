@@ -227,13 +227,15 @@ export default function SsrHome({ user }: InferGetServerSidePropsType<typeof get
                     <span className="whitespace-nowrap uppercase">{selectedFilter} Bills</span>
                   </label>
                   <ul tabIndex={0} className="dropdown-content menu p-2 border shadow bg-base-100 rounded-box w-52">
-                    {availableFilters?.map((filter) => (
-                      <li key={filter}>
-                        <a onClick={() => setSelectedFilter(filter)} className="whitespace-nowrap capitalize">
-                          {filter}
-                        </a>
-                      </li>
-                    ))}
+                    <div className='w-full flex flex-col overflow-y-scroll max-h-52'>
+                      {availableFilters?.map((filter) => (
+                        <li key={filter}>
+                          <a onClick={() => setSelectedFilter(filter)} className="whitespace-nowrap capitalize">
+                            {filter}
+                          </a>
+                        </li>
+                      ))}
+                    </div>
                   </ul>
                 </div>
               </div>
