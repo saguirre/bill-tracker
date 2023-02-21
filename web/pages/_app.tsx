@@ -2,7 +2,7 @@ import '../styles/globals.css';
 import type { AppProps } from 'next/app';
 import { ThemeProvider } from 'next-themes';
 import { ToastContainer } from 'react-toastify';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { Bill } from '../models/bill/bill';
 import { User } from '../models/user/user';
 import { AppContext } from '../contexts/app.context';
@@ -10,6 +10,7 @@ import { SWRConfig } from 'swr';
 import fetchJson from '../lib/fetchJson';
 import 'react-toastify/dist/ReactToastify.css';
 export { reportWebVitals } from 'next-axiom';
+import useHotjar from 'react-use-hotjar';
 
 const toastClass = {
   success:
@@ -26,6 +27,7 @@ const toastClass = {
 const BillTracker = ({ Component, pageProps }: AppProps) => {
   const [user, setUser] = useState<User | null>(null);
   const [bills, setBills] = useState<Bill[]>([]);
+  const { initHotjar } = useHotjar();
 
   const appContextProps = {
     user,
@@ -33,6 +35,12 @@ const BillTracker = ({ Component, pageProps }: AppProps) => {
     bills,
     setBills,
   };
+
+  useEffect(() => {
+    if (process.env.NODE_ENV !== 'development' || process.env.NEXT_PUBLIC_VERCEL_ENV !== 'development') {
+      initHotjar(3376016, 6, false, console.info);
+    }
+  }, [initHotjar]);
 
   return (
     <SWRConfig
