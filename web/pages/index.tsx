@@ -19,8 +19,10 @@ import useCategories from '../lib/useCategories';
 import { AddGroupModal } from '../components/common/AddGroupModal';
 import useGroups from '../lib/useGroups';
 import { Group } from '../models/group/group';
+import { useRouter } from 'next/router';
 
 export default function SsrHome({ user }: InferGetServerSidePropsType<typeof getServerSideProps>) {
+  const router = useRouter();
   const [selectedBill, setSelectedBill] = useState<Bill | null>(null);
   const [calendarSelectedBills, setCalendarSelectedBills] = useState<Bill[]>([]);
   const [loadingBillData, setLoadingBillData] = useState(false);
@@ -34,6 +36,7 @@ export default function SsrHome({ user }: InferGetServerSidePropsType<typeof get
   const [selectedFilter, setSelectedFilter] = useState<string>('all');
   const { groups, mutateGroups } = useGroups(user);
   const [availableFilters, setAvailableFilters] = useState<string[]>(['all']);
+  const [isMac, setIsMac] = useState(false);
   const { bills, mutateBills } = useBills({
     ...user,
   });
@@ -125,6 +128,12 @@ export default function SsrHome({ user }: InferGetServerSidePropsType<typeof get
     setFilterableBills(bills);
   }, [bills]);
 
+  useEffect(() => {
+    if (typeof navigator !== 'undefined' && navigator.platform.toUpperCase().indexOf('MAC') >= 0) {
+      setIsMac(true);
+    }
+  }, [router.isReady]);
+
   return (
     <Layout showSearch={true} user={user} search={(value: string) => setSearchString(value)}>
       <div className="flex flex-col items-center px-12">
@@ -145,7 +154,7 @@ export default function SsrHome({ user }: InferGetServerSidePropsType<typeof get
                 Add Bill
               </label>
               <div className="flex flex-row items-center justify-center gap-1">
-                <span className="kbd kbd-sm">⌘</span>
+                {isMac ? <span className="kbd kbd-sm">⌘</span> : <span className="kbd kbd-sm">ctrl</span>}
                 <span className="kbd kbd-sm">A</span>
               </div>
             </div>
@@ -158,7 +167,7 @@ export default function SsrHome({ user }: InferGetServerSidePropsType<typeof get
                 Add Category
               </label>
               <div className="flex flex-row items-center justify-center gap-1">
-                <span className="kbd kbd-sm">⌘</span>
+                {isMac ? <span className="kbd kbd-sm">⌘</span> : <span className="kbd kbd-sm">ctrl</span>}
                 <span className="kbd kbd-sm">E</span>
               </div>
             </div>
@@ -171,7 +180,7 @@ export default function SsrHome({ user }: InferGetServerSidePropsType<typeof get
                 Add Group
               </label>
               <div className="flex flex-row items-center justify-center gap-1">
-                <span className="kbd kbd-sm">⌘</span>
+                {isMac ? <span className="kbd kbd-sm">⌘</span> : <span className="kbd kbd-sm">ctrl</span>}
                 <span className="kbd kbd-sm">G</span>
               </div>
             </div>
@@ -227,7 +236,7 @@ export default function SsrHome({ user }: InferGetServerSidePropsType<typeof get
                     <span className="whitespace-nowrap uppercase">{selectedFilter} Bills</span>
                   </label>
                   <ul tabIndex={0} className="dropdown-content menu p-2 border shadow bg-base-100 rounded-box w-52">
-                    <div className='w-full flex flex-col overflow-y-scroll max-h-52'>
+                    <div className="w-full flex flex-col overflow-y-scroll max-h-52">
                       {availableFilters?.map((filter) => (
                         <li key={filter}>
                           <a onClick={() => setSelectedFilter(filter)} className="whitespace-nowrap capitalize">
