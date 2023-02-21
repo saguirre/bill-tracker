@@ -1,5 +1,7 @@
 /** @type {import('next').NextConfig} */
-module.exports = {
+const { withAxiom } = require('next-axiom');
+
+module.exports = withAxiom({
   reactStrictMode: true,
   crossOrigin: 'anonymous',
   typescript: {
@@ -9,4 +11,4 @@ module.exports = {
     // !! WARN !!
     ignoreBuildErrors: true,
   },
-}
+});
