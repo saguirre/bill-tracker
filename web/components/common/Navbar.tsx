@@ -24,6 +24,7 @@ export const Navbar: React.FC<NavbarProps> = ({ showSearch, user, scrolling, sea
   const commandPlusF = useRef<HTMLInputElement>(null);
   const [channel, setChannel] = useState<Ably.Types.RealtimeChannelPromise | null>(null);
   const { notifications, mutateNotifications } = useNotifications(user);
+  const [isMac, setIsMac] = useState(false);
 
   useEffect(() => {
     const ably: Ably.Types.RealtimePromise = configureAbly({ authUrl: '/api/authentication' });
@@ -65,6 +66,12 @@ export const Navbar: React.FC<NavbarProps> = ({ showSearch, user, scrolling, sea
     if (showSearch) commandPlusF?.current?.focus();
   }, ['KeyK']);
 
+  useEffect(() => {
+    if (typeof navigator !== 'undefined' && navigator.platform.toUpperCase().indexOf('MAC') >= 0) {
+      setIsMac(true);
+    }
+  }, [router.isReady]);
+
   return (
     <div
       className={classNames('w-full navbar fixed flex flex-row items-center justify-between bg-base-100 z-20 p-3', {
@@ -83,7 +90,7 @@ export const Navbar: React.FC<NavbarProps> = ({ showSearch, user, scrolling, sea
               className="relative input input-ghost w-full max-w-xs"
               placeholder="Search"
             />
-            <kbd className="absolute left-[265px] opacity-60 top-3 kbd kbd-sm">⌘</kbd>
+            {isMac ? <kbd className="absolute left-[265px] opacity-60 top-3 kbd kbd-sm">⌘</kbd> : <span className="absolute left-[245px] opacity-60 top-2.5 kbd kbd-sm px-2 py-0.5">ctrl</span>}
             <kbd className="absolute left-[290px] opacity-60 top-3 kbd kbd-sm">K</kbd>
           </>
         )}

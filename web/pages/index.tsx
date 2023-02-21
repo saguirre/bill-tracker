@@ -130,7 +130,7 @@ export default function SsrHome({ user }: InferGetServerSidePropsType<typeof get
 
   useEffect(() => {
     if (typeof navigator !== 'undefined' && navigator.platform.toUpperCase().indexOf('MAC') >= 0) {
-      setIsMac(false);
+      setIsMac(true);
     }
   }, [router.isReady]);
 
