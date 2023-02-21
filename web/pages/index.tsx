@@ -130,7 +130,7 @@ export default function SsrHome({ user }: InferGetServerSidePropsType<typeof get
 
   useEffect(() => {
     if (typeof navigator !== 'undefined' && navigator.platform.toUpperCase().indexOf('MAC') >= 0) {
-      setIsMac(true);
+      setIsMac(false);
     }
   }, [router.isReady]);
 
@@ -154,7 +154,7 @@ export default function SsrHome({ user }: InferGetServerSidePropsType<typeof get
                 Add Bill
               </label>
               <div className="flex flex-row items-center justify-center gap-1">
-                {isMac ? <span className="kbd kbd-sm">⌘</span> : <span className="kbd kbd-sm">ctrl</span>}
+                {isMac ? <span className="kbd kbd-sm">⌘</span> : <span className="kbd kbd-sm px-2 py-0.5">ctrl</span>}
                 <span className="kbd kbd-sm">A</span>
               </div>
             </div>
@@ -167,7 +167,7 @@ export default function SsrHome({ user }: InferGetServerSidePropsType<typeof get
                 Add Category
               </label>
               <div className="flex flex-row items-center justify-center gap-1">
-                {isMac ? <span className="kbd kbd-sm">⌘</span> : <span className="kbd kbd-sm">ctrl</span>}
+                {isMac ? <span className="kbd kbd-sm">⌘</span> : <span className="kbd kbd-sm px-2 py-0.5">ctrl</span>}
                 <span className="kbd kbd-sm">E</span>
               </div>
             </div>
@@ -180,7 +180,7 @@ export default function SsrHome({ user }: InferGetServerSidePropsType<typeof get
                 Add Group
               </label>
               <div className="flex flex-row items-center justify-center gap-1">
-                {isMac ? <span className="kbd kbd-sm">⌘</span> : <span className="kbd kbd-sm">ctrl</span>}
+                {isMac ? <span className="kbd kbd-sm">⌘</span> : <span className="kbd kbd-sm px-2 py-0.5">ctrl</span>}
                 <span className="kbd kbd-sm">G</span>
               </div>
             </div>
