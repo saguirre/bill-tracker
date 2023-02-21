@@ -1,0 +1,41 @@
+version: '3.7'
+
+services:
+  bt-backend-db:
+    image: postgres
+    volumes:
+      - bt_backend_data:/var/lib/postgresql/data/
+    ports:
+      - '5434:5432'
+    environment:
+      - POSTGRES_DB=bill_tracker
+      - POSTGRES_USER=dev
+      - POSTGRES_PASSWORD=dev
+
+  bt-notifications-db:
+    image: postgres
+    volumes:
+      - notifications_db_data:/var/lib/postgresql/data/
+    ports:
+      - '5435:5432'
+    environment:
+      - POSTGRES_DB=bt_notifications
+      - POSTGRES_USER=dev
+      - POSTGRES_PASSWORD=dev
+
+  redis:
+    image: redis:6.2-alpine
+    restart: always
+    ports:
+      - '6379:6379'
+    command: redis-server --save 20 1 --loglevel warning
+    environment:
+      - REDIS_PASSWORD=password123
+    volumes:
+      - redis:/data
+
+volumes:
+  bt_backend_data:
+  notifications_db_data:
+  redis:
+    driver: local
