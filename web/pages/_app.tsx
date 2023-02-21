@@ -9,6 +9,7 @@ import { AppContext } from '../contexts/app.context';
 import { SWRConfig } from 'swr';
 import fetchJson from '../lib/fetchJson';
 import 'react-toastify/dist/ReactToastify.css';
+export { reportWebVitals } from 'next-axiom';
 
 const toastClass = {
   success:
