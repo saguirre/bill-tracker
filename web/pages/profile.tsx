@@ -6,6 +6,7 @@ import { useState } from 'react';
 import { useForm } from 'react-hook-form';
 import { toast } from 'react-toastify';
 import { ChangePasswordModal } from '../components/common/ChangePasswordModal';
+import { ClipLoadingIndicator } from '../components/common/ClipLoadingIndicator';
 import { UploadAvatarModal } from '../components/common/UploadAvatarModal';
 import { Layout } from '../components/Layout';
 import { useDecorativeImage } from '../hooks/useDecorativeImage.hook';
@@ -26,6 +27,7 @@ export default function Profile({ user }: InferGetServerSidePropsType<typeof get
   const { imagePath } = useDecorativeImage('profile');
   const [uploadedAvatar, setUploadedAvatar] = useState<boolean>(false);
   const [changePasswordSelected, setChangePasswordSelected] = useState<boolean>(false);
+  const [loading, setLoading] = useState<boolean>(false);
   const {
     register,
     handleSubmit,
@@ -40,15 +42,24 @@ export default function Profile({ user }: InferGetServerSidePropsType<typeof get
   });
 
   const onSubmit = async (data: FormValues) => {
-    const updatedUser = await fetchJson('/api/user', {
-      method: 'PUT',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify(data),
-    });
-    if (updatedUser) {
-      reset(data);
+    try {
+      setLoading(true);
+      const updatedUser = await fetchJson('/api/user', {
+        method: 'PUT',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(data),
+      });
+      setLoading(false);
+      if (updatedUser) {
+        reset(data);
+      }
+      toast.success('Profile updated successfully');
+    } catch (error) {
+      console.error('There was an error updating the user');
+      toast.error('There was an error updating your information');
+    } finally {
+      setLoading(false);
     }
-    toast.success('Profile updated successfully');
   };
 
   const displayPhoneDigit = (digit?: string) => {
@@ -164,7 +175,7 @@ export default function Profile({ user }: InferGetServerSidePropsType<typeof get
                   </div>
                   {isDirty && Object.entries(errors).length === 0 && (
                     <div className="toast toast-bottom toast-center w-[80%] mb-10 z-10">
-                      <div className="alert shadow-lg">
+                      <div className="alert shadow-lg bg-base-100 border border-primary">
                         <div>
                           <svg
                             xmlns="http://www.w3.org/2000/svg"
@@ -188,7 +199,8 @@ export default function Profile({ user }: InferGetServerSidePropsType<typeof get
                             Cancel
                           </button>
                           <button type="submit" className="btn btn-sm btn-primary">
-                            Save
+                            {loading && <ClipLoadingIndicator size={20} loading={loading} />}
+                            {!loading && 'Save'}
                           </button>
                         </div>
                       </div>

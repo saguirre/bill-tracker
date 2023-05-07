@@ -12,8 +12,8 @@ export default function SignIn() {
   const [loadingRequest, setLoadingRequest] = useState(false);
 
   const onSubmit = async (data: any) => {
-    setLoadingRequest(true);
     try {
+      setLoadingRequest(true);
       mutateUser(
         await fetchJson('/api/login', {
           method: 'POST',
@@ -31,13 +31,14 @@ export default function SignIn() {
         toast.error('An unexpected error happened');
         console.error('An unexpected error happened:', error);
       }
+    } finally {
+      setLoadingRequest(false);
     }
-    setLoadingRequest(false);
   };
 
   return (
     <div>
-      <SignInForm loadingRequest={loadingRequest} submit={onSubmit} />
+      <SignInForm loading={loadingRequest} submit={onSubmit} />
     </div>
   );
 }

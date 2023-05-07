@@ -1,15 +1,19 @@
-import { TrashIcon } from '@heroicons/react/24/outline';
 import classNames from 'classnames';
 import { format } from 'date-fns';
 import { useState } from 'react';
+import { toast } from 'react-toastify';
 import { Bill } from '../../models/bill/bill';
 import { currencyFormat } from '../../utils/currency-format.util';
 import { RemoveItemButton } from '../common/RemoveItemButton';
+
 interface BillListItemProps {
   badgeColor: string;
   amountColor: string;
   bill: Bill;
-  removeBill: (bill: Bill) => void;
+  bills: Bill[];
+  mutateBills: (bills: Bill[]) => void;
+  calendarSelectedBills: Bill[];
+  setCalendarSelectedBills: (bill: Bill[]) => void;
   setSelectedBill: (bill: Bill | null) => void;
   setLoadingBillData: (loading: boolean) => void;
 }
@@ -17,19 +21,37 @@ interface BillListItemProps {
 export const BillListItem: React.FC<BillListItemProps> = ({
   setSelectedBill,
   setLoadingBillData,
-  removeBill,
+  mutateBills,
+  bills,
+  calendarSelectedBills,
+  setCalendarSelectedBills,
   badgeColor,
   amountColor,
   bill,
 }) => {
-  const [isHovering, setIsHovering] = useState(false);
+  const [loadingDelete, setLoadingDelete] = useState(false);
 
-  const handleMouseOver = () => {
-    setIsHovering(true);
-  };
-
-  const handleMouseOut = () => {
-    setIsHovering(false);
+  const removeBill = async (bill: Bill) => {
+    try {
+      setLoadingDelete(true);
+      const response = await fetch(`/api/bills/${bill.id}`, {
+        method: 'DELETE',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+      });
+      setLoadingDelete(false);
+      if (response.status === 200) {
+        toast.success('Bill deleted successfully!');
+        mutateBills(bills?.filter((b) => b.id !== bill.id));
+        setCalendarSelectedBills(calendarSelectedBills?.filter((b) => b.id !== bill.id));
+      }
+    } catch (error) {
+      console.error(error);
+      toast.error('An unexpected error happened');
+    } finally {
+      // setLoadingDelete(false);
+    }
   };
 
   return (
@@ -75,7 +97,7 @@ export const BillListItem: React.FC<BillListItemProps> = ({
           })}
         ></div>
       </label>
-      <RemoveItemButton onRemove={() => removeBill(bill)} />
+      <RemoveItemButton loading={loadingDelete} onRemove={() => removeBill(bill)} />
     </div>
   );
 };

@@ -1,11 +1,12 @@
 import { MinusIcon, PlusIcon, UserGroupIcon } from '@heroicons/react/24/outline';
-import { useRef } from 'react';
+import { useRef, useState } from 'react';
 import { SubmitHandler, useFieldArray, useForm } from 'react-hook-form';
 import { toast } from 'react-toastify';
 import { useKeyPress } from '../../hooks/useKeyPress.hook';
 import fetchJson from '../../lib/fetchJson';
 import { Group } from '../../models/group/group';
 import { emailRegex } from '../../utils/regex-utils';
+import { ClipLoadingIndicator } from './ClipLoadingIndicator';
 import { FormInput } from './FormInput';
 
 interface AddMemberModalProps {
@@ -29,6 +30,7 @@ export const AddMemberModal: React.FC<AddMemberModalProps> = ({ group, mutateGro
     control,
   });
   const closeRef = useRef<HTMLInputElement>(null);
+  const [loading, setLoading] = useState(false);
 
   useKeyPress(
     () => {
@@ -42,11 +44,13 @@ export const AddMemberModal: React.FC<AddMemberModalProps> = ({ group, mutateGro
 
   const onSubmit: SubmitHandler<FormValues> = async (data: FormValues) => {
     try {
+      setLoading(true);
       await fetchJson(`/api/groups/${group?.id}/members`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(data.emails),
       });
+      setLoading(false);
       const modal = document.getElementById('add-member-modal') as any;
       if (modal) modal.checked = false;
       mutateGroups();
@@ -55,6 +59,8 @@ export const AddMemberModal: React.FC<AddMemberModalProps> = ({ group, mutateGro
     } catch (error) {
       console.error(error);
       toast.error('There was an error inviting members. Please try again later.');
+    } finally {
+      setLoading(false);
     }
   };
 
@@ -143,7 +149,10 @@ export const AddMemberModal: React.FC<AddMemberModalProps> = ({ group, mutateGro
                 <label htmlFor="add-member-modal" className="btn btn-ghost rounded-xl">
                   Cancel
                 </label>
-                <button className="btn btn-primary rounded-xl">Send</button>
+                <button className="btn btn-primary rounded-xl">
+                  <ClipLoadingIndicator loading={loading} />
+                  {!loading && 'Send'}
+                </button>
               </div>
             </form>
           )}

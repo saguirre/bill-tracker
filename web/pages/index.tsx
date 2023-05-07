@@ -26,8 +26,6 @@ export default function SsrHome({ user }: InferGetServerSidePropsType<typeof get
   const [selectedBill, setSelectedBill] = useState<Bill | null>(null);
   const [calendarSelectedBills, setCalendarSelectedBills] = useState<Bill[]>([]);
   const [loadingBillData, setLoadingBillData] = useState(false);
-  const [loadingAddBill, setLoadingAddBill] = useState(false);
-  const [loadingAddCategory, setLoadingAddCategory] = useState(false);
   const addBillRef = useRef<HTMLLabelElement>(null);
   const addCategoryRef = useRef<HTMLLabelElement>(null);
   const addGroupRef = useRef<HTMLLabelElement>(null);
@@ -45,25 +43,6 @@ export default function SsrHome({ user }: InferGetServerSidePropsType<typeof get
   });
 
   const [filterableBills, setFilterableBills] = useState<Bill[] | undefined>(bills);
-
-  const removeBill = async (bill: Bill) => {
-    try {
-      const response = await fetch(`/api/bills/${bill.id}`, {
-        method: 'DELETE',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-      });
-      if (response.status === 200) {
-        toast.success('Bill deleted successfully!');
-        mutateBills(bills?.filter((b) => b.id !== bill.id));
-        setCalendarSelectedBills(calendarSelectedBills?.filter((b) => b.id !== bill.id));
-      }
-    } catch (error) {
-      console.error(error);
-      toast.error('An unexpected error happened');
-    }
-  };
 
   const filterBillsByDropdown = (filter: string) => {
     if (filter === 'all') {
@@ -276,11 +255,13 @@ export default function SsrHome({ user }: InferGetServerSidePropsType<typeof get
                       badge="EXPIRED"
                       badgeColor="badge-error"
                       amountColor="badge-error"
-                      removeBill={(bill) => removeBill(bill)}
                       bills={filterableBills?.filter((bill) => {
                         if (!bill?.dueDate) return false;
                         return new Date(bill.dueDate) <= new Date() && !bill?.paid;
                       })}
+                      calendarSelectedBills={calendarSelectedBills}
+                      mutateBills={mutateBills}
+                      setCalendarSelectedBills={setCalendarSelectedBills}
                       setSelectedBill={setSelectedBill}
                       setLoadingBillData={setLoadingBillData}
                     />
@@ -293,7 +274,9 @@ export default function SsrHome({ user }: InferGetServerSidePropsType<typeof get
                       <BillList
                         title="Upcoming Bills"
                         badge="DUE"
-                        removeBill={(bill) => removeBill(bill)}
+                        calendarSelectedBills={calendarSelectedBills}
+                        mutateBills={mutateBills}
+                        setCalendarSelectedBills={setCalendarSelectedBills}
                         badgeColor="badge-primary"
                         dueBadgeColor="badge-ghost"
                         amountColor="badge-ghost"
@@ -312,7 +295,9 @@ export default function SsrHome({ user }: InferGetServerSidePropsType<typeof get
                     <BillList
                       title="Paid Bills"
                       badgeColor="badge-success"
-                      removeBill={(bill) => removeBill(bill)}
+                      calendarSelectedBills={calendarSelectedBills}
+                      mutateBills={mutateBills}
+                      setCalendarSelectedBills={setCalendarSelectedBills}
                       amountColor="badge-success"
                       bills={filterableBills?.filter((bill) => {
                         return bill?.paid;
@@ -342,14 +327,8 @@ export default function SsrHome({ user }: InferGetServerSidePropsType<typeof get
           categories={categories}
           mutateBills={mutateBills}
           userId={user?.id}
-          loading={loadingAddBill}
         />
-        <AddCategoryModal
-          categories={categories}
-          mutateCategories={mutateCategories}
-          userId={user?.id}
-          loading={loadingAddCategory}
-        />
+        <AddCategoryModal categories={categories} mutateCategories={mutateCategories} userId={user?.id} />
         {selectedBill && (
           <EditBillModal
             bills={bills}
@@ -361,12 +340,14 @@ export default function SsrHome({ user }: InferGetServerSidePropsType<typeof get
           />
         )}
         <ViewBillsFromCalendarModal
+          calendarSelectedBills={calendarSelectedBills}
+          mutateBills={mutateBills}
+          setCalendarSelectedBills={setCalendarSelectedBills}
           bills={calendarSelectedBills}
-          removeBill={(bill) => removeBill(bill)}
           setSelectedBill={setSelectedBill}
           setLoadingBillData={setLoadingBillData}
         />
-        <AddGroupModal groups={groups} mutateGroups={mutateGroups} userId={user?.id} loading={false} />
+        <AddGroupModal groups={groups} mutateGroups={mutateGroups} userId={user?.id} />
       </div>
     </Layout>
   );

@@ -6,16 +6,14 @@ import { useKeyPress } from '../../hooks/useKeyPress.hook';
 import fetchJson from '../../lib/fetchJson';
 import { Bill } from '../../models/bill/bill';
 import { FormInput } from './FormInput';
-import { Spinner } from './Spinner';
 import * as Ably from 'ably/promises';
 import { configureAbly } from '@ably-labs/react-hooks';
 import { CategoryModel } from '../../models/category';
 import { Group } from '../../models/group/group';
-import { RecurringBillDropdown } from './RecurringBillDropdown';
+import { ClipLoadingIndicator } from './ClipLoadingIndicator';
 
 interface AddBillModalProps {
   userId?: number;
-  loading: boolean;
   bills: Bill[] | undefined;
   mutateBills: (bills: Bill[]) => void;
   groups: Group[] | undefined;
@@ -32,14 +30,7 @@ interface FormValues {
   paid: boolean;
 }
 
-export const AddBillModal: React.FC<AddBillModalProps> = ({
-  groups,
-  categories,
-  userId,
-  bills,
-  mutateBills,
-  loading,
-}) => {
+export const AddBillModal: React.FC<AddBillModalProps> = ({ groups, categories, userId, bills, mutateBills }) => {
   const {
     register,
     handleSubmit,
@@ -50,6 +41,7 @@ export const AddBillModal: React.FC<AddBillModalProps> = ({
   const [channel, setChannel] = useState<Ably.Types.RealtimeChannelPromise | null>(null);
   const [addAnother, setAddAnother] = useState(false);
   const [checked, setChecked] = useState(false);
+  const [loading, setLoading] = useState(false);
   const closeRef = useRef<HTMLInputElement>(null);
 
   useEffect(() => {
@@ -104,23 +96,18 @@ export const AddBillModal: React.FC<AddBillModalProps> = ({
         dueDate: new Date(data.dueDate).toISOString(),
       };
 
-      mutateBills([...(bills || []), { id: (bills?.length || 0) + 1, ...newBill }]);
+      setLoading(true);
       const billResponse = await fetchJson(`/api/bills/user/${userId}`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(newBill),
       });
+      setLoading(false);
 
       if (billResponse) {
-        mutateBills([
-          ...(bills || [])?.map((bill: Bill) => {
-            if (bill.id === newBill.id) {
-              return billResponse;
-            }
-            return bill;
-          }),
-        ]);
+        mutateBills([billResponse, ...(bills || [])]);
       }
+
       const modal = document.getElementById('add-bill-modal') as any;
       if (!addAnother) {
         if (modal) modal.checked = false;
@@ -132,6 +119,8 @@ export const AddBillModal: React.FC<AddBillModalProps> = ({
     } catch (error) {
       console.error(error);
       toast.error('There was an error adding your bill. Please try again later.');
+    } finally {
+      setLoading(false);
     }
   };
 
@@ -292,8 +281,8 @@ export const AddBillModal: React.FC<AddBillModalProps> = ({
                   Cancel
                 </label>
                 <button className="btn btn-primary rounded-xl">
-                  {loading && <Spinner className=" h-4 w-4 border-b-2 border-white bg-primary mr-3"></Spinner>}
-                  Save
+                  <ClipLoadingIndicator loading={loading} />
+                  {!loading && 'Save'}
                 </button>
               </div>
             </div>

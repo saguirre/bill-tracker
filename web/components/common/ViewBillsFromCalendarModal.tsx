@@ -1,4 +1,4 @@
-import { ClipboardDocumentIcon, ClipboardDocumentListIcon } from '@heroicons/react/24/outline';
+import { ClipboardDocumentListIcon } from '@heroicons/react/24/outline';
 import { format } from 'date-fns';
 import { useRef } from 'react';
 import { useKeyPress } from '../../hooks/useKeyPress.hook';
@@ -7,19 +7,22 @@ import { BillListItem } from '../home/BillListItem';
 
 interface ViewBillsFromCalendarModalProps {
   bills: Bill[] | undefined;
-  removeBill: (bill: Bill) => void;
+  mutateBills: (bills: Bill[]) => void;
+  calendarSelectedBills: Bill[];
+  setCalendarSelectedBills: (bill: Bill[]) => void;
   setSelectedBill: React.Dispatch<React.SetStateAction<Bill | null>>;
   setLoadingBillData: React.Dispatch<React.SetStateAction<boolean>>;
 }
 
 export const ViewBillsFromCalendarModal: React.FC<ViewBillsFromCalendarModalProps> = ({
   bills,
-  removeBill,
+  calendarSelectedBills,
+  mutateBills,
+  setCalendarSelectedBills,
   setSelectedBill,
   setLoadingBillData,
 }) => {
   const closeRef = useRef<HTMLInputElement>(null);
-
   useKeyPress(() => {
     if (closeRef.current) {
       closeRef.current.checked = false;
@@ -30,7 +33,7 @@ export const ViewBillsFromCalendarModal: React.FC<ViewBillsFromCalendarModalProp
     if (bill.paid) {
       return 'badge-success';
     }
-    if (bill?.dueDate && bill?.dueDate < new Date()) {
+    if (bill?.dueDate && new Date(bill?.dueDate) < new Date()) {
       return 'badge-danger';
     }
     return 'badge';
@@ -60,12 +63,10 @@ export const ViewBillsFromCalendarModal: React.FC<ViewBillsFromCalendarModalProp
               {bills?.map((bill) => (
                 <BillListItem
                   key={bill.id}
-                  removeBill={(bill) => {
-                    if (bills?.length === 1 && closeRef.current) {
-                      closeRef.current.checked = false;
-                    }
-                    removeBill(bill);
-                  }}
+                  bills={bills}
+                  calendarSelectedBills={calendarSelectedBills}
+                  mutateBills={mutateBills}
+                  setCalendarSelectedBills={setCalendarSelectedBills}
                   badgeColor={badgeColor(bill)}
                   setSelectedBill={(bill) => {
                     if (closeRef.current) {

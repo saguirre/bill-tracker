@@ -1,16 +1,26 @@
 import '../styles/globals.css';
 import type { AppProps } from 'next/app';
 import { ThemeProvider } from 'next-themes';
-import { ToastContainer } from 'react-toastify';
-import { useEffect, useState } from 'react';
+import { toast, ToastContainer } from 'react-toastify';
+import { useState } from 'react';
 import { Bill } from '../models/bill/bill';
-import { User } from '../models/user/user';
-import { AppContext } from '../contexts/app.context';
+import { AppContext, IAppContext } from '../contexts/app.context';
 import { SWRConfig } from 'swr';
 import fetchJson from '../lib/fetchJson';
 import 'react-toastify/dist/ReactToastify.css';
 export { reportWebVitals } from 'next-axiom';
-import useHotjar from 'react-use-hotjar';
+import { SidebarItem } from '../components/common/SidebarItem';
+import {
+  ArrowLeftOnRectangleIcon,
+  BanknotesIcon,
+  ChartPieIcon,
+  Cog6ToothIcon,
+  InboxIcon,
+  UserGroupIcon,
+} from '@heroicons/react/24/outline';
+import { useRouter } from 'next/router';
+import { TransitionLoading } from '../components/common/TransitionLoading';
+import useUser from '../lib/useUser';
 
 const toastClass = {
   success:
@@ -25,22 +35,30 @@ const toastClass = {
 };
 
 const BillTracker = ({ Component, pageProps }: AppProps) => {
-  const [user, setUser] = useState<User | null>(null);
   const [bills, setBills] = useState<Bill[]>([]);
-  const { initHotjar } = useHotjar();
+  const { user, mutateUser } = useUser();
+  const router = useRouter();
 
-  const appContextProps = {
-    user,
-    setUser,
-    bills,
-    setBills,
+  const logout = async () => {
+    try {
+      await fetchJson('/api/logout', {
+        method: 'POST',
+      });
+      mutateUser(undefined, false);
+      router.push('/signin');
+    } catch (error) {
+      toast.error('There was an error logging you out. If the error persists, please close the browser tab.');
+      console.error('Error logging out');
+    }
   };
 
-  useEffect(() => {
-    if (process.env.NODE_ENV !== 'development' || process.env.NEXT_PUBLIC_VERCEL_ENV !== 'development') {
-      initHotjar(3376016, 6, false, console.info);
-    }
-  }, [initHotjar]);
+  const appContextProps: IAppContext = {
+    user,
+    mutateUser,
+    bills,
+    setBills,
+    logout,
+  };
 
   return (
     <SWRConfig
@@ -53,7 +71,80 @@ const BillTracker = ({ Component, pageProps }: AppProps) => {
     >
       <ThemeProvider>
         <AppContext.Provider value={appContextProps}>
-          <Component {...pageProps} />
+          <TransitionLoading>
+            <Component {...pageProps} />
+          </TransitionLoading>
+          {user?.isLoggedIn && (
+            <div className="fixed flex transition-all duration-200 w-[70px] bg-base-100 ease-in-out flex-col h-screen z-50 top-0 left-0">
+              <ul className="flex flex-col justify-start bg-base-100 px-2 py-1 mt-2">
+                <SidebarItem
+                  icon={BanknotesIcon}
+                  className="p-0"
+                  iconClassName="h-8 w-8 text-primary"
+                  onClick={() => {
+                    router.push('/');
+                  }}
+                />
+              </ul>
+              <div className="divider my-0.5 px-3"></div>
+              <ul className="flex flex-col justify-between h-full bg-base-100 px-2 py-1">
+                <div className="flex flex-col items-start">
+                  <SidebarItem
+                    popoverText="Inbox"
+                    iconClassName="h-5 w-5"
+                    icon={InboxIcon}
+                    onClick={() => {
+                      router.push('/');
+                    }}
+                  />
+                  <SidebarItem
+                    popoverText="Groups"
+                    iconClassName="h-5 w-5"
+                    icon={UserGroupIcon}
+                    onClick={() => {
+                      router.push('/groups');
+                    }}
+                  />
+                  <SidebarItem
+                    iconClassName="h-5 w-5"
+                    icon={ChartPieIcon}
+                    popoverText="Historic Data"
+                    onClick={() => {
+                      router.push('/historic');
+                    }}
+                  />
+                </div>
+                <div className="flex flex-col items-end">
+                  <SidebarItem
+                    iconClassName="h-5 w-5"
+                    icon={Cog6ToothIcon}
+                    popoverText="Settings"
+                    onClick={() => {
+                      router.push('/settings');
+                    }}
+                  />
+                  <SidebarItem
+                    iconClassName="h-5 w-5"
+                    popoverText="Logout"
+                    icon={ArrowLeftOnRectangleIcon}
+                    onClick={async () => {
+                      try {
+                        await fetchJson('/api/logout', {
+                          method: 'POST',
+                        });
+                        router.push('/signin');
+                      } catch (error) {
+                        toast.error(
+                          'There was an error logging you out. If the error persists, please close the browser tab.'
+                        );
+                        console.error('Error logging out');
+                      }
+                    }}
+                  />
+                </div>
+              </ul>
+            </div>
+          )}
           <ToastContainer
             position="bottom-left"
             closeButton={false}

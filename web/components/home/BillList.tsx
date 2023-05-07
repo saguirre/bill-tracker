@@ -9,17 +9,21 @@ interface BillListProps {
   badgeColor: string;
   dueBadgeColor?: string;
   amountColor: string;
-  removeBill: (bill: Bill) => void;
+  bills: Bill[] | undefined;
+  mutateBills: (bills: Bill[]) => void;
+  calendarSelectedBills: Bill[];
+  setCalendarSelectedBills: (bill: Bill[]) => void;
   setLoadingBillData: (loading: boolean) => void;
   setSelectedBill: (bill: Bill | null) => void;
-  bills: Bill[] | undefined;
 }
 
 export const BillList: React.FC<BillListProps> = ({
   title,
   badge,
   setSelectedBill,
-  removeBill,
+  mutateBills,
+  calendarSelectedBills,
+  setCalendarSelectedBills,
   setLoadingBillData,
   badgeColor = 'badge-primary',
   dueBadgeColor = badgeColor,
@@ -43,13 +47,16 @@ export const BillList: React.FC<BillListProps> = ({
           )}
         </h2>
       </div>
-      {bills && bills?.length > 0 || title !== 'Expired Bills' && <div className="divider my-0"></div>}
+      {(bills && bills?.length > 0) || (title !== 'Expired Bills' && <div className="divider my-0"></div>)}
       <div className="w-full bg-base-100">
         <div className="flex flex-col gap-3 items-center justify-start w-full">
           {bills?.map((bill) => (
             <BillListItem
               key={bill.id}
-              removeBill={removeBill}
+              bills={bills}
+              calendarSelectedBills={calendarSelectedBills}
+              mutateBills={mutateBills}
+              setCalendarSelectedBills={setCalendarSelectedBills}
               badgeColor={dueBadgeColor}
               setSelectedBill={setSelectedBill}
               setLoadingBillData={setLoadingBillData}

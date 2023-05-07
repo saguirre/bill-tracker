@@ -5,12 +5,11 @@ import { toast } from 'react-toastify';
 import { useKeyPress } from '../../hooks/useKeyPress.hook';
 import fetchJson from '../../lib/fetchJson';
 import { CategoryModel } from '../../models/category';
+import { ClipLoadingIndicator } from './ClipLoadingIndicator';
 import { FormInput } from './FormInput';
-import { Spinner } from './Spinner';
 
 interface AddCategoryModalProps {
   userId?: number;
-  loading: boolean;
   categories: CategoryModel[] | undefined;
   mutateCategories: (categories: CategoryModel[]) => void;
 }
@@ -19,12 +18,7 @@ interface FormValues {
   name: string;
 }
 
-export const AddCategoryModal: React.FC<AddCategoryModalProps> = ({
-  userId,
-  categories,
-  mutateCategories,
-  loading,
-}) => {
+export const AddCategoryModal: React.FC<AddCategoryModalProps> = ({ userId, categories, mutateCategories }) => {
   const {
     register,
     handleSubmit,
@@ -34,6 +28,7 @@ export const AddCategoryModal: React.FC<AddCategoryModalProps> = ({
   const [addAnother, setAddAnother] = useState(false);
   const [checked, setChecked] = useState(false);
   const closeRef = useRef<HTMLInputElement>(null);
+  const [loading, setLoading] = useState(false);
 
   useKeyPress(
     () => {
@@ -51,23 +46,18 @@ export const AddCategoryModal: React.FC<AddCategoryModalProps> = ({
         ...data,
       };
 
-      mutateCategories([...(categories || []), { id: (categories?.length || 0) + 1, ...newCategory }]);
+      setLoading(true);
       const categoryResponse = await fetchJson(`/api/categories/user/${userId}`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(newCategory),
       });
+      setLoading(false);
 
       if (categoryResponse) {
-        mutateCategories([
-          ...(categories || [])?.map((category: CategoryModel) => {
-            if (category.id === newCategory.id) {
-              return categoryResponse;
-            }
-            return category;
-          }),
-        ]);
+        mutateCategories([categoryResponse, ...(categories || [])]);
       }
+
       const modal = document.getElementById('add-category-modal') as any;
       if (!addAnother) {
         if (modal) modal.checked = false;
@@ -78,6 +68,8 @@ export const AddCategoryModal: React.FC<AddCategoryModalProps> = ({
     } catch (error) {
       console.error(error);
       toast.error('There was an error adding your category. Please try again later.');
+    } finally {
+      setLoading(false);
     }
   };
 
@@ -134,8 +126,8 @@ export const AddCategoryModal: React.FC<AddCategoryModalProps> = ({
                   Cancel
                 </label>
                 <button className="btn btn-primary rounded-xl">
-                  {loading && <Spinner className=" h-4 w-4 border-b-2 border-white bg-primary mr-3"></Spinner>}
-                  Save
+                  <ClipLoadingIndicator loading={loading} />
+                  {!loading && 'Save'}
                 </button>
               </div>
             </div>
