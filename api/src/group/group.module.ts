@@ -4,6 +4,7 @@ import { PrismaService } from 'src/prisma.service';
 import { GroupController } from './group.controller';
 import { GroupService } from './group.service';
 import * as dotenv from 'dotenv';
+import { GroupRepository } from './group.repository';
 dotenv.config();
 
 @Module({
@@ -13,6 +14,6 @@ dotenv.config();
     }),
   ],
   controllers: [GroupController],
-  providers: [GroupService, PrismaService],
+  providers: [GroupService, GroupRepository, PrismaService],
 })
 export class GroupModule {}

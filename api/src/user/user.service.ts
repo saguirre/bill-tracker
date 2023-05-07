@@ -14,12 +14,13 @@ import { JwtService } from '@nestjs/jwt';
 import { Queue } from 'bull';
 import { InjectQueue } from '@nestjs/bull';
 import * as dotenv from 'dotenv';
+import { UserRepository } from './user.repository';
 dotenv.config();
 
 @Injectable()
 export class UserService {
   constructor(
-    private prisma: PrismaService,
+    private repository: UserRepository,
     private jwtService: JwtService,
     @InjectQueue(process.env.ACTIVATION_QUEUE as string)
     private readonly activationQueue: Queue,
@@ -30,11 +31,7 @@ export class UserService {
   async user(
     userWhereUniqueInput: Prisma.UserWhereUniqueInput,
   ): Promise<Partial<User> | null> {
-    const user = await this.prisma.user.findUnique({
-      where: userWhereUniqueInput,
-    });
-
-    return user;
+    return this.repository.findUnique({ where: userWhereUniqueInput });
   }
 
   async users(params: {
@@ -44,14 +41,7 @@ export class UserService {
     where?: Prisma.UserWhereInput;
     orderBy?: Prisma.UserOrderByWithRelationInput;
   }): Promise<User[]> {
-    const { skip, take, cursor, where, orderBy } = params;
-    return this.prisma.user.findMany({
-      skip,
-      take,
-      cursor,
-      where,
-      orderBy,
-    });
+    return this.repository.findMany(params);
   }
 
   async createUser(data: Prisma.UserCreateInput): Promise<User> {
@@ -59,7 +49,7 @@ export class UserService {
     const password = await bcrypt.hash(data.password, salt);
     data.password = password;
 
-    const newUser = await this.prisma.user.create({
+    const newUser = await this.repository.create({
       data,
     });
 
@@ -68,7 +58,7 @@ export class UserService {
       { secret: process.env.JWT_SECRET },
     );
 
-    await this.prisma.user.update({
+    await this.repository.update({
       where: {
         id: Number(newUser.id),
       },
@@ -100,7 +90,7 @@ export class UserService {
     data: Prisma.UserUpdateInput;
   }): Promise<User> {
     const { where, data } = params;
-    const user = await this.prisma.user.findUnique({
+    const user = await this.repository.findUnique({
       where,
     });
 
@@ -117,7 +107,7 @@ export class UserService {
       throw new UnauthorizedException('Invalid token');
     }
 
-    return this.prisma.user.update({
+    return this.repository.update({
       where,
       data: {
         activated: true,
@@ -130,15 +120,11 @@ export class UserService {
     where: Prisma.UserWhereUniqueInput;
     data: Prisma.UserUpdateInput;
   }): Promise<User> {
-    const { where, data } = params;
-    return this.prisma.user.update({
-      data,
-      where,
-    });
+    return this.repository.update(params);
   }
 
   async forgotPassword(email: string) {
-    const user = await this.prisma.user.findUnique({
+    const user = await this.repository.findUnique({
       where: {
         email,
       },
@@ -152,7 +138,7 @@ export class UserService {
       { userId: user.id },
       { secret: process.env.JWT_SECRET },
     );
-    const updatedUser = await this.prisma.user.update({
+    const updatedUser = await this.repository.update({
       where: { id: Number(user.id) },
       data: {
         passwordRecoveryToken,
@@ -176,7 +162,7 @@ export class UserService {
     oldPassword: string,
     newPassword: string,
   ) {
-    const user = await this.prisma.user.findUnique({
+    const user = await this.repository.findUnique({
       where: { id: Number(userId) },
     });
     const passwordIsValid = await bcrypt.compare(oldPassword, user.password);
@@ -186,7 +172,7 @@ export class UserService {
 
     const salt = await bcrypt.genSalt();
     const newPasswordHash = await bcrypt.hash(newPassword, salt);
-    const updatedUser = await this.prisma.user.update({
+    const updatedUser = await this.repository.update({
       where: { id: Number(userId) },
       data: {
         password: newPasswordHash,
@@ -203,7 +189,7 @@ export class UserService {
       throw new UnauthorizedException('Invalid token');
     }
     const userId = decodedToken['userId'];
-    const user = await this.prisma.user.findUnique({
+    const user = await this.repository.findUnique({
       where: {
         id: Number(userId),
       },
@@ -219,7 +205,7 @@ export class UserService {
 
     const salt = await bcrypt.genSalt();
     const newPassword = await bcrypt.hash(password, salt);
-    const updatedUser = await this.prisma.user.update({
+    const updatedUser = await this.repository.update({
       where: { id: Number(user.id) },
       data: {
         password: newPassword,
@@ -234,14 +220,13 @@ export class UserService {
     where: Prisma.UserWhereUniqueInput,
     data: Prisma.UserUpdateInput,
   ): Promise<User> {
-    return this.prisma.user.update({
+    return this.repository.update({
       where,
       data,
     });
   }
+
   async deleteUser(where: Prisma.UserWhereUniqueInput): Promise<User> {
-    return this.prisma.user.delete({
-      where,
-    });
+    return this.repository.delete({ where });
   }
 }

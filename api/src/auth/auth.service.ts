@@ -2,7 +2,7 @@ import { HttpException, HttpStatus, Injectable } from '@nestjs/common';
 import { JwtService } from '@nestjs/jwt';
 import { User } from '@prisma/client';
 import * as bcrypt from 'bcryptjs';
-import { UserService } from 'src/user/user.service';
+import { UserRepository } from 'src/user/user.repository';
 import { excludeUserField } from 'src/user/utils';
 import * as dotenv from 'dotenv';
 dotenv.config();
@@ -10,7 +10,7 @@ dotenv.config();
 @Injectable()
 export class AuthService {
   constructor(
-    private userService: UserService,
+    private userRepository: UserRepository,
     private jwtService: JwtService,
   ) {}
 
@@ -18,7 +18,7 @@ export class AuthService {
     email: string,
     pass: string,
   ): Promise<Partial<User> | null> {
-    const user = await this.userService.user({ email });
+    const user = await this.userRepository.findUnique({ where: { email } });
     if (user) {
       const passwordValid = await bcrypt.compare(pass, user.password);
       if (passwordValid) {
@@ -30,7 +30,9 @@ export class AuthService {
   }
 
   async login(user: User) {
-    const dbUser = await this.userService.user({ email: user.email });
+    const dbUser = await this.userRepository.findUnique({
+      where: { email: user.email },
+    });
     if (!dbUser) {
       throw new HttpException('Unauthorized', HttpStatus.UNAUTHORIZED);
     }

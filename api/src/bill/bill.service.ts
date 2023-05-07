@@ -1,15 +1,15 @@
 import { Injectable } from '@nestjs/common';
 import { Bill, Prisma } from '@prisma/client';
-import { PrismaService } from 'src/prisma.service';
+import { BillRepository } from './bill.repository';
 
 @Injectable()
 export class BillService {
-  constructor(private prisma: PrismaService) {}
+  constructor(private repository: BillRepository) {}
 
   async bill(
     billWhereUniqueInput: Prisma.BillWhereUniqueInput,
   ): Promise<Partial<Bill> | null> {
-    const bill = await this.prisma.bill.findUnique({
+    const bill = await this.repository.findUnique({
       where: billWhereUniqueInput,
       include: {
         user: {
@@ -34,7 +34,7 @@ export class BillService {
     orderBy?: Prisma.BillOrderByWithRelationInput;
   }): Promise<Bill[]> {
     const { skip, take, cursor, where, orderBy } = params;
-    return this.prisma.bill.findMany({
+    return this.repository.findMany({
       skip,
       take,
       cursor,
@@ -60,7 +60,7 @@ export class BillService {
   }
 
   async createBill(data: Prisma.BillCreateInput): Promise<Bill> {
-    return this.prisma.bill.create({
+    return this.repository.create({
       data,
       include: {
         user: {
@@ -79,7 +79,7 @@ export class BillService {
     data: Prisma.BillUpdateInput;
   }): Promise<Bill> {
     const { where, data } = params;
-    return this.prisma.bill.update({
+    return this.repository.update({
       data,
       where,
       include: {
@@ -96,7 +96,7 @@ export class BillService {
   }
 
   async deleteBill(where: Prisma.BillWhereUniqueInput): Promise<Bill> {
-    return this.prisma.bill.delete({
+    return this.repository.delete({
       where,
       include: {
         user: {
