@@ -4,6 +4,7 @@ import { BanknotesIcon } from '@heroicons/react/24/outline';
 import { emailRegex } from '../../utils/regex-utils';
 import Link from 'next/link';
 import { useDecorativeImage } from '../../hooks/useDecorativeImage.hook';
+import { ClipLoadingIndicator } from '../common/ClipLoadingIndicator';
 
 interface FormValues {
   email: string;
@@ -12,10 +13,10 @@ interface FormValues {
 
 interface SignInFormProps {
   submit: (data: FormValues) => void;
-  loadingRequest: boolean;
+  loading: boolean;
 }
 
-export const SignInForm: React.FC<SignInFormProps> = ({ submit, loadingRequest }) => {
+export const SignInForm: React.FC<SignInFormProps> = ({ submit, loading }) => {
   const {
     register,
     handleSubmit,
@@ -103,7 +104,8 @@ export const SignInForm: React.FC<SignInFormProps> = ({ submit, loadingRequest }
                 </Link>
                 <div className="mt-6">
                   <button onClick={handleSubmit(onSubmit)} className="btn btn-primary rounded-xl w-full">
-                    Sign In
+                    {loading && <ClipLoadingIndicator loading={loading} />}
+                    {!loading && 'Sign In'}
                   </button>
                 </div>
               </form>

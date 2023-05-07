@@ -37,6 +37,7 @@
     "react-dom": "18.2.0",
     "react-hook-form": "^7.40.0",
     "react-rewards": "^2.0.4",
+    "react-spinners": "^0.13.8",
     "react-toastify": "^9.1.1",
     "react-use-hotjar": "^1.2.2",
     "socket.io": "^4.5.4",
