@@ -13,6 +13,7 @@ async function userRoute(req: NextApiRequest, res: NextApiResponse) {
 
     switch (method) {
       case 'GET':
+        // Get user profile
         if (req.session.user) {
           try {
             res.json({

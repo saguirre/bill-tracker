@@ -1,10 +1,10 @@
 import '../styles/globals.css';
-import type { AppProps } from 'next/app';
+import type { AppContext, AppProps } from 'next/app';
 import { ThemeProvider } from 'next-themes';
 import { toast, ToastContainer } from 'react-toastify';
 import { useState } from 'react';
 import { Bill } from '../models/bill/bill';
-import { AppContext, IAppContext } from '../contexts/app.context';
+import { GlobalContext, IGlobalContext } from '../contexts/app.context';
 import { SWRConfig } from 'swr';
 import fetchJson from '../lib/fetchJson';
 import 'react-toastify/dist/ReactToastify.css';
@@ -21,6 +21,9 @@ import {
 import { useRouter } from 'next/router';
 import { TransitionLoading } from '../components/common/TransitionLoading';
 import useUser from '../lib/useUser';
+import App from 'next/app';
+import { getIronSession } from 'iron-session';
+import { sessionOptions } from '../lib/session';
 
 const toastClass = {
   success:
@@ -36,7 +39,7 @@ const toastClass = {
 
 const BillTracker = ({ Component, pageProps }: AppProps) => {
   const [bills, setBills] = useState<Bill[]>([]);
-  const { user, mutateUser } = useUser();
+  const { user, mutateUser } = useUser({ initialUserData: pageProps.user });
   const router = useRouter();
 
   const logout = async () => {
@@ -52,7 +55,7 @@ const BillTracker = ({ Component, pageProps }: AppProps) => {
     }
   };
 
-  const appContextProps: IAppContext = {
+  const appContextProps: IGlobalContext = {
     user,
     mutateUser,
     bills,
@@ -70,7 +73,7 @@ const BillTracker = ({ Component, pageProps }: AppProps) => {
       }}
     >
       <ThemeProvider>
-        <AppContext.Provider value={appContextProps}>
+        <GlobalContext.Provider value={appContextProps}>
           <TransitionLoading>
             <Component {...pageProps} />
           </TransitionLoading>
@@ -151,10 +154,26 @@ const BillTracker = ({ Component, pageProps }: AppProps) => {
             toastClassName={(props) => toastClass[props?.type || 'default']}
             hideProgressBar={true}
           />
-        </AppContext.Provider>
+        </GlobalContext.Provider>
       </ThemeProvider>
     </SWRConfig>
   );
+};
+
+BillTracker.getInitialProps = async (appContext: AppContext) => {
+  const appProps = await App.getInitialProps(appContext);
+
+  if (appContext.ctx.req && appContext.ctx.res) {
+    const { user } = await getIronSession(appContext.ctx.req, appContext.ctx.res, sessionOptions);
+
+    return {
+      ...appProps,
+      user,
+    };
+  }
+
+  // here as server-side's already given a valid user, client side should handle the case when navigating
+  return appProps;
 };
 
 export default BillTracker;

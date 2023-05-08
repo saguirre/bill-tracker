@@ -169,15 +169,18 @@ export const EditBillModal: React.FC<EditBillModalProps> = ({
         <label className="modal-box relative" htmlFor="">
           <div className="flex flex-col items-start justify-start gap-2">
             <div className="flex flex-row items-center justify-start gap-2">
-              <button
-                onClick={() => setEditing(!editing)}
-                className={classNames(
-                  'btn btn-outline btn-base-content border rounded-box p-1.5',
-                  editing ? 'btn-primary' : ''
-                )}
-              >
-                <PencilIcon className="h-8 w-8" />
-              </button>
+              <div className="indicator">
+                {editing && <span className="indicator-item animate-bounce badge badge-xs mb-1 badge-primary"></span>}
+                <button
+                  onClick={() => setEditing(!editing)}
+                  className={classNames(
+                    'btn btn-outline btn-base-content border rounded-box p-1.5',
+                    editing ? 'btn-primary' : ''
+                  )}
+                >
+                  <PencilIcon className="h-8 w-8" />
+                </button>
+              </div>
               <h1 className="text-2xl font-semibold">View Bill</h1>
               {editing && <span className="text-xs">(Currently editing Bill)</span>}
             </div>
@@ -282,11 +285,22 @@ export const EditBillModal: React.FC<EditBillModalProps> = ({
                   </select>
                 )}
                 {!editing && (
-                  <input
-                    readOnly={true}
-                    defaultValue={bill?.group?.name}
-                    className="input input-bordered border-base-content input-primary focus:border-none focus:ring-base-content cursor-default focus:border-transparent focus:outline-none focus:ring-1"
-                  />
+                  <>
+                    {bill?.group?.name && (
+                      <input
+                        readOnly={true}
+                        defaultValue={bill?.group?.name}
+                        className="input input-bordered border-base-content input-primary focus:border-none focus:ring-base-content cursor-default focus:border-transparent focus:outline-none focus:ring-1"
+                      />
+                    )}
+                    {!bill?.group?.name && (
+                      <input
+                        readOnly={true}
+                        defaultValue={'No Group selected'}
+                        className="input input-bordered border-base-content input-primary focus:border-none focus:ring-base-content cursor-default focus:border-transparent focus:outline-none focus:ring-1"
+                      />
+                    )}
+                  </>
                 )}
               </div>
               <div className="flex flex-col items-end w-full justify-end">

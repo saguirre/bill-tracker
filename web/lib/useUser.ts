@@ -3,8 +3,8 @@ import Router from 'next/router';
 import useSWR from 'swr';
 import { User } from '../models/user/user';
 
-export default function useUser({ redirectTo = '', redirectIfFound = false } = {}) {
-  const { data: user, mutate: mutateUser } = useSWR<User>('/api/user');
+export default function useUser({ redirectTo = '', redirectIfFound = false, initialUserData = undefined } = {}) {
+  const { data: user, mutate: mutateUser } = useSWR<User>('/api/user', { fallbackData: initialUserData });
 
   useEffect(() => {
     // if no redirect needed, just return (example: already on /)

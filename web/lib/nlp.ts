@@ -1,10 +1,12 @@
 import fetchJson from './fetchJson';
 
-type BillData = {
+export interface BillData {
   title: string;
   amount: number;
+  category: string;
+  categoryId?: number;
   dueDate: string;
-};
+}
 
 export const extractBillData = async (text: string): Promise<BillData | null> => {
   try {
