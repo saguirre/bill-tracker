@@ -5,6 +5,7 @@ import { PrismaService } from 'src/prisma.service';
 import { BullModule } from '@nestjs/bull';
 import { JwtService } from '@nestjs/jwt';
 import * as dotenv from 'dotenv';
+import { UserRepository } from './user.repository';
 dotenv.config();
 
 @Module({
@@ -16,7 +17,7 @@ dotenv.config();
       name: process.env.FORGOT_PASSWORD_QUEUE,
     }),
   ],
-  providers: [UserService, PrismaService, JwtService],
+  providers: [UserService, UserRepository, PrismaService, JwtService],
   controllers: [UserController],
 })
 export class UserModule {}

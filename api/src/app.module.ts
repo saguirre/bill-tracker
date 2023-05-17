@@ -15,6 +15,7 @@ import { CategoryModule } from './category/category.module';
 import { GroupModule } from './group/group.module';
 import { BullModule } from '@nestjs/bull';
 import * as dotenv from 'dotenv';
+import { UserRepository } from './user/user.repository';
 dotenv.config();
 
 @Module({
@@ -48,7 +49,7 @@ dotenv.config();
     GroupModule,
   ],
   controllers: [AuthController],
-  providers: [PrismaService, UserService, AuthService],
+  providers: [PrismaService, UserRepository, UserService, AuthService],
 })
 export class AppModule implements NestModule {
   configure(consumer: MiddlewareConsumer): void {

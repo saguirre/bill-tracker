@@ -6,9 +6,9 @@ import { LocalStrategy } from './local.strategy';
 import { PrismaService } from '../prisma.service';
 import { UserModule } from 'src/user/user.module';
 import { JwtStrategy } from './jwt.strategy';
-import { UserService } from 'src/user/user.service';
 import { BullModule } from '@nestjs/bull';
 import * as dotenv from 'dotenv';
+import { UserRepository } from 'src/user/user.repository';
 dotenv.config();
 
 @Module({
@@ -34,7 +34,7 @@ dotenv.config();
     LocalStrategy,
     PrismaService,
     JwtService,
-    UserService,
+    UserRepository,
     JwtStrategy,
   ],
   exports: [AuthService, JwtService],

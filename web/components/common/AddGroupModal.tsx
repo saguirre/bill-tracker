@@ -1,16 +1,17 @@
 import { UserGroupIcon } from '@heroicons/react/24/outline';
+import { useState } from 'react';
 import { useRef } from 'react';
 import { SubmitHandler, useForm } from 'react-hook-form';
 import { toast } from 'react-toastify';
 import { useKeyPress } from '../../hooks/useKeyPress.hook';
 import fetchJson from '../../lib/fetchJson';
 import { Group } from '../../models/group/group';
+import { ClipLoadingIndicator } from './ClipLoadingIndicator';
 import { FormInput } from './FormInput';
 import { Spinner } from './Spinner';
 
 interface AddGroupModalProps {
   userId?: number;
-  loading: boolean;
   groups: Group[] | undefined;
   mutateGroups: (groups: Group[]) => void;
 }
@@ -21,7 +22,7 @@ interface FormValues {
   userIds: number[];
 }
 
-export const AddGroupModal: React.FC<AddGroupModalProps> = ({ userId, groups, mutateGroups, loading }) => {
+export const AddGroupModal: React.FC<AddGroupModalProps> = ({ userId, groups, mutateGroups }) => {
   const {
     register,
     handleSubmit,
@@ -29,6 +30,7 @@ export const AddGroupModal: React.FC<AddGroupModalProps> = ({ userId, groups, mu
     formState: { errors },
   } = useForm<FormValues>({ mode: 'onChange' });
   const closeRef = useRef<HTMLInputElement>(null);
+  const [loading, setLoading] = useState<boolean>(false);
 
   useKeyPress(
     () => {
@@ -47,23 +49,18 @@ export const AddGroupModal: React.FC<AddGroupModalProps> = ({ userId, groups, mu
         adminId: userId,
       };
 
-      mutateGroups([...(groups || []), { id: (groups?.length || 0) + 1, ...newGroup }]);
+      setLoading(true);
       const groupResponse = await fetchJson(`/api/groups`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(newGroup),
       });
+      setLoading(false);
 
       if (groupResponse) {
-        mutateGroups([
-          ...(groups || [])?.map((group: Group) => {
-            if (group.name === newGroup.name) {
-              return groupResponse;
-            }
-            return group;
-          }),
-        ]);
+        mutateGroups([groupResponse, ...(groups || [])]);
       }
+
       const modal = document.getElementById('add-group-modal') as any;
       if (modal) modal.checked = false;
       reset();
@@ -71,6 +68,8 @@ export const AddGroupModal: React.FC<AddGroupModalProps> = ({ userId, groups, mu
     } catch (error) {
       console.error(error);
       toast.error('There was an error adding your group. Please try again later.');
+    } finally {
+      setLoading(false);
     }
   };
 
@@ -114,8 +113,8 @@ export const AddGroupModal: React.FC<AddGroupModalProps> = ({ userId, groups, mu
                 Cancel
               </label>
               <button className="btn btn-primary rounded-xl">
-                {loading && <Spinner className=" h-4 w-4 border-b-2 border-white bg-primary mr-3"></Spinner>}
-                Save
+                <ClipLoadingIndicator loading={loading} />
+                {!loading && 'Save'}
               </button>
             </div>
           </form>

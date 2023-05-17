@@ -13,6 +13,7 @@ import { useEffect, useState } from 'react';
 import { User } from '../models/user/user';
 import fetchJson from '../lib/fetchJson';
 import { toast } from 'react-toastify';
+import { TransitionLoading } from './common/TransitionLoading';
 
 interface LayoutProps {
   search?: (value: string) => void;
@@ -34,7 +35,9 @@ export const Layout: React.FC<LayoutProps> = ({ showSearch, user, children, sear
   return (
     <div className="flex flex-col overflow-x-hidden">
       <Navbar user={user} showSearch={showSearch} search={search} scrolling={scrolling} />
-      <div className="transition-all mt-[74px] ml-[70px] duration-200 ease-in-out relative">{children}</div>
+      <TransitionLoading>
+        <div className="transition-all mt-[74px] ml-[70px] duration-200 ease-in-out relative">{children}</div>
+      </TransitionLoading>
       <div className="fixed flex transition-all duration-200 w-[70px] bg-base-100 ease-in-out flex-col h-screen z-50 top-0 left-0">
         <ul className="flex flex-col justify-start bg-base-100 px-2 py-1 mt-2">
           <SidebarItem

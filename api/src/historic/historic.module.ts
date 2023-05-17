@@ -1,12 +1,17 @@
 import { Module } from '@nestjs/common';
-import { BillService } from 'src/bill/bill.service';
-import { CategoryService } from 'src/category/category.service';
+import { BillRepository } from 'src/bill/bill.repository';
+import { CategoryRepository } from 'src/category/category.repository';
 import { PrismaService } from 'src/prisma.service';
 import { HistoricController } from './historic.controller';
 import { HistoricService } from './historic.service';
 
 @Module({
   controllers: [HistoricController],
-  providers: [HistoricService, BillService, CategoryService, PrismaService],
+  providers: [
+    HistoricService,
+    BillRepository,
+    CategoryRepository,
+    PrismaService,
+  ],
 })
 export class HistoricModule {}

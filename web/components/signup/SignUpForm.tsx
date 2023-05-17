@@ -8,6 +8,7 @@ import { useState } from 'react';
 import { useDecorativeImage } from '../../hooks/useDecorativeImage.hook';
 import { usePasswordStrength } from '../../hooks/usePasswordStrength.hook';
 import { PasswordStrengthIndicator } from '../common/PasswordStrengthIndicator';
+import { ClipLoadingIndicator } from '../common/ClipLoadingIndicator';
 
 interface FormValues {
   name: string;
@@ -19,11 +20,11 @@ interface FormValues {
 
 interface SignUpFormProps {
   submit: (data: FormValues) => void;
-  loadingRequest: boolean;
+  loading: boolean;
   isInvitation?: boolean;
 }
 
-export const SignUpForm: React.FC<SignUpFormProps> = ({ submit, loadingRequest }) => {
+export const SignUpForm: React.FC<SignUpFormProps> = ({ submit, loading }) => {
   const {
     register,
     handleSubmit,
@@ -151,7 +152,8 @@ export const SignUpForm: React.FC<SignUpFormProps> = ({ submit, loadingRequest }
                   disabled={Object.entries(errors)?.length > 0}
                   className="btn btn-primary rounded-xl w-full"
                 >
-                  Sign Up
+                  {loading && <ClipLoadingIndicator loading={loading} />}
+                  {!loading && 'Sign Up'}
                 </button>
               </form>
             </div>

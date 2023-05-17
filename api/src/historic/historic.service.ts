@@ -1,24 +1,24 @@
 import { Injectable } from '@nestjs/common';
-import { BillService } from 'src/bill/bill.service';
-import { CategoryService } from 'src/category/category.service';
 import {
   HistoricBillsByCategory,
   HistoricBillsByMonth,
   HistoricBillsInMonth,
 } from './entities/historic';
+import { BillRepository } from 'src/bill/bill.repository';
+import { CategoryRepository } from 'src/category/category.repository';
 
 @Injectable()
 export class HistoricService {
   constructor(
-    private readonly billService: BillService,
-    private readonly categoryService: CategoryService,
+    private readonly billRepository: BillRepository,
+    private readonly categoryRepository: CategoryRepository,
   ) {}
 
   async historicBillsInMonth(params: {
     where: { userId: number };
   }): Promise<HistoricBillsInMonth> {
     const { where } = params;
-    const a = this.billService.bills({
+    const a = this.billRepository.findMany({
       where: { userId: Number(where.userId) },
     });
     return a as any;
@@ -29,7 +29,7 @@ export class HistoricService {
   }): Promise<HistoricBillsByMonth> {
     const { where } = params;
     const months = [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11];
-    const allBills = await this.billService.bills({
+    const allBills = await this.billRepository.findMany({
       where: { userId: Number(where.userId) },
     });
     const billsByMonth = months.map((month) => {
@@ -52,11 +52,11 @@ export class HistoricService {
     where: { userId: number };
   }): Promise<HistoricBillsByCategory> {
     const { where } = params;
-    const userCategories = await this.categoryService.categories({
+    const userCategories = await this.categoryRepository.findMany({
       where: { userId: Number(where.userId) },
     });
 
-    const allBills = await this.billService.bills({
+    const allBills = await this.billRepository.findMany({
       where: { userId: Number(where.userId) },
     });
     const billsByCategory = userCategories.map((category) => {

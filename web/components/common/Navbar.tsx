@@ -2,7 +2,7 @@ import { BellIcon, EnvelopeOpenIcon, TrashIcon } from '@heroicons/react/24/outli
 import classNames from 'classnames';
 import Link from 'next/link';
 import { useRouter } from 'next/router';
-import { useEffect, useRef, useState } from 'react';
+import { useContext, useEffect, useRef, useState } from 'react';
 import { toast } from 'react-toastify';
 import { useKeyPress } from '../../hooks/useKeyPress.hook';
 import fetchJson from '../../lib/fetchJson';
@@ -11,6 +11,8 @@ import * as Ably from 'ably/promises';
 import { configureAbly } from '@ably-labs/react-hooks';
 import useNotifications from '../../lib/useNotifications';
 import { User } from '../../models/user/user';
+import logout from '../../pages/api/logout';
+import { GlobalContext } from '../../contexts';
 
 interface NavbarProps {
   scrolling: boolean;
@@ -21,9 +23,11 @@ interface NavbarProps {
 export const Navbar: React.FC<NavbarProps> = ({ showSearch, user, scrolling, search }) => {
   const router = useRouter();
   const notificationLabelRef = useRef<HTMLLabelElement>(null);
+  const { logout } = useContext(GlobalContext);
   const commandPlusF = useRef<HTMLInputElement>(null);
   const [channel, setChannel] = useState<Ably.Types.RealtimeChannelPromise | null>(null);
   const { notifications, mutateNotifications } = useNotifications(user);
+  const [isMac, setIsMac] = useState(false);
 
   useEffect(() => {
     const ably: Ably.Types.RealtimePromise = configureAbly({ authUrl: '/api/authentication' });
@@ -65,6 +69,12 @@ export const Navbar: React.FC<NavbarProps> = ({ showSearch, user, scrolling, sea
     if (showSearch) commandPlusF?.current?.focus();
   }, ['KeyK']);
 
+  useEffect(() => {
+    if (typeof navigator !== 'undefined' && navigator.platform.toUpperCase().indexOf('MAC') >= 0) {
+      setIsMac(true);
+    }
+  }, [router.isReady]);
+
   return (
     <div
       className={classNames('w-full navbar fixed flex flex-row items-center justify-between bg-base-100 z-20 p-3', {
@@ -83,7 +93,11 @@ export const Navbar: React.FC<NavbarProps> = ({ showSearch, user, scrolling, sea
               className="relative input input-ghost w-full max-w-xs"
               placeholder="Search"
             />
-            <kbd className="absolute left-[265px] opacity-60 top-3 kbd kbd-sm">⌘</kbd>
+            {isMac ? (
+              <kbd className="absolute left-[265px] opacity-60 top-3 kbd kbd-sm">⌘</kbd>
+            ) : (
+              <span className="absolute left-[245px] opacity-60 top-2.5 kbd kbd-sm px-2 py-0.5">ctrl</span>
+            )}
             <kbd className="absolute left-[290px] opacity-60 top-3 kbd kbd-sm">K</kbd>
           </>
         )}
@@ -191,23 +205,7 @@ export const Navbar: React.FC<NavbarProps> = ({ showSearch, user, scrolling, sea
               <Link href="/settings">Settings</Link>
             </li>
             <li>
-              <a
-                onClick={async () => {
-                  try {
-                    await fetchJson('/api/logout', {
-                      method: 'POST',
-                    });
-                    router.push('/signin');
-                  } catch (error) {
-                    toast.error(
-                      'There was an error logging you out. If the error persists, please close the browser tab.'
-                    );
-                    console.error('Error logging out');
-                  }
-                }}
-              >
-                Logout
-              </a>
+              <a onClick={() => logout()}>Logout</a>
             </li>
           </ul>
         </div>

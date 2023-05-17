@@ -1,15 +1,29 @@
 import '../styles/globals.css';
-import type { AppProps } from 'next/app';
+import type { AppContext, AppProps } from 'next/app';
 import { ThemeProvider } from 'next-themes';
-import { ToastContainer } from 'react-toastify';
+import { toast, ToastContainer } from 'react-toastify';
 import { useState } from 'react';
 import { Bill } from '../models/bill/bill';
-import { User } from '../models/user/user';
-import { AppContext } from '../contexts/app.context';
+import { GlobalContext, IGlobalContext } from '../contexts/app.context';
 import { SWRConfig } from 'swr';
 import fetchJson from '../lib/fetchJson';
 import 'react-toastify/dist/ReactToastify.css';
 export { reportWebVitals } from 'next-axiom';
+import { SidebarItem } from '../components/common/SidebarItem';
+import {
+  ArrowLeftOnRectangleIcon,
+  BanknotesIcon,
+  ChartPieIcon,
+  Cog6ToothIcon,
+  InboxIcon,
+  UserGroupIcon,
+} from '@heroicons/react/24/outline';
+import { useRouter } from 'next/router';
+import { TransitionLoading } from '../components/common/TransitionLoading';
+import useUser from '../lib/useUser';
+import App from 'next/app';
+import { getIronSession } from 'iron-session';
+import { sessionOptions } from '../lib/session';
 
 const toastClass = {
   success:
@@ -24,14 +38,29 @@ const toastClass = {
 };
 
 const BillTracker = ({ Component, pageProps }: AppProps) => {
-  const [user, setUser] = useState<User | null>(null);
   const [bills, setBills] = useState<Bill[]>([]);
+  const { user, mutateUser } = useUser({ initialUserData: pageProps.user });
+  const router = useRouter();
 
-  const appContextProps = {
+  const logout = async () => {
+    try {
+      await fetchJson('/api/logout', {
+        method: 'POST',
+      });
+      mutateUser(undefined);
+      router.push('/signin');
+    } catch (error) {
+      toast.error('There was an error logging you out. If the error persists, please close the browser tab.');
+      console.error('Error logging out');
+    }
+  };
+
+  const appContextProps: IGlobalContext = {
     user,
-    setUser,
+    mutateUser,
     bills,
     setBills,
+    logout,
   };
 
   return (
@@ -44,18 +73,35 @@ const BillTracker = ({ Component, pageProps }: AppProps) => {
       }}
     >
       <ThemeProvider>
-        <AppContext.Provider value={appContextProps}>
+        <GlobalContext.Provider value={appContextProps}>
           <Component {...pageProps} />
+
           <ToastContainer
             position="bottom-left"
             closeButton={false}
             toastClassName={(props) => toastClass[props?.type || 'default']}
             hideProgressBar={true}
           />
-        </AppContext.Provider>
+        </GlobalContext.Provider>
       </ThemeProvider>
     </SWRConfig>
   );
+};
+
+BillTracker.getInitialProps = async (appContext: AppContext) => {
+  const appProps = await App.getInitialProps(appContext);
+
+  if (appContext.ctx.req && appContext.ctx.res) {
+    const { user } = await getIronSession(appContext.ctx.req, appContext.ctx.res, sessionOptions);
+
+    return {
+      ...appProps,
+      user,
+    };
+  }
+
+  // here as server-side's already given a valid user, client side should handle the case when navigating
+  return appProps;
 };
 
 export default BillTracker;

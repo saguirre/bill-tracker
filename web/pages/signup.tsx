@@ -12,8 +12,8 @@ export default function SignUp() {
   const [loadingRequest, setLoadingRequest] = useState(false);
 
   const onSubmit = async (data: any) => {
-    setLoadingRequest(true);
     try {
+      setLoadingRequest(true);
       const { name, email, password } = data;
       mutateUser(
         await fetchJson('/api/signup', {
@@ -32,9 +32,10 @@ export default function SignUp() {
         toast.error('An unexpected error happened');
         console.error('An unexpected error happened:', error);
       }
+    } finally {
+      setLoadingRequest(false);
     }
-    setLoadingRequest(false);
   };
 
-  return <SignUpForm loadingRequest={loadingRequest} submit={onSubmit} />;
+  return <SignUpForm loading={loadingRequest} submit={onSubmit} />;
 }

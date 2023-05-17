@@ -1,10 +1,9 @@
-import { CheckIcon } from '@heroicons/react/24/outline';
 import { useTheme } from 'next-themes';
 import { useState, useEffect } from 'react';
 
 export const ThemeChanger: React.FC = () => {
   const [mounted, setMounted] = useState(false);
-  const { theme, setTheme } = useTheme();
+  const { setTheme } = useTheme();
 
   useEffect(() => {
     setMounted(true);
