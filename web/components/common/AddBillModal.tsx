@@ -192,6 +192,7 @@ export const AddBillModal: React.FC<AddBillModalProps> = ({
       const newBill: Bill = {
         ...nlpBillData,
         paid: checked,
+        groupId: watch('groupId'),
         paidDate: nlpBillData.paidDate ? new Date(nlpBillData.paidDate).toISOString() : undefined,
         dueDate: new Date(nlpBillData.dueDate).toISOString(),
       };
@@ -353,22 +354,25 @@ export const AddBillModal: React.FC<AddBillModalProps> = ({
                     ))}
                   </select>
                 </div>
-                <label className="label pt-0 pb-1">
-                  <span className="label-text text-sm font-semibold">Group</span>
-                </label>
-                <select
-                  placeholder="Select a group"
-                  defaultValue={''}
-                  {...register('groupId')}
-                  className="select select-bordered border-base-content select-primary focus:border-none focus:border-transparent focus:outline-none focus:ring-2 focus:ring-primary"
-                >
-                  <option value="">Select a group</option>
-                  {groups?.map((group: Group) => (
-                    <option key={group.id} value={group.id}>
-                      {group.name}
-                    </option>
-                  ))}
-                </select>
+                <div className="form-control w-full mt-1">
+                  <label className="label pt-0 pb-1">
+                    <span className="label-text text-sm font-semibold">Group</span>
+                  </label>
+                  <select
+                    placeholder="Select a group"
+                    defaultValue={''}
+                    {...register('groupId')}
+                    className="select select-bordered border-base-content select-primary focus:border-none focus:border-transparent focus:outline-none focus:ring-2 focus:ring-primary"
+                  >
+                    <option value="">Select a group</option>
+                    {groups?.map((group: Group) => (
+                      <option key={group.id} value={group.id}>
+                        {group.name}
+                      </option>
+                    ))}
+                  </select>
+                </div>
+
                 <div className="flex flex-col mt-2 items-end w-full justify-end">
                   <div className="form-control">
                     <label className="label cursor-pointer flex flex-row items-center gap-3">
@@ -563,6 +567,25 @@ export const AddBillModal: React.FC<AddBillModalProps> = ({
                     </div>
                   )}
                 </div>
+                <div className="form-control w-full mt-1">
+                  <label className="label pt-0 pb-1">
+                    <span className="label-text text-sm font-semibold">Group</span>
+                  </label>
+                  <select
+                    placeholder="Select a group"
+                    defaultValue={''}
+                    {...register('groupId')}
+                    className="select select-bordered border-base-content select-primary focus:border-none focus:border-transparent focus:outline-none focus:ring-2 focus:ring-primary"
+                  >
+                    <option value="">Select a group</option>
+                    {groups?.map((group: Group) => (
+                      <option key={group.id} value={group.id}>
+                        {group.name}
+                      </option>
+                    ))}
+                  </select>
+                </div>
+
                 <div className="flex flex-col mt-2 items-end w-full justify-end">
                   <div className="form-control">
                     <label className="label cursor-pointer flex flex-row items-center gap-3">

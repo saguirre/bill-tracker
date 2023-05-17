@@ -118,7 +118,6 @@ export const EditBillModal: React.FC<EditBillModalProps> = ({
         dueDate: new Date(data.dueDate).toISOString(),
       };
 
-      mutateBills(bills?.map((billItem: Bill) => (bill?.id === billItem.id ? newBill : billItem)) || []);
       const billResponse: Bill = await fetchJson(`/api/bills/user/${userId}/bill/${bill?.id}`, {
         method: 'PUT',
         headers: { 'Content-Type': 'application/json' },

@@ -3,7 +3,7 @@ import { withIronSessionSsr } from 'iron-session/next';
 import { sessionOptions } from '../lib/session';
 import { User } from '../models/user/user';
 import { Layout } from '../components/Layout';
-import { useRef, useState } from 'react';
+import { useContext, useEffect, useRef, useState } from 'react';
 import { useKeyPress } from '../hooks/useKeyPress.hook';
 import { AddGroupModal } from '../components/common/AddGroupModal';
 import useGroups from '../lib/useGroups';
@@ -16,12 +16,15 @@ import { useTheme } from 'next-themes';
 import { RemoveItemButton } from '../components/common/RemoveItemButton';
 import { toast } from 'react-toastify';
 import { ViewMembersModal } from '../components/common/ViewMembersGroupModal';
+import { GlobalContext } from '../contexts';
 
 export default function Groups({ user }: InferGetServerSidePropsType<typeof getServerSideProps>) {
   const addGroupRef = useRef<HTMLLabelElement>(null);
   const { groups, mutateGroups } = useGroups(user);
   const { theme } = useTheme();
+  const { mutateUser } = useContext(GlobalContext);
   const [selectedGroup, setSelectedGroup] = useState<Group | undefined>();
+  const [loading, setLoading] = useState(false);
 
   useKeyPress(() => {
     if (addGroupRef.current) {
@@ -47,6 +50,10 @@ export default function Groups({ user }: InferGetServerSidePropsType<typeof getS
       toast.error('An unexpected error happened');
     }
   };
+
+  useEffect(() => {
+    mutateUser(user);
+  }, []);
 
   return (
     <Layout showSearch={true} user={user}>
@@ -138,14 +145,14 @@ export default function Groups({ user }: InferGetServerSidePropsType<typeof getS
                       </div>
                     </div>
                   </div>
-                  {isGroupAdmin(group) && <RemoveItemButton onRemove={() => removeGroup(group)} />}
+                  {isGroupAdmin(group) && <RemoveItemButton loading={loading} onRemove={() => removeGroup(group)} />}
                 </div>
               ))}
             </div>
           )}
         </div>
       </div>
-      <AddGroupModal groups={groups} mutateGroups={mutateGroups} userId={user?.id} loading={false} />
+      <AddGroupModal groups={groups} mutateGroups={mutateGroups} userId={user?.id} />
       <AddMemberModal group={selectedGroup} mutateGroups={mutateGroups} />
       <ViewMembersModal group={selectedGroup} mutateGroups={mutateGroups} />
     </Layout>

@@ -47,7 +47,7 @@ const BillTracker = ({ Component, pageProps }: AppProps) => {
       await fetchJson('/api/logout', {
         method: 'POST',
       });
-      mutateUser(undefined, false);
+      mutateUser(undefined);
       router.push('/signin');
     } catch (error) {
       toast.error('There was an error logging you out. If the error persists, please close the browser tab.');
@@ -74,80 +74,8 @@ const BillTracker = ({ Component, pageProps }: AppProps) => {
     >
       <ThemeProvider>
         <GlobalContext.Provider value={appContextProps}>
-          <TransitionLoading>
-            <Component {...pageProps} />
-          </TransitionLoading>
-          {user?.isLoggedIn && (
-            <div className="fixed flex transition-all duration-200 w-[70px] bg-base-100 ease-in-out flex-col h-screen z-50 top-0 left-0">
-              <ul className="flex flex-col justify-start bg-base-100 px-2 py-1 mt-2">
-                <SidebarItem
-                  icon={BanknotesIcon}
-                  className="p-0"
-                  iconClassName="h-8 w-8 text-primary"
-                  onClick={() => {
-                    router.push('/');
-                  }}
-                />
-              </ul>
-              <div className="divider my-0.5 px-3"></div>
-              <ul className="flex flex-col justify-between h-full bg-base-100 px-2 py-1">
-                <div className="flex flex-col items-start">
-                  <SidebarItem
-                    popoverText="Inbox"
-                    iconClassName="h-5 w-5"
-                    icon={InboxIcon}
-                    onClick={() => {
-                      router.push('/');
-                    }}
-                  />
-                  <SidebarItem
-                    popoverText="Groups"
-                    iconClassName="h-5 w-5"
-                    icon={UserGroupIcon}
-                    onClick={() => {
-                      router.push('/groups');
-                    }}
-                  />
-                  <SidebarItem
-                    iconClassName="h-5 w-5"
-                    icon={ChartPieIcon}
-                    popoverText="Historic Data"
-                    onClick={() => {
-                      router.push('/historic');
-                    }}
-                  />
-                </div>
-                <div className="flex flex-col items-end">
-                  <SidebarItem
-                    iconClassName="h-5 w-5"
-                    icon={Cog6ToothIcon}
-                    popoverText="Settings"
-                    onClick={() => {
-                      router.push('/settings');
-                    }}
-                  />
-                  <SidebarItem
-                    iconClassName="h-5 w-5"
-                    popoverText="Logout"
-                    icon={ArrowLeftOnRectangleIcon}
-                    onClick={async () => {
-                      try {
-                        await fetchJson('/api/logout', {
-                          method: 'POST',
-                        });
-                        router.push('/signin');
-                      } catch (error) {
-                        toast.error(
-                          'There was an error logging you out. If the error persists, please close the browser tab.'
-                        );
-                        console.error('Error logging out');
-                      }
-                    }}
-                  />
-                </div>
-              </ul>
-            </div>
-          )}
+          <Component {...pageProps} />
+
           <ToastContainer
             position="bottom-left"
             closeButton={false}
