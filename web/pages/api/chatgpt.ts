@@ -1,8 +1,12 @@
 // pages/api/chatgpt.ts
+import { withIronSessionApiRoute } from 'iron-session/next';
 import type { NextApiRequest, NextApiResponse } from 'next';
 import { ask } from '../../lib/chatgpt';
+import { sessionOptions } from '../../lib/session';
 
-export default async function handler(req: NextApiRequest, res: NextApiResponse) {
+export default withIronSessionApiRoute(handler, sessionOptions);
+
+async function handler(req: NextApiRequest, res: NextApiResponse) {
   if (req.method === 'POST') {
     const prompt = req.body;
     console.log(prompt);
