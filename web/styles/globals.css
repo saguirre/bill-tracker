@@ -9,18 +9,17 @@
 }
 
 ::-webkit-scrollbar {
-  width: 12px;
+  width: 0px;
 }
 
 ::-webkit-scrollbar-track {
   border-radius: 100vh;
-  background: 'bg-base-200';
+  background: 'bg-base-100';
 }
 
 ::-webkit-scrollbar-thumb {
-  background: 'bg-base-300';
+  background: 'bg-base-100';
   border-radius: 100vh;
-  border: 1px solid 'bg-base-200';
 }
 
 ::-webkit-scrollbar-thumb:hover {
