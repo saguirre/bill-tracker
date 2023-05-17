@@ -324,6 +324,7 @@ export default function SsrHome({ user }: InferGetServerSidePropsType<typeof get
         <AddBillModal
           bills={bills}
           groups={groups}
+          mutateCategories={mutateCategories}
           categories={categories}
           mutateBills={mutateBills}
           userId={user?.id}

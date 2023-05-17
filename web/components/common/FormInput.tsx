@@ -12,7 +12,7 @@ export interface FormInputProps {
   labelText?: string;
   defaultValue?: string;
   placeholder?: string;
-  onChange?: ChangeHandler;
+  onChange?: ChangeHandler | ((event: React.ChangeEvent<HTMLInputElement>) => void);
   onBlur?: ChangeHandler;
   min?: string | number;
   max?: string | number;

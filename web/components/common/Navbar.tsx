@@ -12,7 +12,7 @@ import { configureAbly } from '@ably-labs/react-hooks';
 import useNotifications from '../../lib/useNotifications';
 import { User } from '../../models/user/user';
 import logout from '../../pages/api/logout';
-import { AppContext } from '../../contexts';
+import { GlobalContext } from '../../contexts';
 
 interface NavbarProps {
   scrolling: boolean;
@@ -23,7 +23,7 @@ interface NavbarProps {
 export const Navbar: React.FC<NavbarProps> = ({ showSearch, user, scrolling, search }) => {
   const router = useRouter();
   const notificationLabelRef = useRef<HTMLLabelElement>(null);
-  const { logout } = useContext(AppContext);
+  const { logout } = useContext(GlobalContext);
   const commandPlusF = useRef<HTMLInputElement>(null);
   const [channel, setChannel] = useState<Ably.Types.RealtimeChannelPromise | null>(null);
   const { notifications, mutateNotifications } = useNotifications(user);

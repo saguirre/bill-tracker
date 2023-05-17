@@ -1,14 +1,14 @@
 import { SignInForm } from '../components/signin/SignInForm';
-import { useState } from 'react';
+import { useContext, useState } from 'react';
 import 'react-toastify/dist/ReactToastify.css';
 import { toast } from 'react-toastify';
-import useUser from '../lib/useUser';
 import fetchJson, { FetchError } from '../lib/fetchJson';
 import { useRouter } from 'next/router';
+import { GlobalContext } from '../contexts';
 
 export default function SignIn() {
   const router = useRouter();
-  const { mutateUser } = useUser();
+  const { mutateUser } = useContext(GlobalContext);
   const [loadingRequest, setLoadingRequest] = useState(false);
 
   const onSubmit = async (data: any) => {
@@ -19,8 +19,7 @@ export default function SignIn() {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify(data),
-        }),
-        false
+        })
       );
       router.push('/');
       toast.success('Signed in successfully!');
